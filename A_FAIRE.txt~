@@ -2,7 +2,7 @@ PROJET Java STRI 2014
 
 Tâches qui doivent être réaliser :
 
-- Création du Git -> FAIT
+- Création du Git
 
 - Programmation :
 	- Dossier Javadoc
@@ -10,7 +10,7 @@ Tâches qui doivent être réaliser :
 	- Programme client
 - Dossier de conception :
 	- Répartition des tâches
-	- Charte de programmation -> FAIT
+	- Charte de programmation
 	- Diagrammes UML
 	- Expliquation des besoins et du but du projet
 
@@ -22,8 +22,3 @@ Durée pour rélaiser le travail :
 Le reste du temps sera consacrée au débeugage à la comprehension du code par l'ensemble des membres de l'équipe.
 
 
-Aides données par le prof :
-
-- la conversation se trouve dans un fichier texte, et par intervalle de temps, les client check le fichier.
-- mise en place de socket qui permet a un client d'envoyer un message au serveur, et le serveur renvoi le message sur tous les clients.
-- BDD: il a pas détaillé, mais je pense que vous avez des idées avec cette méthode 
