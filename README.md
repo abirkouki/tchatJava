@@ -16,7 +16,7 @@ Tâches qui doivent être réaliser :
 	- Répartition des tâches
 	- Charte de programmation -> FAIT
 	- Diagrammes UML
-	- Expliquation des besoins et du but du projet
+	- Expliquation des besoins et du but du projet -> (turlute commence)
 
 Durée pour rélaiser le travail :
 
@@ -26,7 +26,7 @@ Durée pour rélaiser le travail :
 Le reste du temps sera consacrée au débeugage à la comprehension du code par l'ensemble des membres de l'équipe.
 
 
-Aides données par le prof :
+Aides données par le prof (choisir une solution):
 
 - la conversation se trouve dans un fichier texte, et par intervalle de temps, les client check le fichier.
 - mise en place de socket qui permet a un client d'envoyer un message au serveur, et le serveur renvoi le message sur tous les clients.
