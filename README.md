@@ -17,6 +17,7 @@ Tâches qui doivent être réaliser :
 	- Charte de programmation -> FAIT
 	- Diagrammes UML
 	- Expliquation des besoins et du but du projet -> (turlute commence)
+- Manuel utilisateur du programme
 
 Durée pour rélaiser le travail :
 
