@@ -11,7 +11,7 @@ Tâches qui doivent être réaliser :
 	- Dossier Javadoc
 	- Programme serveur
 	- Programme client
-	- Base de données (My SQL)
+	- Fichiers de sauvegarde des données
 - Dossier de conception :
 	- Répartition des tâches
 	- Charte de programmation -> FAIT
