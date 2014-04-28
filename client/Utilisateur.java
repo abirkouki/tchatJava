@@ -5,7 +5,7 @@ package client;
 
 /**
  * @author florian
- * Classe caractérisant un utilisateur de l'application cliente, caractérisé par son identifiant (attribué automatiquement à l'inscription), son nom, son prénom, son grade et son statut.
+ * Classe caractérisant un utilisateur de l'application cliente, caractérisé par son identifiant (attribué automatiquement à l'inscription), son nom, son prénom et son statut.
  */
 public class Utilisateur {
 	
@@ -23,14 +23,6 @@ public class Utilisateur {
 	 * Prénom de l'utilisateur saisi durant l'inscription.
 	 */
 	private String prenom;
-	
-	/**
-	 * Grade d'un utilisateur qui lui est attribué par les administrateurs.
-	 * 0 : utilisateur basique
-	 * 1 : utilisateur avancé
-	 * 2 : Administrateur
-	 */
-	private int grade;
 	
 	/**
 	 * Statut d'un utilisateur
@@ -52,9 +44,8 @@ public class Utilisateur {
 	 * @param id Identifiant (unique) qui représente un utilisateur, attribué automatiquement à l'inscription.
 	 * @param nom Nom d'un utilisateur, saisi pendant l'inscription.
 	 * @param prenom Prénom de l'utilisateur, saisi pendant l'inscription.
-	 * @param grade Grade d'un utilisateur, attribué par les Administrateurs, à l'inscription le grade est le plus bas (0).
 	 */
-	public Utilisateur(int id,String nom, String prenom, int grade) {
+	public Utilisateur(int id,String nom, String prenom) {
 		/* Par défaut le statut est "En ligne" -> 0 */
 		this.statut = 0;
 		/* L'utilisateur ne peut justifier que un statut "Abscent" -> 3, donc on initialise la justification à null */
@@ -63,26 +54,10 @@ public class Utilisateur {
 		this.id = id;
 		this.nom = nom;
 		this.prenom = prenom;
-		this.grade = grade;
 		
 	}
 
-	/**
-	 * Retourne le grade d'un utilisateur.
-	 * @return Grade de l'utilisateur.
-	 */
-	public int getGrade() {
-		return grade;
-	}
-
-	/**
-	 * Affecte un nouveau grade à l'utilisateur.
-	 * @param grade Nouveau grade de l'utilisateur.
-	 */
-	public void setGrade(int grade) {
-		this.grade = grade;
-	}
-
+	
 	/**
 	 * Retourne le statut d'un utilisateur.
 	 * @return Statut actuel de l'utilisateur.
