@@ -94,12 +94,33 @@ public class Inscription extends Serveur implements Runnable{
 	}
 	
 	public void run() {
-		/* On informe le client du début du processus d'inscription */
-		System.out.println("On rentre dans le processus d'inscription");
-		System.out.println(this.sockConnexion);
-		this.envoyerMesg("2");
-		
-
+		/* On attend le message de l'utilisateur avec tous les champs (nom/prenom/login/password) */
+		String infos = new String();
+		infos = lireMesg();
+		System.out.println("Message reçu du client : "+infos);
+		/* On décompose le message reçu */
+		String[] infosDecomp = infos.split("/");
+		/* On affecte aux champs la bonne valeur */
+		this.nom = infosDecomp[0];
+		this.prenom = infosDecomp[1];
+		this.login = infosDecomp[2];
+		this.motDePasse = infosDecomp[3];
+		/* On récupère la liste des utilisateurs */
+		super.initListeUtilisateurs();
+		/* On récupère le nombre d'utilisateurs déjà inscrits pour affecter l'identifiant au nouvel utilisateur */
+		int id = this.listeUtilisateurs.size();
+		/* On créer le nouvel utilisateur */
+		Utilisateur nouvelUtilisateur = new Utilisateur(id, this.login, this.nom, this.prenom, this.motDePasse);
+		/* On l'ajoute dans la liste des utilisateurs */
+		this.listeUtilisateurs.add(id, nouvelUtilisateur);
+		/* On sauvegarde la nouvelle liste des utilisateurs */
+		if(saveListeUtilisateurs() != 0){
+			/* Echec de la sauvegarde de la liste des utilisateurs, on abandonne tout et on informe le client */
+			envoyerMesg("0");
+		}else{
+			/* L'utilisateur a bien été ajouté */
+			envoyerMesg("1");
+		}
 	}
 
 }

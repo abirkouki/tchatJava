@@ -88,21 +88,8 @@ public class ConnexionClient {
 			if(codeServeur != 0){
 				/* Si le serveur confirme la connexion, on envoie notre requête */
 				this.envoyerMesg(Integer.toString(requete));
-				/* On attend la réponse du serveur, qui doit être la même que la requête que nous lui avons envoyé */
-				codeServeur = Integer.parseInt(this.lireMesg());
-				if(codeServeur == 1){
-					/* Le serveur lance le processus d'identification */
-					System.out.println("Authentification");
-				}else{
-					if(codeServeur == 2)
-					{
-						/* Le serveur lance le processus d'inscription */
-						System.out.println("Inscription");
-					}else{
-						/* ERREUR */
-						this.sockConnexion.close();
-					}
-				}
+			}else{
+				/* Informer le client de l'échec de la connexion au serveur */
 			}
 			
 		}
@@ -111,5 +98,5 @@ public class ConnexionClient {
 		}
 		
 	}
-
+	
 }

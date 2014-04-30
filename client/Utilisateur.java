@@ -3,12 +3,19 @@
  */
 package client;
 
+import java.io.Serializable;
+
 /**
  * @author florian
  * Classe caractérisant un utilisateur de l'application cliente, caractérisé par son identifiant (attribué automatiquement à l'inscription), son nom, son prénom et son statut.
  */
-public class Utilisateur {
+public class Utilisateur implements Serializable {
 	
+	/**
+	 * Attribut de Serializable
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Identifiant de l'utilisateur attribué à son inscription.
 	 */
@@ -127,6 +134,13 @@ public class Utilisateur {
 		return prenom;
 	}
 	
+	/**
+	 * Retourne le login d'un utulisateur
+	 * @return Login de l'utilisateur.
+	 */
+	public String getLogin(){
+		return this.login;
+	}
 	
 
 }
