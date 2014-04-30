@@ -1,61 +1,109 @@
 /**
- * 
+ * Package contenant toutes les classes relatives à l'application cliente
  */
 package client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.InetAddress;
+import java.util.Scanner;
 
 /**
  * @author florian
- *
+ * Classe permettant d'établir la connexion entre un client et le serveur.
  */
 public class ConnexionClient {
 	
 	/**
 	 * Socket permettant de réaliser la connexion au serveur
 	 */
-	Socket sockConnexion = null;
-	
-	/**
-	 * Client qui souhaite se connecter
-	 */
-	Utilisateur client = null;
+	private Socket sockConnexion = null;
+
 	
 	/**
 	 * Buffer permettant de lire les messages du serveur
 	 */
-	BufferedReader lire = null;
+	private BufferedReader lire = null;
 	
 	/**
-	 * Message reçu du serveur
+	 * Bufer d'écriture pour envoyer des messages au serveur
 	 */
-	String message = null;
+	private PrintWriter ecrire;
 	
 	/**
-	 * Constructeur d'intialiser la connexion entre le client et le serveur.
-	 * @param client Identité du client demandant la connexion (utilisé pour les clients sur liste noire)
+	 * Retourne la socket de connexion du client
+	 * @return La socket de connexion du client
 	 */
-	public ConnexionClient(Utilisateur client) {
-		this.client = client;
+	public Socket getSock(){
+		return this.sockConnexion;
+	}
+	
+	/**
+	 * Récupère un message reçu du serveur
+	 * @return Message reçu du serveur.
+	 */
+	public String lireMesg(){
+		try{
+			String message;
+			/* On initialise le buffer de lecture pour récupérer la confirmation de connexion de la part du serveur */
+			lire = new BufferedReader(new InputStreamReader(sockConnexion.getInputStream()));
+			/* On récupère le message du serveur */
+			message = lire.readLine();
+			return message;
+		}
+		catch (IOException exception){
+			return("Impossible de récupérer le message du serveur");
+		}
+	}
+	
+	/**
+	 * Envoie un message au serveur, puis vide le buffer d'écriture.
+	 * @param message Message que le client veut envoyer au serveur
+	 */
+	public void envoyerMesg(String message){
+		try{
+			ecrire = new PrintWriter(this.sockConnexion.getOutputStream());
+			ecrire.println(message);
+			ecrire.flush();
+		}
+		catch(IOException exception){
+			System.out.println("Imposible d'envoyer un message au serveur");
+		}
 	}
 	
 	/**
 	 * Réalise la connexion du client au serveur et intialise la socket de connexion.
 	 */
-	public void connect(){
+	public void connect(int requete){
+		int codeServeur; /* code de début ou de fin de processus envoyé par le serveur */
 		/* On tente de connecter le client au serveur en lui envoyant l'identifiant du client */
 		try{
 			this.sockConnexion = new Socket(InetAddress.getLocalHost(), 2369);
-			/* On initialise le buffer de lecture pour récupérer la confirmation de connexion de la part du serveur */
-			lire = new BufferedReader(new InputStreamReader(sockConnexion.getInputStream()));
-			/* On récupère le message du serveur */
-			message = lire.readLine();
-			/* On l'affiche */
-			System.out.println("Mesage du serveur : "+message);
+			/* On récupère le message du serveur après notre demande de connexion */
+			/* Si il est différent de 0 on envoie notre requête (ident : demande d'identification / inscr : demande d'inscription */
+			codeServeur = Integer.parseInt(this.lireMesg());
+			if(codeServeur != 0){
+				/* Si le serveur confirme la connexion, on envoie notre requête */
+				this.envoyerMesg(Integer.toString(requete));
+				/* On attend la réponse du serveur, qui doit être la même que la requête que nous lui avons envoyé */
+				codeServeur = Integer.parseInt(this.lireMesg());
+				if(codeServeur == 1){
+					/* Le serveur lance le processus d'identification */
+					System.out.println("Authentification");
+				}else{
+					if(codeServeur == 2)
+					{
+						/* Le serveur lance le processus d'inscription */
+						System.out.println("Inscription");
+					}else{
+						/* ERREUR */
+						this.sockConnexion.close();
+					}
+				}
+			}
 			
 		}
 		catch(IOException exception){

@@ -25,6 +25,11 @@ public class Utilisateur {
 	private String prenom;
 	
 	/**
+	 * Mot de passe d'un utilisateur nécessaire pour se connecter
+	 */
+	private String motDePasse;
+	
+	/**
 	 * Statut d'un utilisateur
 	 * 0:En ligne
 	 * 1: Hors ligne
@@ -37,6 +42,12 @@ public class Utilisateur {
 	 * Justification du statut (Abscent).
 	 */
 	private String justification;
+	
+	/**
+	 * Login de connexion d'un utilisateur
+	 */
+	private String login;
+	
 
 	/**
 	 * Constrcuteur de la classe Utilisateur.
@@ -45,7 +56,7 @@ public class Utilisateur {
 	 * @param nom Nom d'un utilisateur, saisi pendant l'inscription.
 	 * @param prenom Prénom de l'utilisateur, saisi pendant l'inscription.
 	 */
-	public Utilisateur(int id,String nom, String prenom) {
+	public Utilisateur(int id,String login, String nom, String prenom, String motDePasse) {
 		/* Par défaut le statut est "En ligne" -> 0 */
 		this.statut = 0;
 		/* L'utilisateur ne peut justifier que un statut "Abscent" -> 3, donc on initialise la justification à null */
@@ -54,6 +65,8 @@ public class Utilisateur {
 		this.id = id;
 		this.nom = nom;
 		this.prenom = prenom;
+		this.motDePasse = motDePasse;
+		this.login = login;
 		
 	}
 

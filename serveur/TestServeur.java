@@ -1,13 +1,12 @@
 package serveur;
 
+import java.io.IOException;
+
 public class TestServeur {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		Serveur serv = new Serveur();
-		ConnexionServeur conServ = new ConnexionServeur(serv);
-		
-		conServ.connect();
-
+		serv.demarerServeur();
 	}
 
 }
