@@ -170,7 +170,7 @@ public class FenConnexion {
 						/* on récupère les infos de l'utilisateur */
 						String infosUtil = lireMesg();
 						/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
-						FenPrincipale fenPrincipale = new FenPrincipale(sockConnexion, infosUtil);
+						
 					}
 				}
 			}

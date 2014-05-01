@@ -111,7 +111,7 @@ public class Inscription extends Serveur implements Runnable{
 		this.login = infosDecomp[2];
 		this.motDePasse = infosDecomp[3];
 		/* On récupère la liste des utilisateurs */
-		super.initListeUtilisateurs();
+		super.initUtilisateurs();
 		/* On récupère le nombre d'utilisateurs déjà inscrits pour affecter l'identifiant au nouvel utilisateur */
 		int id = this.listeUtilisateurs.size();
 		/* On créer le nouvel utilisateur */
@@ -119,7 +119,7 @@ public class Inscription extends Serveur implements Runnable{
 		/* On l'ajoute dans la liste des utilisateurs */
 		this.listeUtilisateurs.add(id, nouvelUtilisateur);
 		/* On sauvegarde la nouvelle liste des utilisateurs */
-		if(saveListeUtilisateurs() != 0){
+		if(saveUtilisateurs() != 0){
 			/* Echec de la sauvegarde de la liste des utilisateurs, on abandonne tout et on informe le client */
 			envoyerMesg("0");
 			/* On créer ensuite le thread qui va rediriger sur la classe ConnexionServeur */

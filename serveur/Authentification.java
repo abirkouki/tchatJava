@@ -94,7 +94,7 @@ public class Authentification extends Serveur implements Runnable {
 			this.login = infosDecomp[0];
 			this.pass = infosDecomp[1];
 			/* On récupère la liste des utilisateurs */
-			this.initListeUtilisateurs();
+			this.initUtilisateurs();
 			/* On parcours la liste pour vérifier si la combinaison login + mdp est correcte */
 			int i; /* indice de parcours de la liste */
 			for(i=0;i<listeUtilisateurs.size();i++){

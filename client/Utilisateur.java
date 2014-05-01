@@ -163,5 +163,13 @@ public class Utilisateur implements Serializable {
 	public String getPassword(){
 		return this.motDePasse;
 	}
+	
+	/**
+	 * Modifie le grade d'un utilisateur
+	 * @param grade Nouveau grade de l'utilisateur
+	 */
+	public void setGrade(int grade){
+		this.grade = grade;
+	}
 
 }

@@ -37,9 +37,14 @@ public class Serveur {
 	protected ArrayList<Utilisateur> listeUtilisateurs;
 	
 	/**
-	 * Nombre de clients connectés sur le serveur
+	 * Liste des utilisateurs connectés sur l'application
 	 */
-	private int nombreClients;
+	protected ArrayList<Utilisateur> listeConnectes;
+	
+	/**
+	 * Liste des canaux présents sur le serveur
+	 */
+	protected ArrayList<Canal> listeCanaux;
 	
 	/**
 	 * Démare le serveur avec toutes ses initialisations
@@ -47,10 +52,12 @@ public class Serveur {
 	public void demarerServeur(){
 		/* On essaye de connecter le serveur sur le numero de port demandé */
 		try{
-			/* On initialise le serveur */
-			this.initListeUtilisateurs();
-			/* On initialise le nombre de clients connectés à 0 */
-			this.nombreClients = 0;
+			/* On initialise la liste des utilisateurs inscrits */
+			this.initUtilisateurs();
+			/* On initialise la liste des canaux sauvegardés */
+			this.initCanaux();
+			/* On créer une liste vide des utilisateurs connectés */
+			this.listeConnectes = new ArrayList<Utilisateur>();
 			/* On initialise la socket avec le numero de port fourni en paramètre */
 			this.sockServeur = new ServerSocket(2369);
 			/* On affiche un message pour informer du succes de la création de la socket */
@@ -70,7 +77,7 @@ public class Serveur {
 	/**
 	 * Initialise le serveur avec les données sauvegardées dans les fichiers de sauvegarde.
 	 */
-	public void initListeUtilisateurs() {
+	public void initUtilisateurs() {
 		this.listeUtilisateurs = new ArrayList<Utilisateur>();
 		ObjectInputStream entree;
 		try{
@@ -101,7 +108,7 @@ public class Serveur {
 	/**
 	 * Sauvegarde la liste des utilisateurs inscrits sur l'application dans un fichier de datas. Retourne -1 en cas d'échec
 	 */
-	public int saveListeUtilisateurs(){
+	public int saveUtilisateurs(){
 		ObjectOutputStream sortie;
 		try{
 			sortie = new ObjectOutputStream(new FileOutputStream("saveUtilisateurs.dat"));
@@ -116,6 +123,60 @@ public class Serveur {
 		}
 		catch (IOException exception){
 			System.out.println("Sauvegarde de la liste des utilisateurs -> KO");
+			exception.printStackTrace();
+			return -1;
+		}
+	}
+	
+	/**
+	 * Initialise le serveur avec les canaux sauvegardés dans le fichier de sauvegarde
+	 */
+	public void initCanaux() {
+		this.listeCanaux = new ArrayList<Canal>();
+		ObjectInputStream entree;
+		try{
+			entree = new ObjectInputStream(new FileInputStream("saveCanaux.dat"));
+			ArrayList<Canal> readObject = (ArrayList<Canal>) entree.readObject();
+			this.listeCanaux = readObject;
+			entree.close();
+			System.out.println("Initialisation de la liste des Canaux -> OK");
+		}
+		catch(ClassNotFoundException c)
+		{
+			System.out.println("ERREUR initialisation de la liste des Canaux -> Problème de classe");
+			c.printStackTrace();
+		}
+		catch(FileNotFoundException f)
+		{
+			System.out.println("ERREUR initialisation de la liste des Canaux -> Fichier introuvable");
+			f.printStackTrace();
+		}
+		catch(IOException e)
+		{
+			System.out.println("ERREUR initialisation de la liste des Canaux -> KO");
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * Sauvegarde la liste des canaux présent sur l'application dans un fichier de datas. Retourne -1 en cas d'échec
+	 */
+	public int saveCanaux(){
+		ObjectOutputStream sortie;
+		try{
+			sortie = new ObjectOutputStream(new FileOutputStream("saveCanaux.dat"));
+			sortie.writeObject(this.listeCanaux);
+			System.out.println("Sauvegarde de la liste des Canaux -> OK");
+			sortie.close();
+			return 0;
+		}
+		catch (FileNotFoundException fileexcept){
+			System.out.println("Fichier introuvable pour la sauvegarde des Canaux");
+			return -1;
+		}
+		catch (IOException exception){
+			System.out.println("Sauvegarde de la liste des Canaux -> KO");
 			exception.printStackTrace();
 			return -1;
 		}
@@ -153,27 +214,6 @@ public class Serveur {
 	 */
 	public int getNbUtilisateurs(){
 		return this.listeUtilisateurs.size();
-	}
-
-	/**
-	 * @return Le nombre de clients connectés
-	 */
-	public int getNombreClients() {
-		return nombreClients;
-	}
-	
-	/**
-	 * Incrémente le nombre de clients connectés
-	 */
-	public void addClientConnecte(){
-		this.nombreClients++;
-	}
-	
-	/**
-	 * Décrémente le nombre de clients connectés
-	 */
-	public void remClientConnecte(){
-		this.nombreClients--;
 	}
 
 }
