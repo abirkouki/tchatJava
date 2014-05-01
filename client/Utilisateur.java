@@ -55,6 +55,11 @@ public class Utilisateur implements Serializable {
 	 */
 	private String login;
 	
+	/**
+	 * Grade de l'utilisateur (0 : visiteur / 1 : membre / 2 : Administrateur)
+	 */
+	private int grade;
+	
 
 	/**
 	 * Constrcuteur de la classe Utilisateur.
@@ -63,7 +68,7 @@ public class Utilisateur implements Serializable {
 	 * @param nom Nom d'un utilisateur, saisi pendant l'inscription.
 	 * @param prenom Prénom de l'utilisateur, saisi pendant l'inscription.
 	 */
-	public Utilisateur(int id,String login, String nom, String prenom, String motDePasse) {
+	public Utilisateur(int id,String login, String nom, String prenom, String motDePasse, int grade) {
 		/* Par défaut le statut est "En ligne" -> 0 */
 		this.statut = 0;
 		/* L'utilisateur ne peut justifier que un statut "Abscent" -> 3, donc on initialise la justification à null */
@@ -74,6 +79,7 @@ public class Utilisateur implements Serializable {
 		this.prenom = prenom;
 		this.motDePasse = motDePasse;
 		this.login = login;
+		this.grade = grade;
 		
 	}
 
@@ -142,5 +148,20 @@ public class Utilisateur implements Serializable {
 		return this.login;
 	}
 	
+	/**
+	 * Retourne le grade de l'utilisateur
+	 * @return Grade de l'utilisateur
+	 */
+	public int getGrade(){
+		return this.grade;
+	}
+	
+	/**
+	 * Retourne le mot de passe d'un utilisateur
+	 * @return Mot de passe de l'utilisateur
+	 */
+	public String getPassword(){
+		return this.motDePasse;
+	}
 
 }

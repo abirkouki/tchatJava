@@ -57,7 +57,7 @@ public class FenMenuPrincipal {
 	 */
 	private void initialize() {
 		frmApplicationtchatStri = new JFrame();
-		frmApplicationtchatStri.setTitle("Application \"Tchat STRI\"");
+		frmApplicationtchatStri.setTitle("Application Tchat STRI");
 		frmApplicationtchatStri.setResizable(false);
 		frmApplicationtchatStri.setBounds(100, 100, 1024, 700);
 		frmApplicationtchatStri.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -73,6 +73,16 @@ public class FenMenuPrincipal {
 		panel.add(libTitle);
 		
 		JButton btnConnexion = new JButton("Connexion");
+		btnConnexion.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				/* On lance la connexion au serveur */
+				ConnexionClient conCli = new ConnexionClient();
+				conCli.connect(1);
+				FenConnexion fenConnexion = new FenConnexion(conCli.getSock());
+				fenConnexion.ouvrirFenetre();
+				fermerFenetre();
+			}
+		});
 		btnConnexion.setSelectedIcon(null);
 		btnConnexion.setFont(new Font("Liberation Serif", Font.BOLD, 25));
 		btnConnexion.setBounds(409, 164, 204, 35);

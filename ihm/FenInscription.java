@@ -1,7 +1,5 @@
 package ihm;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -145,7 +143,7 @@ public class FenInscription {
 	 */
 	private void initialize() {
 		frmApllicationTchatStri = new JFrame();
-		frmApllicationTchatStri.setTitle("Apllication Tchat STRI");
+		frmApllicationTchatStri.setTitle("Application Tchat STRI");
 		frmApllicationTchatStri.setBounds(100, 100, 1024, 700);
 		frmApllicationTchatStri.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -282,7 +280,7 @@ public class FenInscription {
 					libErreur.setText("ERREUR : Vous devez remplir tous les champs");
 				}
 				/* On parcours la liste en entier */
-				for(i=1;i<listeUtilisateurs.size()+1;i++){
+				for(i=0;i<listeUtilisateurs.size();i++){
 					/* On vérifie que le login n'est pas utilisé */
 					if(saiLogin.getText().compareTo(listeUtilisateurs.get(i).getLogin()) == 0){
 						/* Si le login est déjà utilisé on met erreur à true */
@@ -329,6 +327,13 @@ public class FenInscription {
 			public void actionPerformed(ActionEvent e) {
 				FenMenuPrincipal fenMenu = new FenMenuPrincipal();
 				fenMenu.ouvrirFenetre();
+				/* On ferme la connexion et la fenêtre d'inscription */
+				try{
+					sockConnexion.close();
+				}
+				catch(IOException ex){
+					ex.printStackTrace();
+				}
 				fermerFenetre();
 			}
 		});

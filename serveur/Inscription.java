@@ -23,6 +23,11 @@ public class Inscription extends Serveur implements Runnable{
 	private String nom;
 	
 	/**
+	 * Thread permettant de lancer le processus d'authentification
+	 */
+	private Thread thConnexion = null;
+	
+	/**
 	 * Prénom du nouveau membre
 	 */
 	private String prenom;
@@ -110,16 +115,24 @@ public class Inscription extends Serveur implements Runnable{
 		/* On récupère le nombre d'utilisateurs déjà inscrits pour affecter l'identifiant au nouvel utilisateur */
 		int id = this.listeUtilisateurs.size();
 		/* On créer le nouvel utilisateur */
-		Utilisateur nouvelUtilisateur = new Utilisateur(id, this.login, this.nom, this.prenom, this.motDePasse);
+		Utilisateur nouvelUtilisateur = new Utilisateur(id, this.login, this.nom, this.prenom, this.motDePasse, 1);
 		/* On l'ajoute dans la liste des utilisateurs */
 		this.listeUtilisateurs.add(id, nouvelUtilisateur);
 		/* On sauvegarde la nouvelle liste des utilisateurs */
 		if(saveListeUtilisateurs() != 0){
 			/* Echec de la sauvegarde de la liste des utilisateurs, on abandonne tout et on informe le client */
 			envoyerMesg("0");
+			/* On créer ensuite le thread qui va rediriger sur la classe ConnexionServeur */
+			this.thConnexion = new Thread(new ConnexionServeur(this.getSock()));
+			/* On lance le thread */
+			this.thConnexion.start();
 		}else{
 			/* L'utilisateur a bien été ajouté */
 			envoyerMesg("1");
+			/* On créer ensuite le thread qui va rediriger sur la classe ConnexionServeur */
+			this.thConnexion = new Thread(new ConnexionServeur(this.getSock()));
+			/* On lance le thread */
+			this.thConnexion.start();
 		}
 	}
 
