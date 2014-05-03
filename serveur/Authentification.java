@@ -10,6 +10,8 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import client.Utilisateur;
+
 /**
  * @author florian
  *
@@ -47,12 +49,23 @@ public class Authentification implements Runnable {
 	private ServerSocket sockServ;
 	
 	/**
+	 * Thread de l'application
+	 */
+	private Thread thApplication = null;
+	
+	/**
+	 * Serveur sur lequel tourne l'aplli
+	 */
+	private Serveur serveur;
+	
+	/**
 	 * Constructeur de la classe Authentification
 	 * @param sockConnexion Socket de connexion du client
 	 */
-	public Authentification(Socket sockConnexion, ServerSocket sockServ){
+	public Authentification(Socket sockConnexion, ServerSocket sockServ, Serveur serveur){
 		this.sockConnexion = sockConnexion;
 		this.sockServ = sockServ;
+		this.serveur = serveur;
 	}
 	
 	/**
@@ -111,6 +124,9 @@ public class Authentification implements Runnable {
 					if(this.pass.compareTo(serv.getListeUtilisateurs().get(i).getPassword()) == 0){
 						/* Les mots de passes correspondent */
 						envoyerMesg("1");
+						/* On ajoute l'utilisateur à la liste des utlisateurs connectés */
+						Utilisateur nouvUtil = new Utilisateur(serv.getListeUtilisateurs().get(i).getId(), serv.getListeUtilisateurs().get(i).getLogin(), serv.getListeUtilisateurs().get(i).getNom(), serv.getListeUtilisateurs().get(i).getPrenom(), serv.getListeUtilisateurs().get(i).getPassword(), serv.getListeUtilisateurs().get(i).getGrade());
+						
 						/* On envoi toutes les infos relatives à l'utilisateur */
 						envoyerMesg(serv.getListeUtilisateurs().get(i).getId()+"/"+serv.getListeUtilisateurs().get(i).getLogin()+"/"+serv.getListeUtilisateurs().get(i).getNom()+"/"+serv.getListeUtilisateurs().get(i).getPrenom()+"/"+serv.getListeUtilisateurs().get(i).getPassword()+"/"+serv.getListeUtilisateurs().get(i).getGrade());
 						/* On met le booleen a false pour sortir de la boucle */
@@ -124,7 +140,9 @@ public class Authentification implements Runnable {
 			}
 		}while(erreur != false);
 		/* On lance le thread de Tchat*/
-		//System.out.println("Début de processus de Tchat");
+		System.out.println("Début de processus de Tchat");
+		this.thApplication = new Thread(new Application(this.sockConnexion, this.serveur));
+		this.thApplication.start();
 
 	}
 

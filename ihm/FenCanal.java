@@ -41,6 +41,14 @@ public class FenCanal {
 		this.sockConnexion = sockConnexion;
 		initialize();
 	}
+	
+	/**
+	 * Ferme la fenêtre
+	 */
+	public void fermerFenetre(){
+		this.frame.setVisible(false);
+		this.frame.dispose();
+	}
 
 	/**
 	 * Initialize the contents of the frame.
@@ -88,5 +96,15 @@ public class FenCanal {
 		libNomCanal.setFont(new Font("Liberation Serif", Font.BOLD, 17));
 		libNomCanal.setBounds(23, 0, 747, 27);
 		panel.add(libNomCanal);
+		
+		JButton btnQuitter = new JButton("Quitter Canal");
+		btnQuitter.setFont(new Font("Liberation Serif", Font.BOLD, 15));
+		btnQuitter.setBounds(858, 592, 139, 25);
+		panel.add(btnQuitter);
+		
+		JButton btnAccueil = new JButton("Retour Accueil");
+		btnAccueil.setFont(new Font("Liberation Serif", Font.BOLD, 15));
+		btnAccueil.setBounds(858, 629, 139, 25);
+		panel.add(btnAccueil);
 	}
 }

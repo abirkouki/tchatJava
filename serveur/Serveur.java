@@ -63,7 +63,7 @@ public class Serveur {
 			/* On affiche un message pour informer du succes de la création de la socket */
 			System.out.println("Création de la socket sur le port 2369 -> OK");
 			/* On créer ensuite le thread qui va rediriger sur la classe ConnexionServeur */
-			this.thConnexion = new Thread(new ConnexionServeur(this.sockServeur));
+			this.thConnexion = new Thread(new ConnexionServeur(this.sockServeur, this));
 			/* On lance le thread */
 			this.thConnexion.start();
 		}
@@ -223,5 +223,33 @@ public class Serveur {
 	public ArrayList<Utilisateur> getListeUtilisateurs(){
 		return this.listeUtilisateurs;
 	}
-
+	
+	/**
+	 * Ajoute un utilisateur à la liste des connectés
+	 * @param utilisateur Utilisateur qui vient de réaliser une connexion
+	 */
+	public void addConnecte(Utilisateur utilisateur){
+		this.listeConnectes.add(utilisateur);
+	}
+	
+	/**
+	 * Supprime un utilisateur de la liste des connectés
+	 * @param utilisateur Utilisateur qui vient de se déconnecter
+	 */
+	public void delConnecte(Utilisateur utilisateur){
+		int i;
+		for(i=0;i<this.listeConnectes.size();i++){
+			if(this.listeConnectes.get(i).getId() == utilisateur.getId()){
+				this.listeConnectes.remove(i);
+			}
+		}
+	}
+	
+	/**
+	 * Renvoi la liste des utilisateurs conectés
+	 * @return Liste des utilisateurs connectés sur l'application.
+	 */
+	public ArrayList<Utilisateur> getListeConnecte(){
+		return this.listeConnectes;
+	}
 }

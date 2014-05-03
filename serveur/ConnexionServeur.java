@@ -41,6 +41,11 @@ public class ConnexionServeur implements Runnable{
 	 */
 	private Socket sockConnexion = null;
 	
+	/**
+	 * Serveur sur lequel tourne l'appli
+	 */
+	private Serveur serveur;
+	
 	
 	/**
 	 * Buffer de lecture pour lire les messages reçu du client
@@ -51,9 +56,10 @@ public class ConnexionServeur implements Runnable{
 	 * Constructeur de la connexion permettant de pointer sur le serveur passé en paramètre
 	 * @param serveur Serveur sur lequel les client vont réaliser la connexion.
 	 */
-	public ConnexionServeur(ServerSocket sockServeur){
+	public ConnexionServeur(ServerSocket sockServeur, Serveur serveur){
 		/* On récupère la socket du serveur passée en paramètre */
 		this.sockServeur = sockServeur;
+		this.serveur = serveur;
 	}
 	
 
@@ -129,14 +135,14 @@ public class ConnexionServeur implements Runnable{
 				if(requeteClient == 1){
 					/* Demande d'authentification */
 					/* On créer le thread correspondant */
-					this.thAuthentification = new Thread(new Authentification(this.sockConnexion, this.sockServeur));
+					this.thAuthentification = new Thread(new Authentification(this.sockConnexion, this.sockServeur, this.serveur));
 					/* On lance le thread correspondant */
 					this.thAuthentification.start();
 				}else{
 					if(requeteClient == 2){
 						/* Demande d'inscription */
 						/* On créer le thread correspondant */
-						this.thInscription = new Thread(new Inscription(this.sockConnexion, this.sockServeur));
+						this.thInscription = new Thread(new Inscription(this.sockConnexion, this.sockServeur, this.serveur));
 						/* On lance le thread d'inscription */
 						this.thInscription.start();
 					}

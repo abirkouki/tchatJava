@@ -39,9 +39,8 @@ public class Utilisateur implements Serializable {
 	/**
 	 * Statut d'un utilisateur
 	 * 0:En ligne
-	 * 1: Hors ligne
-	 * 2:Occupé
-	 * 3:Abscent
+	 * 1:Occupé
+	 * 2:Abscent
 	 */
 	private int statut;
 	
@@ -67,6 +66,9 @@ public class Utilisateur implements Serializable {
 	 * @param id Identifiant (unique) qui représente un utilisateur, attribué automatiquement à l'inscription.
 	 * @param nom Nom d'un utilisateur, saisi pendant l'inscription.
 	 * @param prenom Prénom de l'utilisateur, saisi pendant l'inscription.
+	 * @param login Login de connexion de l'utilisateur
+	 * @param motDePasse Mot de passe de l'utilisateur
+	 * @param grade Grade de l'utilisateur
 	 */
 	public Utilisateur(int id,String login, String nom, String prenom, String motDePasse, int grade) {
 		/* Par défaut le statut est "En ligne" -> 0 */

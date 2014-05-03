@@ -59,6 +59,11 @@ public class Inscription implements Runnable{
 	private Socket sockConnexion;
 	
 	/**
+	 * Serveur sur lequel tourne l'appli
+	 */
+	private Serveur serveur;
+	
+	/**
 	 * Socket du server
 	 */
 	private ServerSocket sockServ;
@@ -66,9 +71,10 @@ public class Inscription implements Runnable{
 	/**
 	 * Initialise le processus d'inscription avec la socket de connexion du client
 	 */
-	public Inscription(Socket sockConnexion, ServerSocket sockServ){
+	public Inscription(Socket sockConnexion, ServerSocket sockServ, Serveur serveur){
 		this.sockConnexion = sockConnexion;
 		this.sockServ = sockServ;
+		this.serveur = serveur;
 	}
 	
 	
@@ -134,7 +140,7 @@ public class Inscription implements Runnable{
 			/* L'utilisateur a bien été ajouté */
 			envoyerMesg("1");
 			/* On créer ensuite le thread qui va rediriger sur la classe ConnexionServeur */
-			this.thConnexion = new Thread(new ConnexionServeur(this.sockServ));
+			this.thConnexion = new Thread(new ConnexionServeur(this.sockServ,this.serveur));
 			/* On lance le thread */
 			this.thConnexion.start();
 		}
