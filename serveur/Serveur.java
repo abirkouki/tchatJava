@@ -29,7 +29,7 @@ public class Serveur {
 	/**
 	 * Thread permettant la connexion de plusieurs client en simultané
 	 */
-	private Thread th = null;
+	private Thread thConnexion = null;
 	
 	/**
 	 * Liste des utilisateurs inscrits sur l'application
@@ -63,9 +63,9 @@ public class Serveur {
 			/* On affiche un message pour informer du succes de la création de la socket */
 			System.out.println("Création de la socket sur le port 2369 -> OK");
 			/* On créer ensuite le thread qui va rediriger sur la classe ConnexionServeur */
-			this.th = new Thread(new ConnexionServeur(this.sockServeur));
+			this.thConnexion = new Thread(new ConnexionServeur(this.sockServeur));
 			/* On lance le thread */
-			this.th.start();
+			this.thConnexion.start();
 		}
 		/* Si la connexion échoue, on affiche un message pour informer que le port est indisponible */
 		catch(IOException exception){
@@ -214,6 +214,14 @@ public class Serveur {
 	 */
 	public int getNbUtilisateurs(){
 		return this.listeUtilisateurs.size();
+	}
+	
+	/**
+	 * Renvoi la liste des utilisateurs
+	 * @return Liste des utilisateurs
+	 */
+	public ArrayList<Utilisateur> getListeUtilisateurs(){
+		return this.listeUtilisateurs;
 	}
 
 }

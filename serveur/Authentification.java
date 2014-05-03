@@ -7,13 +7,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
  * @author florian
  *
  */
-public class Authentification extends Serveur implements Runnable {
+public class Authentification implements Runnable {
 	
 	/**
 	 * Socket de connexion avec le client
@@ -41,11 +42,17 @@ public class Authentification extends Serveur implements Runnable {
 	private PrintWriter ecrire = null;
 	
 	/**
+	 * Socket du serveur
+	 */
+	private ServerSocket sockServ;
+	
+	/**
 	 * Constructeur de la classe Authentification
 	 * @param sockConnexion Socket de connexion du client
 	 */
-	public Authentification(Socket sockConnexion){
+	public Authentification(Socket sockConnexion, ServerSocket sockServ){
 		this.sockConnexion = sockConnexion;
+		this.sockServ = sockServ;
 	}
 	
 	/**
@@ -86,6 +93,7 @@ public class Authentification extends Serveur implements Runnable {
 	 */
 	public void run() {
 		Boolean erreur = true;
+		Serveur serv = new Serveur();
 		do{
 			/* On attend les infos du client */
 			String infos = lireMesg();
@@ -94,17 +102,17 @@ public class Authentification extends Serveur implements Runnable {
 			this.login = infosDecomp[0];
 			this.pass = infosDecomp[1];
 			/* On récupère la liste des utilisateurs */
-			this.initUtilisateurs();
+			serv.initUtilisateurs();
 			/* On parcours la liste pour vérifier si la combinaison login + mdp est correcte */
 			int i; /* indice de parcours de la liste */
-			for(i=0;i<listeUtilisateurs.size();i++){
-				if(this.login.compareTo(listeUtilisateurs.get(i).getLogin()) == 0){
+			for(i=0;i<serv.getListeUtilisateurs().size();i++){
+				if(this.login.compareTo(serv.getListeUtilisateurs().get(i).getLogin()) == 0){
 					/* On a localisé l'utilisateur on vérifie maintenant son mot de passe */
-					if(this.pass.compareTo(listeUtilisateurs.get(i).getPassword()) == 0){
+					if(this.pass.compareTo(serv.getListeUtilisateurs().get(i).getPassword()) == 0){
 						/* Les mots de passes correspondent */
 						envoyerMesg("1");
 						/* On envoi toutes les infos relatives à l'utilisateur */
-						envoyerMesg(listeUtilisateurs.get(i).getId()+"/"+listeUtilisateurs.get(i).getLogin()+"/"+listeUtilisateurs.get(i).getNom()+"/"+listeUtilisateurs.get(i).getPrenom()+"/"+listeUtilisateurs.get(i).getPassword()+"/"+listeUtilisateurs.get(i).getGrade());
+						envoyerMesg(serv.getListeUtilisateurs().get(i).getId()+"/"+serv.getListeUtilisateurs().get(i).getLogin()+"/"+serv.getListeUtilisateurs().get(i).getNom()+"/"+serv.getListeUtilisateurs().get(i).getPrenom()+"/"+serv.getListeUtilisateurs().get(i).getPassword()+"/"+serv.getListeUtilisateurs().get(i).getGrade());
 						/* On met le booleen a false pour sortir de la boucle */
 						erreur = false;
 					}else{

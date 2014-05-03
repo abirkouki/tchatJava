@@ -129,14 +129,14 @@ public class ConnexionServeur implements Runnable{
 				if(requeteClient == 1){
 					/* Demande d'authentification */
 					/* On créer le thread correspondant */
-					this.thAuthentification = new Thread(new Authentification(this.sockConnexion));
+					this.thAuthentification = new Thread(new Authentification(this.sockConnexion, this.sockServeur));
 					/* On lance le thread correspondant */
 					this.thAuthentification.start();
 				}else{
 					if(requeteClient == 2){
 						/* Demande d'inscription */
 						/* On créer le thread correspondant */
-						this.thInscription = new Thread(new Inscription(this.sockConnexion));
+						this.thInscription = new Thread(new Inscription(this.sockConnexion, this.sockServeur));
 						/* On lance le thread d'inscription */
 						this.thInscription.start();
 					}

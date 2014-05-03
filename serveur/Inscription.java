@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.rmi.server.SocketSecurityException;
 
 import client.Utilisateur;
 
@@ -16,7 +17,7 @@ import client.Utilisateur;
  * @author florian
  *
  */
-public class Inscription extends Serveur implements Runnable{
+public class Inscription implements Runnable{
 	/**
 	 * Nom du nouveau membre
 	 */
@@ -58,10 +59,16 @@ public class Inscription extends Serveur implements Runnable{
 	private Socket sockConnexion;
 	
 	/**
+	 * Socket du server
+	 */
+	private ServerSocket sockServ;
+	
+	/**
 	 * Initialise le processus d'inscription avec la socket de connexion du client
 	 */
-	public Inscription(Socket sockConnexion){
+	public Inscription(Socket sockConnexion, ServerSocket sockServ){
 		this.sockConnexion = sockConnexion;
+		this.sockServ = sockServ;
 	}
 	
 	
@@ -99,6 +106,7 @@ public class Inscription extends Serveur implements Runnable{
 	}
 	
 	public void run() {
+		Serveur serv =  new Serveur();
 		/* On attend le message de l'utilisateur avec tous les champs (nom/prenom/login/password) */
 		String infos = new String();
 		infos = lireMesg();
@@ -111,26 +119,22 @@ public class Inscription extends Serveur implements Runnable{
 		this.login = infosDecomp[2];
 		this.motDePasse = infosDecomp[3];
 		/* On récupère la liste des utilisateurs */
-		super.initUtilisateurs();
+		serv.initUtilisateurs();
 		/* On récupère le nombre d'utilisateurs déjà inscrits pour affecter l'identifiant au nouvel utilisateur */
-		int id = this.listeUtilisateurs.size();
+		int id = serv.getListeUtilisateurs().size();
 		/* On créer le nouvel utilisateur */
 		Utilisateur nouvelUtilisateur = new Utilisateur(id, this.login, this.nom, this.prenom, this.motDePasse, 1);
 		/* On l'ajoute dans la liste des utilisateurs */
-		this.listeUtilisateurs.add(id, nouvelUtilisateur);
+		serv.addUtilisateur(id, nouvelUtilisateur);
 		/* On sauvegarde la nouvelle liste des utilisateurs */
-		if(saveUtilisateurs() != 0){
+		if(serv.saveUtilisateurs() != 0){
 			/* Echec de la sauvegarde de la liste des utilisateurs, on abandonne tout et on informe le client */
 			envoyerMesg("0");
-			/* On créer ensuite le thread qui va rediriger sur la classe ConnexionServeur */
-			this.thConnexion = new Thread(new ConnexionServeur(this.getSock()));
-			/* On lance le thread */
-			this.thConnexion.start();
 		}else{
 			/* L'utilisateur a bien été ajouté */
 			envoyerMesg("1");
 			/* On créer ensuite le thread qui va rediriger sur la classe ConnexionServeur */
-			this.thConnexion = new Thread(new ConnexionServeur(this.getSock()));
+			this.thConnexion = new Thread(new ConnexionServeur(this.sockServ));
 			/* On lance le thread */
 			this.thConnexion.start();
 		}
