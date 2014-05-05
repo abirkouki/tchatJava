@@ -114,6 +114,28 @@ public class Application implements Runnable {
 				/* On informe le client que le changement de statut a bien été pris en compte */
 				envoyerMesg("1");
 			}
+			if(requeteClient == 2){
+				/* Requête pour rejoindre un canal */
+			}
+			if(requeteClient == 3){
+				/* Demande de création d'un canal */
+				/* On confirme la bonne réception de la demande */
+				/* On attend les infos de l'utilisateur */
+				/* On créer le canal */
+				/* On l'ajoute à la liste des canaux du serveur */
+				/* On créer le fichier des messages */
+				/* on renvoie la confirmation de la création à l'utilisateur */
+			}
+			if(requeteClient == 4){
+				/* Envoie d'un message sur un canal */
+				/* on confirme la bonne réception de la demande */
+				envoyerMesg("4");
+			}
+			if(requeteClient == 5){
+				/* Actualisation des messages d'un canal */
+				/* on confirme la bonne réception de la demande */
+				envoyerMesg("5");
+			}
 		}
 		
 	}

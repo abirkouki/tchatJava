@@ -75,6 +75,16 @@ public class Serveur {
 	}
 	
 	/**
+	 * Accesseur sur la socket du serveur
+	 * @return Socket du serveur.
+	 */
+	public ServerSocket getSock(){
+		return this.sockServeur;
+	}
+	
+	/* Fonctions sur la liste des utilisateurs */
+	
+	/**
 	 * Initialise le serveur avec les données sauvegardées dans les fichiers de sauvegarde.
 	 */
 	public void initUtilisateurs() {
@@ -129,6 +139,42 @@ public class Serveur {
 	}
 	
 	/**
+	 * Retourne un utilisateur de la liste des utilisateurs inscrits
+	 * @param idUtilisateur Identifiant de l'utilisateur recherché
+	 * @return Utilisateur correspondant à l'identifiant passé en paramètre.
+	 */
+	public Utilisateur getUtilisateur(int idUtilisateur){
+		return this.listeUtilisateurs.get(idUtilisateur);
+	}
+	
+	/**
+	 * Ajoute un utilisateur dans la liste
+	 * @param id
+	 * @param utilisateur
+	 */
+	public void addUtilisateur(int id, Utilisateur utilisateur){
+		this.listeUtilisateurs.add(id,utilisateur);
+	}
+	
+	/**
+	 * Retourne le nombre d'utilisateurs inscrits
+	 * @return
+	 */
+	public int getNbUtilisateurs(){
+		return this.listeUtilisateurs.size();
+	}
+	
+	/**
+	 * Renvoi la liste des utilisateurs
+	 * @return Liste des utilisateurs
+	 */
+	public ArrayList<Utilisateur> getListeUtilisateurs(){
+		return this.listeUtilisateurs;
+	}
+	
+	/* Fonctions sur la liste des canaux */
+	
+	/**
 	 * Initialise le serveur avec les canaux sauvegardés dans le fichier de sauvegarde
 	 */
 	public void initCanaux() {
@@ -181,48 +227,25 @@ public class Serveur {
 			return -1;
 		}
 	}
+	
+	/**
+	 * Ajoute un canal à la liste des canaux
+	 * @param canal Canal qui va être ajouté à la liste
+	 */
+	public void addCanal(Canal canal){
+		this.listeCanaux.add(canal);
+	}
+	
+	/**
+	 * Accesseur sur la liste des canaux
+	 * @return La liste des canaux qui ont été créés sur le serveur
+	 */
+	public ArrayList<Canal> getListeCanaux(){
+		return this.listeCanaux;
+	}
 
-	/**
-	 * Accesseur sur la socket du serveur
-	 * @return Socket du serveur.
-	 */
-	public ServerSocket getSock(){
-		return this.sockServeur;
-	}
 	
-	/**
-	 * Retourne un utilisateur de la liste des utilisateurs inscrits
-	 * @param idUtilisateur Identifiant de l'utilisateur recherché
-	 * @return Utilisateur correspondant à l'identifiant passé en paramètre.
-	 */
-	public Utilisateur getUtilisateur(int idUtilisateur){
-		return this.listeUtilisateurs.get(idUtilisateur);
-	}
-	
-	/**
-	 * Ajoute un utilisateur dans la liste
-	 * @param id
-	 * @param utilisateur
-	 */
-	public void addUtilisateur(int id, Utilisateur utilisateur){
-		this.listeUtilisateurs.add(id,utilisateur);
-	}
-	
-	/**
-	 * Retourne le nombre d'utilisateurs inscrits
-	 * @return
-	 */
-	public int getNbUtilisateurs(){
-		return this.listeUtilisateurs.size();
-	}
-	
-	/**
-	 * Renvoi la liste des utilisateurs
-	 * @return Liste des utilisateurs
-	 */
-	public ArrayList<Utilisateur> getListeUtilisateurs(){
-		return this.listeUtilisateurs;
-	}
+	/* Fonctions sur la liste des utilisateurs connectés */
 	
 	/**
 	 * Ajoute un utilisateur à la liste des connectés

@@ -1,11 +1,19 @@
 package ihm;
 
 import java.awt.EventQueue;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+
 import java.awt.BorderLayout;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -14,31 +22,61 @@ import javax.swing.JEditorPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextPane;
 import javax.swing.JList;
+import javax.swing.ListModel;
+
 import java.awt.Color;
+
 import javax.swing.AbstractListModel;
 import javax.swing.JTextField;
+
 import java.awt.Font;
+
 import javax.swing.JButton;
 
-public class FenCanal {
+import client.Utilisateur;
+import serveur.Canal;
 
-	private JFrame frame;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+
+public class FenCanal implements FocusListener {
+
+	private JFrame frmApplicationTchatStri;
 	private Socket sockConnexion;
 	private JTextField saiMesg;
+	private Canal canal;
+	private Utilisateur utilisateur;
+	private Boolean focus;
+	private String newLine = System.getProperty("line.separator");
+	
+	/**
+	 * Buffer permettant de lire les messages du serveur
+	 */
+	private BufferedReader lire = null;
+	
+	/**
+	 * Bufer d'écriture pour envoyer des messages au serveur
+	 */
+	private PrintWriter ecrire;
 
 	/**
 	 * Launch the application.
 	 */
 	public void ouvrirFenetre(){
-		this.frame.setVisible(true);
+		this.frmApplicationTchatStri.setVisible(true);
 	}
 	
 
 	/**
 	 * Create the application.
 	 */
-	public FenCanal(Socket sockConnexion) {
+	public FenCanal(Socket sockConnexion, Canal canal, Utilisateur utilisateur) {
 		this.sockConnexion = sockConnexion;
+		this.canal = canal;
+		this.utilisateur = utilisateur;
+		this.focus = false;
 		initialize();
 	}
 	
@@ -46,37 +84,66 @@ public class FenCanal {
 	 * Ferme la fenêtre
 	 */
 	public void fermerFenetre(){
-		this.frame.setVisible(false);
-		this.frame.dispose();
+		this.frmApplicationTchatStri.setVisible(false);
+		this.frmApplicationTchatStri.dispose();
+	}
+	
+	/**
+	 * Récupère un message reçu du client
+	 * @return Message reçu du client.
+	 */
+	public String lireMesg(){
+		try{
+			String message;
+			/* On initialise le buffer de lecture pour récupérer la confirmation de connexion de la part du serveur */
+			lire = new BufferedReader(new InputStreamReader(this.sockConnexion.getInputStream()));
+			/* On récupère le message du serveur */
+			message = lire.readLine();
+			return message;
+		}
+		catch (IOException exception){
+			return("Impossible de récupérer le message du serveur");
+		}
+	}
+	
+	/**
+	 * Envoie un message à un client, puis vide le buffer d'écriture.
+	 * @param message Message que le serveur veut envoyer au client
+	 */
+	public void envoyerMesg(String message){
+		try{
+			ecrire = new PrintWriter(this.sockConnexion.getOutputStream());
+			ecrire.println(message);
+			ecrire.flush();
+		}
+		catch(IOException exception){
+			System.out.println("Imposible d'envoyer un message au client");
+		}
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setResizable(false);
-		frame.setBounds(100, 100, 1024, 700);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmApplicationTchatStri = new JFrame();
+		frmApplicationTchatStri.setTitle("Application Tchat STRI");
+		frmApplicationTchatStri.setResizable(false);
+		frmApplicationTchatStri.setBounds(100, 100, 1024, 700);
+		frmApplicationTchatStri.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JPanel panel = new JPanel();
-		frame.getContentPane().add(panel, BorderLayout.CENTER);
+		final JPanel panel = new JPanel();
+		frmApplicationTchatStri.getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
 		
-		JTextPane txtTchat = new JTextPane();
+		final JTextPane txtTchat = new JTextPane();
 		txtTchat.setBounds(23, 27, 747, 547);
 		panel.add(txtTchat);
 		
-		JList listListeUsers = new JList();
-		listListeUsers.setModel(new AbstractListModel() {
-			String[] values = new String[] {};
-			public int getSize() {
-				return values.length;
-			}
-			public Object getElementAt(int index) {
-				return values[index];
-			}
-		});
+		DefaultListModel listModel = new DefaultListModel();
+		listModel.addElement("user1");
+		listModel.addElement("user2");
+		listModel.addElement("user3");
+		JList listListeUsers = new JList(listModel);
 		listListeUsers.setBackground(Color.LIGHT_GRAY);
 		listListeUsers.setBounds(820, 489, 155, -433);
 		panel.add(listListeUsers);
@@ -86,13 +153,9 @@ public class FenCanal {
 		saiMesg.setBounds(23, 586, 621, 35);
 		panel.add(saiMesg);
 		saiMesg.setColumns(10);
+		saiMesg.addFocusListener(this);
 		
-		JButton btnEnvoyer = new JButton("Envoyer");
-		btnEnvoyer.setFont(new Font("Liberation Serif", Font.BOLD, 15));
-		btnEnvoyer.setBounds(656, 592, 117, 25);
-		panel.add(btnEnvoyer);
-		
-		JLabel libNomCanal = new JLabel("Vous êtes actuellement sur le canal : ");
+		JLabel libNomCanal = new JLabel("Vous êtes actuellement sur le canal : "+this.canal.getTitre());
 		libNomCanal.setFont(new Font("Liberation Serif", Font.BOLD, 17));
 		libNomCanal.setBounds(23, 0, 747, 27);
 		panel.add(libNomCanal);
@@ -106,5 +169,82 @@ public class FenCanal {
 		btnAccueil.setFont(new Font("Liberation Serif", Font.BOLD, 15));
 		btnAccueil.setBounds(858, 629, 139, 25);
 		panel.add(btnAccueil);
+		
+		final JButton btnActualiser = new JButton("");
+		btnActualiser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				/* On vérifie que le champs de saisie n'est pas focus et qu'il est vide */
+				if(focus == false && saiMesg.getText().compareTo("")==0){
+					/* On envoie une demande d'actualisation au serveur */
+					envoyerMesg("5");
+					/* On attend la confirmation */
+					if(Integer.parseInt(lireMesg()) == 5){
+						/* On attend la réponse du serveur avec tout les messages */
+						String messages = lireMesg();
+						String[] messagesDecomp = messages.split("|"); /* on décompose */
+						int nbMessages = messagesDecomp.length; /* on récupère le nombre de messages */
+						int i; /* indice de parcours */
+						messages = null; /* on vide la variable message */
+						for(i=0;i<nbMessages+1;i++){
+							messages += messagesDecomp[i]+newLine;
+						}
+						/* On ajoute la nouvelle chaine au champs texte */
+						txtTchat.setText(messages);
+					}
+				}
+			}
+		});
+		btnActualiser.setBounds(656, 629, 117, 25);
+		panel.add(btnActualiser);
+		btnActualiser.setVisible(false);
+		
+		JButton btnEnvoyer = new JButton("Envoyer");
+		btnEnvoyer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				/* On vérifie que le sai n'est pas vide */
+				if(saiMesg.getText().compareTo("") != 0){
+					/* on vérifie qu'il n'y a pas de | dans le message */
+					if(saiMesg.getText().contains("|")){
+						JOptionPane.showMessageDialog(panel, "ERREUR, le caractère | est interdit !","ERREUR, caractère interdit",JOptionPane.ERROR_MESSAGE);
+					}else{
+						/* on envoie une requete d'envoie message au serveur */
+						envoyerMesg("4");
+						/* On attend la réponse du serveur */
+						if(Integer.parseInt(lireMesg()) == 4){
+							/* on envoie le message au serveur */
+							envoyerMesg(String.valueOf(utilisateur.getId())+"|"+String.valueOf(canal.getId())+"|"+saiMesg.getText());
+							/* On vérifie que le serveur a bien reçu le message */
+							if(Integer.parseInt(lireMesg()) == 1){
+								saiMesg.setText("");
+								btnActualiser.doClick(100);
+							}else{
+								JOptionPane.showMessageDialog(panel, "ERREUR, votre message n'a pas été envoyé","ERREUR, message non envoyé",JOptionPane.ERROR_MESSAGE);
+							}
+						}
+					}
+				}
+				
+				
+			}
+		});
+		btnEnvoyer.setFont(new Font("Liberation Serif", Font.BOLD, 15));
+		btnEnvoyer.setBounds(656, 592, 117, 25);
+		panel.add(btnEnvoyer);
+	}
+
+
+	@Override
+	public void focusGained(FocusEvent arg0) {
+		// TODO Auto-generated method stub
+		this.focus = true;
+		
+	}
+
+
+	@Override
+	public void focusLost(FocusEvent arg0) {
+		// TODO Auto-generated method stub
+		this.focus = false;
+		
 	}
 }

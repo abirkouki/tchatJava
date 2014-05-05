@@ -126,7 +126,7 @@ public class Authentification implements Runnable {
 						envoyerMesg("1");
 						/* On ajoute l'utilisateur à la liste des utlisateurs connectés */
 						Utilisateur nouvUtil = new Utilisateur(serv.getListeUtilisateurs().get(i).getId(), serv.getListeUtilisateurs().get(i).getLogin(), serv.getListeUtilisateurs().get(i).getNom(), serv.getListeUtilisateurs().get(i).getPrenom(), serv.getListeUtilisateurs().get(i).getPassword(), serv.getListeUtilisateurs().get(i).getGrade());
-						
+						this.serveur.addConnecte(nouvUtil);
 						/* On envoi toutes les infos relatives à l'utilisateur */
 						envoyerMesg(serv.getListeUtilisateurs().get(i).getId()+"/"+serv.getListeUtilisateurs().get(i).getLogin()+"/"+serv.getListeUtilisateurs().get(i).getNom()+"/"+serv.getListeUtilisateurs().get(i).getPrenom()+"/"+serv.getListeUtilisateurs().get(i).getPassword()+"/"+serv.getListeUtilisateurs().get(i).getGrade());
 						/* On met le booleen a false pour sortir de la boucle */

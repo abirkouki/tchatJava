@@ -45,6 +45,11 @@ public class Canal implements Serializable{
 	private ArrayList<Utilisateur> listeUtilisateursConectes;
 	
 	/**
+	 * Liste des messages du serveur
+	 */
+	private ArrayList<String> listeMessages;
+	
+	/**
 	 * Construit un canal en lui donnant un titre et en spécifiant qui en est le créateur
 	 * @param titre Titre du canal, permet aux utilisateurs de connaitre le theme de la discussion
 	 * @param createur Utilisateur qui a créer le canal.
@@ -57,6 +62,15 @@ public class Canal implements Serializable{
 		this.listeUtilisateursConectes.add(createur);
 		this.listeModerateurs = new ArrayList<Utilisateur>();
 		this.listeModerateurs.add(createur);
+		this.listeMessages = new ArrayList<String>();
+	}
+	
+	/**
+	 * Accesseur sur l'identifiant d'un canal
+	 * @return L'identifiant d'un canal
+	 */
+	public int getId(){
+		return this.idCanal;
 	}
 	
 	/**
@@ -89,5 +103,13 @@ public class Canal implements Serializable{
 	 */
 	public ArrayList<Utilisateur> getListeModerateurs(){
 		return this.listeModerateurs;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public ArrayList<Utilisateur> getListeConnectes(){
+		return this.listeUtilisateursConectes;
 	}
 }

@@ -7,10 +7,10 @@ public class TestServeur {
 	public static void main(String[] args) throws IOException {
 		Serveur serv = new Serveur();
 		serv.demarerServeur();
-		//int i;
-		//for(i=0;i<serv.listeUtilisateurs.size();i++){
-		//	System.out.println(serv.listeUtilisateurs.get(i).getId()+" : "+serv.listeUtilisateurs.get(i).getLogin());
-		//}
+		int i;
+		/*for(i=0;i<serv.listeCanaux.size();i++){
+		System.out.println(serv.listeCanaux.get(i).getId()+" : "+serv.listeCanaux.get(i).getTitre());
+		}*/
 	}
 
 }
