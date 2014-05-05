@@ -11,6 +11,7 @@ Projet Java STRI 2014
 	- Déconnexion
 
 - Ce qui doit encore être fait (code + IHM) :
+	- Connexion visiteur
 	- Rejoindre canal
 	- Créer canal
 	- Parler sur un canal (Code seulement)
