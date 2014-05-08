@@ -92,7 +92,10 @@ public class Application implements Runnable {
 		/* On réalise un boucle infinie pour lire et traiter les demandes clientes */
 		while(true){
 			/* On attend une requête d'un client */
-			requeteClient = Integer.parseInt(lireMesg());
+			//System.out.println("On attend la req");
+			String reqCli = lireMesg();
+			//System.out.println("On a recu comme req : "+reqCli);
+			requeteClient = Integer.parseInt(reqCli);
 			/* On identifie la requête client et on lui confirme que on a bien reçu sa requête en lui renvoyant l'identifiant */
 			if(requeteClient == 1){
 				/* Demande de modification de statut */
@@ -130,11 +133,53 @@ public class Application implements Runnable {
 				/* Envoie d'un message sur un canal */
 				/* on confirme la bonne réception de la demande */
 				envoyerMesg("4");
+				/* on récupère la chaine du client qu'il va falloir décomposer */
+				String message;
+				String[] messageDecomp;
+				message = lireMesg();
+				System.out.println("Message reçu du client : "+message);
+				messageDecomp = message.split("#"); /* on décompose la chaine idUser#idCanal#message */
+				System.out.println("MesgDecomp : "+messageDecomp[0]+" "+messageDecomp[1]+" "+messageDecomp[2]);
+				int idUser = Integer.parseInt(messageDecomp[0]);
+				int idCanal = Integer.parseInt(messageDecomp[1]);
+				/* on monte la chaine qui sera enregistrée (Nom prenom) : message */
+				String message2 = "("+this.serveur.getUtilisateur(idUser).getNom()+" "+this.serveur.getUtilisateur(idUser).getPrenom()+") : "+messageDecomp[2];
+				Canal canal = this.serveur.getCanal(idCanal);
+				System.out.println("Mesg : "+message2);
+				/* on enregistre le nouveau message dans la liste des messages du canal */
+				if(canal != null){
+					System.out.println("Canal not null");
+					canal.addMessage(message2);
+					envoyerMesg("1");
+				}else{
+					System.out.println("Canal null");
+					envoyerMesg("0");
+				}
 			}
 			if(requeteClient == 5){
 				/* Actualisation des messages d'un canal */
 				/* on confirme la bonne réception de la demande */
 				envoyerMesg("5");
+				/* On lit l'identifiant du canal */
+				int idCanal;
+				idCanal = Integer.parseInt(lireMesg());
+				/* On cherche le canal correspondant dans la liste */
+				int i; /* indice de parcours de la liste des messages */
+				/* On parcours l'ensemble de la liste pour chercher le canal */
+				for(i=0;i<this.serveur.getListeCanaux().size();i++){
+					if(this.serveur.getListeCanaux().get(i).getId() == idCanal){
+						/* on a trouvé le canal */
+						/* on envoie la liste des messages */
+						String messages = ""; /* chaine contenant les messages séparés par # */
+						int j; /* indice de parcours de la liste des messages */
+						/* on construit la chaine que l'on va devoir envoyé */
+						for(j=0;j<this.serveur.getListeCanaux().get(i).getLitseMessages().size();j++){
+							messages += this.serveur.getListeCanaux().get(i).getLitseMessages().get(j)+"#";
+						}
+						/* on envoie la chaine des messages */
+						envoyerMesg(messages);
+					}
+				}
 			}
 		}
 		

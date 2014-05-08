@@ -243,6 +243,16 @@ public class Serveur {
 	public ArrayList<Canal> getListeCanaux(){
 		return this.listeCanaux;
 	}
+	
+	public Canal getCanal(int idCanal){
+		int i;
+		for(i=0;i<this.listeCanaux.size();i++){
+			if(this.listeCanaux.get(i).getId() == idCanal){
+				return this.listeCanaux.get(i);
+			}
+		}
+		return null;
+	}
 
 	
 	/* Fonctions sur la liste des utilisateurs connectés */

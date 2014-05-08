@@ -112,4 +112,20 @@ public class Canal implements Serializable{
 	public ArrayList<Utilisateur> getListeConnectes(){
 		return this.listeUtilisateursConectes;
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public ArrayList<String> getLitseMessages(){
+		return this.listeMessages;
+	}
+	
+	/**
+	 * Ajoute un message à la liste des messages d'un canal
+	 * @param message Message d'un utilisateur sur le canal
+	 */
+	public void addMessage(String message){
+		this.listeMessages.add(message);
+	}
 }

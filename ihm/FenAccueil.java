@@ -25,6 +25,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
+import serveur.Canal;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -240,6 +242,21 @@ public class FenAccueil {
 		panel.add(libStatut);
 			
 		JButton btnRejoindre = new JButton("Rejoindre un canal");
+		btnRejoindre.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Canal canal = new Canal(0, "Par défaut", null);
+				FenCanal fen;
+				try {
+					fen = new FenCanal(sockConnexion,canal, utilisateur);
+					fen.ouvrirFenetre();
+					fermerFenetre();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		});
 		btnRejoindre.setFont(new Font("Liberation Serif", Font.BOLD, 25));
 		btnRejoindre.setBounds(373, 264, 275, 35);
 		panel.add(btnRejoindre);

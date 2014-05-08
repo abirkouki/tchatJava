@@ -41,6 +41,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
+import javax.swing.JSplitPane;
+
 public class FenCanal implements FocusListener {
 
 	private JFrame frmApplicationTchatStri;
@@ -50,6 +52,7 @@ public class FenCanal implements FocusListener {
 	private Utilisateur utilisateur;
 	private Boolean focus;
 	private String newLine = System.getProperty("line.separator");
+	private final JTextPane txtTchat;
 	
 	/**
 	 * Buffer permettant de lire les messages du serveur
@@ -71,12 +74,14 @@ public class FenCanal implements FocusListener {
 
 	/**
 	 * Create the application.
+	 * @throws InterruptedException 
 	 */
-	public FenCanal(Socket sockConnexion, Canal canal, Utilisateur utilisateur) {
+	public FenCanal(Socket sockConnexion, Canal canal, Utilisateur utilisateur) throws InterruptedException {
 		this.sockConnexion = sockConnexion;
 		this.canal = canal;
 		this.utilisateur = utilisateur;
 		this.focus = false;
+		this.txtTchat = new JTextPane();
 		initialize();
 	}
 	
@@ -120,11 +125,37 @@ public class FenCanal implements FocusListener {
 			System.out.println("Imposible d'envoyer un message au client");
 		}
 	}
+		public void actualiser(JTextPane txtTchat){
+			/* On vérifie que le champs de saisie n'est pas focus et qu'il est vide */
+			if(focus == false && saiMesg.getText().compareTo("")==0){
+				/* On envoie une demande d'actualisation au serveur */
+				envoyerMesg("5");
+				/* On attend la confirmation */
+				if(Integer.parseInt(lireMesg()) == 5){
+					/* On envoie l'identifiant du canal */
+					envoyerMesg(String.valueOf(canal.getId()));
+					/* On attend la réponse du serveur avec tout les messages */
+					String messages = lireMesg();
+					System.out.println("Message du serveur : "+messages);
+					String[] messagesDecomp = messages.split("#"); /* on décompose */
+					int nbMessages = messagesDecomp.length; /* on récupère le nombre de messages */
+					int i; /* indice de parcours */
+					messages = ""; /* on vide la variable message */
+					for(i=0;i<nbMessages;i++){
+						messages += messagesDecomp[i]+newLine;
+					}
+					/* On ajoute la nouvelle chaine au champs texte */
+					this.txtTchat.setText(messages);
+				}
+			}
+		}
+		
 
 	/**
 	 * Initialize the contents of the frame.
+	 * @throws InterruptedException 
 	 */
-	private void initialize() {
+	private void initialize() throws InterruptedException {
 		frmApplicationTchatStri = new JFrame();
 		frmApplicationTchatStri.setTitle("Application Tchat STRI");
 		frmApplicationTchatStri.setResizable(false);
@@ -135,8 +166,8 @@ public class FenCanal implements FocusListener {
 		frmApplicationTchatStri.getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
 		
-		final JTextPane txtTchat = new JTextPane();
-		txtTchat.setBounds(23, 27, 747, 547);
+		this.txtTchat.setEditable(false);
+		this.txtTchat.setBounds(23, 27, 747, 547);
 		panel.add(txtTchat);
 		
 		DefaultListModel listModel = new DefaultListModel();
@@ -170,53 +201,26 @@ public class FenCanal implements FocusListener {
 		btnAccueil.setBounds(858, 629, 139, 25);
 		panel.add(btnAccueil);
 		
-		final JButton btnActualiser = new JButton("");
-		btnActualiser.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				/* On vérifie que le champs de saisie n'est pas focus et qu'il est vide */
-				if(focus == false && saiMesg.getText().compareTo("")==0){
-					/* On envoie une demande d'actualisation au serveur */
-					envoyerMesg("5");
-					/* On attend la confirmation */
-					if(Integer.parseInt(lireMesg()) == 5){
-						/* On attend la réponse du serveur avec tout les messages */
-						String messages = lireMesg();
-						String[] messagesDecomp = messages.split("|"); /* on décompose */
-						int nbMessages = messagesDecomp.length; /* on récupère le nombre de messages */
-						int i; /* indice de parcours */
-						messages = null; /* on vide la variable message */
-						for(i=0;i<nbMessages+1;i++){
-							messages += messagesDecomp[i]+newLine;
-						}
-						/* On ajoute la nouvelle chaine au champs texte */
-						txtTchat.setText(messages);
-					}
-				}
-			}
-		});
-		btnActualiser.setBounds(656, 629, 117, 25);
-		panel.add(btnActualiser);
-		btnActualiser.setVisible(false);
-		
 		JButton btnEnvoyer = new JButton("Envoyer");
 		btnEnvoyer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				/* On vérifie que le sai n'est pas vide */
 				if(saiMesg.getText().compareTo("") != 0){
 					/* on vérifie qu'il n'y a pas de | dans le message */
-					if(saiMesg.getText().contains("|")){
-						JOptionPane.showMessageDialog(panel, "ERREUR, le caractère | est interdit !","ERREUR, caractère interdit",JOptionPane.ERROR_MESSAGE);
+					if(saiMesg.getText().contains("#")){
+						JOptionPane.showMessageDialog(panel, "ERREUR, le caractère # est interdit !","ERREUR, caractère interdit",JOptionPane.ERROR_MESSAGE);
 					}else{
 						/* on envoie une requete d'envoie message au serveur */
 						envoyerMesg("4");
 						/* On attend la réponse du serveur */
 						if(Integer.parseInt(lireMesg()) == 4){
 							/* on envoie le message au serveur */
-							envoyerMesg(String.valueOf(utilisateur.getId())+"|"+String.valueOf(canal.getId())+"|"+saiMesg.getText());
+							System.out.println("on envoie :"+String.valueOf(utilisateur.getId())+"#"+String.valueOf(canal.getId())+"#"+saiMesg.getText());
+							envoyerMesg(String.valueOf(utilisateur.getId())+"#"+String.valueOf(canal.getId())+"#"+saiMesg.getText());
 							/* On vérifie que le serveur a bien reçu le message */
 							if(Integer.parseInt(lireMesg()) == 1){
 								saiMesg.setText("");
-								btnActualiser.doClick(100);
+								actualiser(txtTchat);
 							}else{
 								JOptionPane.showMessageDialog(panel, "ERREUR, votre message n'a pas été envoyé","ERREUR, message non envoyé",JOptionPane.ERROR_MESSAGE);
 							}
@@ -230,6 +234,22 @@ public class FenCanal implements FocusListener {
 		btnEnvoyer.setFont(new Font("Liberation Serif", Font.BOLD, 15));
 		btnEnvoyer.setBounds(656, 592, 117, 25);
 		panel.add(btnEnvoyer);
+		
+		/* Actualisation automatique de la zone de Tchat */
+		Thread th = new Thread(){
+			public void run(){
+				while(true){
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					actualiser(txtTchat);
+				}
+			}
+		};
+		th.start();
 	}
 
 
