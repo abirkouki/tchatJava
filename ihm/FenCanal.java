@@ -42,6 +42,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 import javax.swing.JSplitPane;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class FenCanal implements FocusListener {
 
@@ -52,7 +54,7 @@ public class FenCanal implements FocusListener {
 	private Utilisateur utilisateur;
 	private Boolean focus;
 	private String newLine = System.getProperty("line.separator");
-	private final JTextPane txtTchat;
+	private JTextPane txtTchat;
 	
 	/**
 	 * Buffer permettant de lire les messages du serveur
@@ -81,7 +83,6 @@ public class FenCanal implements FocusListener {
 		this.canal = canal;
 		this.utilisateur = utilisateur;
 		this.focus = false;
-		this.txtTchat = new JTextPane();
 		initialize();
 	}
 	
@@ -127,7 +128,7 @@ public class FenCanal implements FocusListener {
 	}
 		public void actualiser(JTextPane txtTchat){
 			/* On vérifie que le champs de saisie n'est pas focus et qu'il est vide */
-			if(focus == false && saiMesg.getText().compareTo("")==0){
+			if(saiMesg.getText().compareTo("")==0){
 				/* On envoie une demande d'actualisation au serveur */
 				envoyerMesg("5");
 				/* On attend la confirmation */
@@ -166,9 +167,13 @@ public class FenCanal implements FocusListener {
 		frmApplicationTchatStri.getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
 		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(23, 27, 747, 547);
+		panel.add(scrollPane);
+		this.txtTchat = new JTextPane();
+		scrollPane.setViewportView(txtTchat);
+		
 		this.txtTchat.setEditable(false);
-		this.txtTchat.setBounds(23, 27, 747, 547);
-		panel.add(txtTchat);
 		
 		DefaultListModel listModel = new DefaultListModel();
 		listModel.addElement("user1");
@@ -180,6 +185,37 @@ public class FenCanal implements FocusListener {
 		panel.add(listListeUsers);
 		
 		saiMesg = new JTextField();
+		saiMesg.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				int code = e.getKeyCode ();
+                if (code == KeyEvent.VK_ENTER){
+                	/* On vérifie que le sai n'est pas vide */
+    				if(saiMesg.getText().compareTo("") != 0){
+    					/* on vérifie qu'il n'y a pas de | dans le message */
+    					if(saiMesg.getText().contains("#")){
+    						JOptionPane.showMessageDialog(panel, "ERREUR, le caractère # est interdit !","ERREUR, caractère interdit",JOptionPane.ERROR_MESSAGE);
+    					}else{
+    						/* on envoie une requete d'envoie message au serveur */
+    						envoyerMesg("4");
+    						/* On attend la réponse du serveur */
+    						if(Integer.parseInt(lireMesg()) == 4){
+    							/* on envoie le message au serveur */
+    							System.out.println("on envoie :"+String.valueOf(utilisateur.getId())+"#"+String.valueOf(canal.getId())+"#"+saiMesg.getText());
+    							envoyerMesg(String.valueOf(utilisateur.getId())+"#"+String.valueOf(canal.getId())+"#"+saiMesg.getText());
+    							/* On vérifie que le serveur a bien reçu le message */
+    							if(Integer.parseInt(lireMesg()) == 1){
+    								saiMesg.setText("");
+    								actualiser(txtTchat);
+    							}else{
+    								JOptionPane.showMessageDialog(panel, "ERREUR, votre message n'a pas été envoyé","ERREUR, message non envoyé",JOptionPane.ERROR_MESSAGE);
+    							}
+    						}
+    					}
+    				}
+                }
+			}
+		});
 		saiMesg.setFont(new Font("Liberation Serif", Font.PLAIN, 17));
 		saiMesg.setBounds(23, 586, 621, 35);
 		panel.add(saiMesg);
@@ -231,9 +267,43 @@ public class FenCanal implements FocusListener {
 				
 			}
 		});
+		
+		btnEnvoyer.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				int code = e.getKeyCode ();
+                if (code == KeyEvent.VK_ENTER){
+                	/* On vérifie que le sai n'est pas vide */
+    				if(saiMesg.getText().compareTo("") != 0){
+    					/* on vérifie qu'il n'y a pas de | dans le message */
+    					if(saiMesg.getText().contains("#")){
+    						JOptionPane.showMessageDialog(panel, "ERREUR, le caractère # est interdit !","ERREUR, caractère interdit",JOptionPane.ERROR_MESSAGE);
+    					}else{
+    						/* on envoie une requete d'envoie message au serveur */
+    						envoyerMesg("4");
+    						/* On attend la réponse du serveur */
+    						if(Integer.parseInt(lireMesg()) == 4){
+    							/* on envoie le message au serveur */
+    							System.out.println("on envoie :"+String.valueOf(utilisateur.getId())+"#"+String.valueOf(canal.getId())+"#"+saiMesg.getText());
+    							envoyerMesg(String.valueOf(utilisateur.getId())+"#"+String.valueOf(canal.getId())+"#"+saiMesg.getText());
+    							/* On vérifie que le serveur a bien reçu le message */
+    							if(Integer.parseInt(lireMesg()) == 1){
+    								saiMesg.setText("");
+    								actualiser(txtTchat);
+    							}else{
+    								JOptionPane.showMessageDialog(panel, "ERREUR, votre message n'a pas été envoyé","ERREUR, message non envoyé",JOptionPane.ERROR_MESSAGE);
+    							}
+    						}
+    					}
+    				}
+                }
+			}
+		});
 		btnEnvoyer.setFont(new Font("Liberation Serif", Font.BOLD, 15));
 		btnEnvoyer.setBounds(656, 592, 117, 25);
 		panel.add(btnEnvoyer);
+		
+		
 		
 		/* Actualisation automatique de la zone de Tchat */
 		Thread th = new Thread(){

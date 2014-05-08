@@ -143,6 +143,7 @@ public class Authentification implements Runnable {
 			}
 			if(loginExist == false){
 				/* le login n'existe pas */
+				erreur = true;
 				envoyerMesg("0");
 			}
 		}while(erreur != false);

@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -20,6 +23,7 @@ import client.Utilisateur;
 
 import java.awt.Font;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -29,6 +33,9 @@ import serveur.Canal;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
+import javax.swing.JInternalFrame;
+import javax.swing.JList;
 
 public class FenAccueil {
 
@@ -45,6 +52,7 @@ public class FenAccueil {
 	 * Bufer d'écriture pour envoyer des messages au serveur
 	 */
 	private PrintWriter ecrire;
+	private final JInternalFrame intFenRejCanal = new JInternalFrame("Rejoindre un canal");
 	
 	/**
 	 * Launch the application.
@@ -240,11 +248,26 @@ public class FenAccueil {
 		libStatut.setFont(new Font("Liberation Serif", Font.BOLD, 17));
 		libStatut.setBounds(769, 12, 64, 27);
 		panel.add(libStatut);
+		
+		intFenRejCanal.setBounds(321, 196, 436, 252);
+		panel.add(intFenRejCanal);
+		
+		final JPanel panel_1 = new JPanel();
+		intFenRejCanal.getContentPane().add(panel_1, BorderLayout.CENTER);
+		panel_1.setLayout(null);
+		
+		JButton btnRejoinde = new JButton("Rejoinde");
+		btnRejoinde.setFont(new Font("Liberation Serif", Font.BOLD, 15));
+		btnRejoinde.setBounds(313, 183, 101, 25);
+		panel_1.add(btnRejoinde);
+		
+		final DefaultListModel listCanauxModele = new DefaultListModel();
+		
 			
 		JButton btnRejoindre = new JButton("Rejoindre un canal");
 		btnRejoindre.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				Canal canal = new Canal(0, "Par défaut", null);
+				/*Canal canal = new Canal(0, "Par défaut", null);
 				FenCanal fen;
 				try {
 					fen = new FenCanal(sockConnexion,canal, utilisateur);
@@ -253,8 +276,32 @@ public class FenAccueil {
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				}*/
+				/* On envoie la requete au serveur */
+				envoyerMesg("2");
+				/* On attend la liste des canaux que l'on va décomposée et stockée dans une Map composé de l'identifiant du canal et de son nom */
+				Map<Integer, String> canauxDispo = new HashMap<Integer, String>();
+				int i; /* indice de parcours de la liste */
+				String listeCanaux;
+				String[] listeCanauxDecomp;
+				int nbCanaux;
+				listeCanaux = lireMesg(); /* idCanal#nomCanal/idCanal#nomCanal/... */
+				listeCanauxDecomp = listeCanaux.split("/");
+				nbCanaux = listeCanauxDecomp.length;
+				/* On ajoute les canaux dans la Map */
+				for(i=0;i<nbCanaux;i++){
+					canauxDispo.put(Integer.parseInt(listeCanauxDecomp[i].split("#")[0]), listeCanauxDecomp[i].split("#")[1]);
+					/* Au passage on les ajoute a la JList */
+					listCanauxModele.addElement(listeCanauxDecomp[i].split("#")[1]);
 				}
+				/* On fabrique la liste */
+				JList listCanaux = new JList();
+				listCanaux.setModel(listCanauxModele);
+				listCanaux.setBounds(12, 12, 402, 145);
+				panel_1.add(listCanaux);
 				
+				/* On affiche ensuite la fenêtre interne */
+				intFenRejCanal.setVisible(true);
 			}
 		});
 		btnRejoindre.setFont(new Font("Liberation Serif", Font.BOLD, 25));

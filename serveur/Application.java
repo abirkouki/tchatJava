@@ -119,6 +119,13 @@ public class Application implements Runnable {
 			}
 			if(requeteClient == 2){
 				/* Requête pour rejoindre un canal */
+				String listeCanaux = "";
+				int i;
+				/* Gérer les canaux privés */
+				for(i=0;i<this.serveur.getListeCanaux().size();i++){
+					listeCanaux += String.valueOf(this.serveur.getListeCanaux().get(i).getId())+"#"+this.serveur.getListeCanaux().get(i).getTitre()+"/";
+				}
+				envoyerMesg(listeCanaux);
 			}
 			if(requeteClient == 3){
 				/* Demande de création d'un canal */

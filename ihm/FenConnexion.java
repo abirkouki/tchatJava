@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class FenConnexion {
 
@@ -136,16 +138,124 @@ public class FenConnexion {
 		panel.add(libPass);
 		
 		saiLogin = new JTextField();
+		saiLogin.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				 int code = e.getKeyCode ();
+                 if (code == KeyEvent.VK_ENTER){
+                	 Boolean erreur = false; /* Variable pour la présence d'erreurs */
+     				/* On récupère la valeur des deux champs */
+     				String login = saiLogin.getText();
+     				String pass = new String(saiPass.getPassword());
+     				/* On vérifie que l'utilisateur a bien rempli tous les champs */
+     				if(login.compareTo("") == 0 || pass.compareTo("") == 0){
+    					erreur = true;
+    					libInfo.setText("ERREUR : Vous devez saisir votre Login ET votre Mot de passe");
+    				}else{
+	    				/* Si tous les champs sont bien remplis on envoie la demande de connexion au serveur : chaine de forme login/password */
+	    				envoyerMesg(login+"/"+pass);
+	    				if(erreur == false){
+	    					/* On attend la réponse du serveur 0 : : login ou mdp faux ou 1 : ok */
+	    					int codeServ = Integer.parseInt(lireMesg());
+	    					if(codeServ == 0){
+	    						/* Erreur de login ou de Mdp */
+	    						libInfo.setText("ERREUR : Votre login ou votre mot de passe est incorrect");
+	    					}else{
+	    						/* on récupère les infos de l'utilisateur */
+	    						String infosUtil = lireMesg();
+	    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
+	    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, infosUtil);
+	    						fenAccueil.ouvrirFenetre();
+	    						fermerFenetre();
+	    						
+	    					}
+	    				}
+    				}
+                 }
+			}
+		});
 		saiLogin.setFont(new Font("Liberation Serif", Font.PLAIN, 18));
 		saiLogin.setBounds(487, 253, 277, 19);
 		panel.add(saiLogin);
 		saiLogin.setColumns(10);
 		
 		saiPass = new JPasswordField();
+		saiPass.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				 int code = e.getKeyCode ();
+                 if (code == KeyEvent.VK_ENTER){
+                	 Boolean erreur = false; /* Variable pour la présence d'erreurs */
+     				/* On récupère la valeur des deux champs */
+     				String login = saiLogin.getText();
+     				String pass = new String(saiPass.getPassword());
+     				/* On vérifie que l'utilisateur a bien rempli tous les champs */
+     				if(login.compareTo("") == 0 || pass.compareTo("") == 0){
+    					erreur = true;
+    					libInfo.setText("ERREUR : Vous devez saisir votre Login ET votre Mot de passe");
+    				}else{
+	    				/* Si tous les champs sont bien remplis on envoie la demande de connexion au serveur : chaine de forme login/password */
+	    				envoyerMesg(login+"/"+pass);
+	    				if(erreur == false){
+	    					/* On attend la réponse du serveur 0 : : login ou mdp faux ou 1 : ok */
+	    					int codeServ = Integer.parseInt(lireMesg());
+	    					if(codeServ == 0){
+	    						/* Erreur de login ou de Mdp */
+	    						libInfo.setText("ERREUR : Votre login ou votre mot de passe est incorrect");
+	    					}else{
+	    						/* on récupère les infos de l'utilisateur */
+	    						String infosUtil = lireMesg();
+	    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
+	    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, infosUtil);
+	    						fenAccueil.ouvrirFenetre();
+	    						fermerFenetre();
+	    						
+	    					}
+	    				}
+    				}
+                 }
+			}
+		});
 		saiPass.setBounds(487, 352, 277, 19);
 		panel.add(saiPass);
 		
 		JButton btnValider = new JButton("Valider");
+		btnValider.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				 int code = e.getKeyCode ();
+                 if (code == KeyEvent.VK_ENTER){
+                	 Boolean erreur = false; /* Variable pour la présence d'erreurs */
+     				/* On récupère la valeur des deux champs */
+     				String login = saiLogin.getText();
+     				String pass = new String(saiPass.getPassword());
+     				/* On vérifie que l'utilisateur a bien rempli tous les champs */
+     				if(login.compareTo("") == 0 || pass.compareTo("") == 0){
+    					erreur = true;
+    					libInfo.setText("ERREUR : Vous devez saisir votre Login ET votre Mot de passe");
+    				}else{
+	    				/* Si tous les champs sont bien remplis on envoie la demande de connexion au serveur : chaine de forme login/password */
+	    				envoyerMesg(login+"/"+pass);
+	    				if(erreur == false){
+	    					/* On attend la réponse du serveur 0 : : login ou mdp faux ou 1 : ok */
+	    					int codeServ = Integer.parseInt(lireMesg());
+	    					if(codeServ == 0){
+	    						/* Erreur de login ou de Mdp */
+	    						libInfo.setText("ERREUR : Votre login ou votre mot de passe est incorrect");
+	    					}else{
+	    						/* on récupère les infos de l'utilisateur */
+	    						String infosUtil = lireMesg();
+	    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
+	    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, infosUtil);
+	    						fenAccueil.ouvrirFenetre();
+	    						fermerFenetre();
+	    						
+	    					}
+	    				}
+    				}
+                 }
+			}
+		});
 		/* Click sur le bouton Valider */
 		btnValider.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -157,7 +267,7 @@ public class FenConnexion {
 				if(login.compareTo("") == 0 || pass.compareTo("") == 0){
 					erreur = true;
 					libInfo.setText("ERREUR : Vous devez saisir votre Login ET votre Mot de passe");
-				}
+				}else{
 				/* Si tous les champs sont bien remplis on envoie la demande de connexion au serveur : chaine de forme login/password */
 				envoyerMesg(login+"/"+pass);
 				if(erreur == false){
@@ -176,6 +286,7 @@ public class FenConnexion {
 						
 					}
 				}
+				}
 			}
 		});
 		btnValider.setFont(new Font("Liberation Serif", Font.BOLD, 15));
@@ -183,6 +294,24 @@ public class FenConnexion {
 		panel.add(btnValider);
 		
 		JButton btnAnnuler = new JButton("Annuler");
+		btnAnnuler.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				int code = e.getKeyCode ();
+                if (code == KeyEvent.VK_ENTER){
+                	FenMenuPrincipal fenMenu = new FenMenuPrincipal();
+    				fenMenu.ouvrirFenetre();
+    				/* On ferme la connexion et la fenêtre d'inscription */
+    				try{
+    					sockConnexion.close();
+    				}
+    				catch(IOException e1){
+    					e1.printStackTrace();
+    				}
+    				fermerFenetre();
+                }
+			}
+		});
 		/* Click sur le bouton Annuler */
 		btnAnnuler.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

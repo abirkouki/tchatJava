@@ -11,10 +11,11 @@ Projet Java STRI 2014
 	- Déconnexion
 	- Parler sur un canal
 	- Actualisation en direct des messages
+	- Affichage de la liste des canaux quand click sur rejoindre un canal
 
 - Ce qui doit encore être fait (code + IHM) :
 	- Connexion visiteur
-	- Rejoindre canal
+	- Rejoindre canal (à finir + gérer les canaux privés)
 	- Créer canal
 	- Envoyer un message privé
 	- Quitter un canal -> influe sur la liste des mecs présents sur un canal
