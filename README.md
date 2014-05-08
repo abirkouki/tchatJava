@@ -29,8 +29,4 @@ Projet Java STRI 2014
 	- Manuel Utilisateur
 	- Surement pleins de trucs que j'ai zapper
 
-- Beug repéré :
-	- la touche entré n'est pas mise en place pour valider
-	- si on saisit pour se connecter un login non existant le programme plante
-
 PS : Les IHM sont des IHM développeurs et ne sont donc pas faite pour un bon rendu visuel mais pour donner une idée des IHM finales ...

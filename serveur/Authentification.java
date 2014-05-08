@@ -110,6 +110,7 @@ public class Authentification implements Runnable {
 		do{
 			/* On attend les infos du client */
 			String infos = lireMesg();
+			
 			/* On décompose en login + mdp */
 			String[] infosDecomp = infos.split("/");
 			this.login = infosDecomp[0];
@@ -118,9 +119,11 @@ public class Authentification implements Runnable {
 			serv.initUtilisateurs();
 			/* On parcours la liste pour vérifier si la combinaison login + mdp est correcte */
 			int i; /* indice de parcours de la liste */
+			Boolean loginExist = false;
 			for(i=0;i<serv.getListeUtilisateurs().size();i++){
 				if(this.login.compareTo(serv.getListeUtilisateurs().get(i).getLogin()) == 0){
 					/* On a localisé l'utilisateur on vérifie maintenant son mot de passe */
+					loginExist = true;
 					if(this.pass.compareTo(serv.getListeUtilisateurs().get(i).getPassword()) == 0){
 						/* Les mots de passes correspondent */
 						envoyerMesg("1");
@@ -137,6 +140,10 @@ public class Authentification implements Runnable {
 						
 					}
 				}
+			}
+			if(loginExist == false){
+				/* le login n'existe pas */
+				envoyerMesg("0");
 			}
 		}while(erreur != false);
 		/* On lance le thread de Tchat*/
