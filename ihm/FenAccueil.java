@@ -249,7 +249,7 @@ public class FenAccueil {
 		libStatut.setBounds(769, 12, 64, 27);
 		panel.add(libStatut);
 		
-		intFenRejCanal.setBounds(321, 196, 436, 252);
+		intFenRejCanal.setBounds(310, 240, 436, 252);
 		panel.add(intFenRejCanal);
 		
 		final JPanel panel_1 = new JPanel();
@@ -279,29 +279,40 @@ public class FenAccueil {
 				}*/
 				/* On envoie la requete au serveur */
 				envoyerMesg("2");
-				/* On attend la liste des canaux que l'on va décomposée et stockée dans une Map composé de l'identifiant du canal et de son nom */
-				Map<Integer, String> canauxDispo = new HashMap<Integer, String>();
-				int i; /* indice de parcours de la liste */
-				String listeCanaux;
-				String[] listeCanauxDecomp;
-				int nbCanaux;
-				listeCanaux = lireMesg(); /* idCanal#nomCanal/idCanal#nomCanal/... */
-				listeCanauxDecomp = listeCanaux.split("/");
-				nbCanaux = listeCanauxDecomp.length;
-				/* On ajoute les canaux dans la Map */
-				for(i=0;i<nbCanaux;i++){
-					canauxDispo.put(Integer.parseInt(listeCanauxDecomp[i].split("#")[0]), listeCanauxDecomp[i].split("#")[1]);
-					/* Au passage on les ajoute a la JList */
-					listCanauxModele.addElement(listeCanauxDecomp[i].split("#")[1]);
+				/* On regarde que le serveur atteste bonne réception de la requete */
+				if(Integer.parseInt(lireMesg()) == 2){
+					/* On envoie l'identifiant de l'utilisateur */
+					envoyerMesg(String.valueOf(utilisateur.getId()));
+					/* On attend la liste des canaux que l'on va décomposée et stockée dans une Map composé de l'identifiant du canal et de son nom */
+					Map<Integer, String> canauxDispo = new HashMap<Integer, String>();
+					int i; /* indice de parcours de la liste */
+					String listeCanaux;
+					String[] listeCanauxDecomp;
+					int nbCanaux;
+					listeCanaux = lireMesg(); /* idCanal#nomCanal/idCanal#nomCanal/... */
+					listeCanauxDecomp = listeCanaux.split("/");
+					nbCanaux = listeCanauxDecomp.length;
+					/* On ajoute les canaux dans la Map */
+					for(i=0;i<nbCanaux;i++){
+						canauxDispo.put(Integer.parseInt(listeCanauxDecomp[i].split("#")[0]), listeCanauxDecomp[i].split("#")[1]);
+						/* Au passage on les ajoute a la JList */
+						listCanauxModele.addElement(listeCanauxDecomp[i].split("#")[1]);
+					}
+					/* On fabrique la liste */
+					JList listCanaux = new JList();
+					listCanaux.setModel(listCanauxModele);
+					listCanaux.setBounds(12, 12, 402, 145);
+					panel_1.add(listCanaux);
+					
+					/* On affiche ensuite la fenêtre interne */
+					intFenRejCanal.setVisible(true);
+					
+					/* Gérer la partie sélection dans la liste + click que le bouton rejoindre */
+				}else{
+					/* Le serveur n'a pas attesté la bonne réception de la requête */
+					JOptionPane.showMessageDialog(panel, "ERREUR, votre requête n'a pas été traitée par le serveur","Erreur requête non traitée",JOptionPane.ERROR_MESSAGE);
 				}
-				/* On fabrique la liste */
-				JList listCanaux = new JList();
-				listCanaux.setModel(listCanauxModele);
-				listCanaux.setBounds(12, 12, 402, 145);
-				panel_1.add(listCanaux);
 				
-				/* On affiche ensuite la fenêtre interne */
-				intFenRejCanal.setVisible(true);
 			}
 		});
 		btnRejoindre.setFont(new Font("Liberation Serif", Font.BOLD, 25));
@@ -309,6 +320,13 @@ public class FenAccueil {
 		panel.add(btnRejoindre);
 		
 		JButton btnCreer = new JButton("Créer un canal");
+		btnCreer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				FenCreationCanal fenCreCan = new FenCreationCanal(sockConnexion, utilisateur);
+				fenCreCan.ouvrirFenetre();
+				fermerFenetre();
+			}
+		});
 		btnCreer.setFont(new Font("Liberation Serif", Font.BOLD, 25));
 		btnCreer.setBounds(373, 311, 275, 35);
 		panel.add(btnCreer);

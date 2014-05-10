@@ -118,12 +118,24 @@ public class Application implements Runnable {
 				envoyerMesg("1");
 			}
 			if(requeteClient == 2){
+				/* On atteste la bonne réception de la requête */
+				envoyerMesg("2");
+				/* On attend que le client nous envoie l'identifiant de l'utilisateur */
+				int idUtil = Integer.parseInt(lireMesg());
 				/* Requête pour rejoindre un canal */
 				String listeCanaux = "";
 				int i;
 				/* Gérer les canaux privés */
 				for(i=0;i<this.serveur.getListeCanaux().size();i++){
-					listeCanaux += String.valueOf(this.serveur.getListeCanaux().get(i).getId())+"#"+this.serveur.getListeCanaux().get(i).getTitre()+"/";
+					if(this.serveur.getListeCanaux().get(i) instanceof CanalPrive){
+						/* si c'est un canal privé on regarde la liste des invités */
+						CanalPrive canPriv = (CanalPrive) this.serveur.getListeCanaux().get(i);
+						if(canPriv.isInvite(idUtil) == true){
+							listeCanaux += String.valueOf(this.serveur.getListeCanaux().get(i).getId())+"#"+this.serveur.getListeCanaux().get(i).getTitre()+"/";
+						}
+					}else{
+						listeCanaux += String.valueOf(this.serveur.getListeCanaux().get(i).getId())+"#"+this.serveur.getListeCanaux().get(i).getTitre()+"/";
+					}	
 				}
 				envoyerMesg(listeCanaux);
 			}
@@ -187,6 +199,21 @@ public class Application implements Runnable {
 						envoyerMesg(messages);
 					}
 				}
+			}
+			if(requeteClient == 6){
+				/* déconnexion */
+			}
+			if(requeteClient == 7){
+				/*Demande de la liste des utilisateurs */
+				/* on confirme la bonne réception de la requête */
+				envoyerMesg("7");
+				/* On envoi la liste des utilisateurs (id#nom#prenom) séparés par des / */
+				String utilisateurs = "";
+				int i;
+				for(i=0;i<this.serveur.getListeUtilisateurs().size();i++){
+					utilisateurs += String.valueOf(this.serveur.getListeUtilisateurs().get(i).getId())+"#"+this.serveur.getListeUtilisateurs().get(i).getNom()+"#"+this.serveur.getListeUtilisateurs().get(i).getPrenom()+"/";
+				}
+				envoyerMesg(utilisateurs);
 			}
 		}
 		

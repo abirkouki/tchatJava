@@ -152,7 +152,7 @@ public class FenInscription {
 		panel.setLayout(null);
 		
 		final JInternalFrame popUpConfirmation = new JInternalFrame("Inscription Réussie");
-		popUpConfirmation.setBounds(6, 220, 1010, 236);
+		popUpConfirmation.setBounds(6, 236, 1010, 236);
 		panel.add(popUpConfirmation);
 		popUpConfirmation.setVisible(false);
 		
