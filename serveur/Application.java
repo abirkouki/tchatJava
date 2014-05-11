@@ -142,11 +142,30 @@ public class Application implements Runnable {
 			if(requeteClient == 3){
 				/* Demande de création d'un canal */
 				/* On confirme la bonne réception de la demande */
+				envoyerMesg("3");
 				/* On attend les infos de l'utilisateur */
+				String infosCanal = lireMesg();
+				String[] infosCanalDecomp = infosCanal.split("/");
 				/* On créer le canal */
+				Canal canal = null;
+				/* on vérifie le type de canal */
+				if(Integer.parseInt(infosCanalDecomp[2]) == 1){
+					/* canal public */
+					canal = new CanalPublic(this.serveur.getListeCanaux().size(), infosCanalDecomp[1], this.serveur.getUtilisateur(Integer.parseInt(infosCanalDecomp[0])));
+				}else{
+					/* On créer la liste des invité */
+					String[] invites = infosCanalDecomp[3].split("#");
+					ArrayList<Utilisateur> listeInvit =  new ArrayList<Utilisateur>();
+					int i = 0;
+					for(i=0;i<invites.length;i++){
+						listeInvit.add(this.serveur.getUtilisateur(Integer.parseInt(invites[i])));
+					}
+					canal = new CanalPrive(this.serveur.getListeCanaux().size(), infosCanalDecomp[1], this.serveur.getUtilisateur(Integer.parseInt(infosCanalDecomp[0])),listeInvit);
+				}
 				/* On l'ajoute à la liste des canaux du serveur */
-				/* On créer le fichier des messages */
+				this.serveur.addCanal(canal);
 				/* on renvoie la confirmation de la création à l'utilisateur */
+				envoyerMesg("1");
 			}
 			if(requeteClient == 4){
 				/* Envoie d'un message sur un canal */

@@ -233,7 +233,7 @@ public class Serveur {
 	 * @param canal Canal qui va être ajouté à la liste
 	 */
 	public void addCanal(Canal canal){
-		this.listeCanaux.add(canal);
+		this.listeCanaux.add(canal.getId(),canal);
 	}
 	
 	/**

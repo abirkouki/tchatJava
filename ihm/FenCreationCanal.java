@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -43,8 +44,8 @@ public class FenCreationCanal {
 	private PrintWriter ecrire;
 	private JTextField saiTitreCanal;
 	private final JLabel libTypeCanal = new JLabel("Type de canal :");
-	private JTextField saiListeInvit;
 	private JTable tableau;
+	private String listeInvite = "";
 
 	/**
 	 * Launch the application.
@@ -109,18 +110,21 @@ public class FenCreationCanal {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		
+		final String infosUtil;
+		infosUtil = String.valueOf(utilisateur.getId())+"/"+utilisateur.getLogin()+"/"+utilisateur.getNom()+"/"+utilisateur.getPrenom()+"/"+utilisateur.getPassword()+"/"+String.valueOf(utilisateur.getGrade());
 		frmApplicationTchatStri = new JFrame();
 		frmApplicationTchatStri.setFont(null);
 		frmApplicationTchatStri.setTitle("Application Tchat STRI");
 		frmApplicationTchatStri.setBounds(100, 100, 1024, 700);
 		frmApplicationTchatStri.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JPanel panel = new JPanel();
+		final JPanel panel = new JPanel();
 		frmApplicationTchatStri.getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
 		
 		final JInternalFrame intFenAddInvit = new JInternalFrame("Ajouter des invités sur votre canal");
-		intFenAddInvit.setBounds(12, 83, 998, 493);
+		intFenAddInvit.setBounds(22, 86, 998, 493);
 		intFenAddInvit.setOpaque(false);
 		panel.add(intFenAddInvit);
 		
@@ -219,19 +223,35 @@ public class FenCreationCanal {
 	   /* On construit le modèle par défaut */
 	   final ModeleTableau modele = new ModeleTableau(donneesInit, typeColones);
 	   
-	   
+	   final JButton btnAddInvit = new JButton("Ajouter des invités");
 	   JPanel panel_1 = new JPanel();
 	   intFenAddInvit.getContentPane().add(panel_1, BorderLayout.CENTER);
 	   panel_1.setLayout(null);
 	   
-	   JButton button = new JButton("Valider");
-	   button.setFont(new Font("Liberation Serif", Font.BOLD, 15));
-	   button.setBounds(845, 12, 131, 25);
-	   panel_1.add(button);
+	   JButton btnTermine = new JButton("Termine");
+	   btnTermine.addActionListener(new ActionListener() {
+	   	public void actionPerformed(ActionEvent arg0) {
+	   		/* On parcours chaque ligne du tableau*/
+	   		int j; /* indice de parcours des lignes du tableau */
+	   		for(j=0;j<tableau.getRowCount();j++){
+	   			/* on regarde la valeur de la colone invité */
+	   			if(tableau.getValueAt(j, 3).equals(true)){
+	   				/* Si la case invité est cochée, on ajoute l'identifiant a la liste des invités */
+	   				listeInvite += String.valueOf(tableau.getValueAt(j, 0))+"#";
+	   			}
+	   		}
+	   		/* On ferme ensuite la fenêtre interne */
+	   		intFenAddInvit.setVisible(false);
+	   		btnAddInvit.setVisible(true);
+	   	}
+	   });
+	   btnTermine.setFont(new Font("Liberation Serif", Font.BOLD, 15));
+	   btnTermine.setBounds(845, 12, 131, 25);
+	   panel_1.add(btnTermine);
 		
-		final JButton btnAddInvit = new JButton("Ajouter des invités");
 		btnAddInvit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				listeInvite = ""; /* on vide la liste des invités */
 				/* On demande au serveur la liste des utilisateurs */
 				envoyerMesg("7");
 				if(Integer.parseInt(lireMesg()) == 7){
@@ -239,6 +259,21 @@ public class FenCreationCanal {
 					String listeUtils = lireMesg();
 					String[] listeUtilsDecomp = listeUtils.split("/");
 					int i = 0;
+					/* On va trier dans l'ordre alphabétique des noms */
+					String temp;
+					for(i=0;i<listeUtilsDecomp.length-1;i++){
+						/* On compare i et i+1 */
+						if(listeUtilsDecomp[i].split("#")[1].compareToIgnoreCase(listeUtilsDecomp[i+1].split("#")[1])<=0 ){
+							/* si i < i+1 , on passe au suivant */
+						}else{
+							/* si i > i+1, on les inverse et on repart à 0 */
+							temp = listeUtilsDecomp[i];
+							listeUtilsDecomp[i] = listeUtilsDecomp[i+1];
+							listeUtilsDecomp[i+1] = temp;
+							i = -1;
+						}
+					}
+					/* On ajoute les utilisateurs triés dans l'ordre alphabétique dans le tableau */
 					for(i=0;i<listeUtilsDecomp.length;i++){
 						Object[] donnees = {listeUtilsDecomp[i].split("#")[0],listeUtilsDecomp[i].split("#")[1],listeUtilsDecomp[i].split("#")[2], new Boolean(false)};
 						modele.addRow(donnees);
@@ -301,24 +336,10 @@ public class FenCreationCanal {
 		radioTypePriv.setBounds(671, 333, 75, 23);
 		panel.add(radioTypePriv);
 		
-		
-		
-		
-		saiListeInvit = new JTextField();
-		saiListeInvit.setEditable(false);
-		saiListeInvit.setFont(new Font("Liberation Serif", Font.PLAIN, 18));
-		saiListeInvit.setColumns(10);
-		saiListeInvit.setBounds(241, 513, 646, 21);
-		saiListeInvit.setText(String.valueOf(this.utilisateur.getId()));
-		saiListeInvit.setVisible(false);
-		panel.add(saiListeInvit);
-		
 		JButton btnAnnuler = new JButton("Annuler");
 		btnAnnuler.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				/* On ferme la fenêtre et on retourne à l'accueil */
-				String infosUtil;
-				infosUtil = String.valueOf(utilisateur.getId())+"/"+utilisateur.getLogin()+"/"+utilisateur.getNom()+"/"+utilisateur.getPrenom()+"/"+utilisateur.getPassword()+"/"+String.valueOf(utilisateur.getGrade());
 				FenAccueil fenAcc = new FenAccueil(sockConnexion, infosUtil);
 				fenAcc.ouvrirFenetre();
 				fermerFenetre();
@@ -348,7 +369,24 @@ public class FenCreationCanal {
 						}else{
 							type = 1;
 						}
-						/* Si il s'agit d'un canal privé on récupère la liste des invités (saiListeInvit) */
+						/* On va préparer la chaine qui va être envoyée au serveur */
+						String infosCanal = String.valueOf(utilisateur.getId())+"/"+saiTitreCanal.getText()+"/"+String.valueOf(type)+"/"+listeInvite;
+						/* On fait une demande d'ajout de canal au serveur */
+						envoyerMesg("3");
+						/* On attend que le serveur valide notre requete */
+						if(Integer.parseInt(lireMesg()) == 3){
+							/* On envoie les infos au serveur */
+							envoyerMesg(infosCanal);
+							/* On attend de voir si le serveur confirme la création du canal */
+							if(Integer.parseInt(lireMesg()) == 1){
+								JOptionPane.showMessageDialog(panel, "Votre création d'un canal a bien été prise en compte","Création d'un canal",JOptionPane.INFORMATION_MESSAGE);
+								FenAccueil fenAcc = new FenAccueil(sockConnexion, infosUtil);
+								fenAcc.ouvrirFenetre();
+								fermerFenetre();
+							}else{
+								JOptionPane.showMessageDialog(panel, "Votre création d'un canal a échoué, merci de réessayer ultérieurement","Erreur création d'un canal",JOptionPane.ERROR_MESSAGE);
+							}
+						}
 					}
 				}
 			}

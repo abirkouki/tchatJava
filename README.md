@@ -16,14 +16,13 @@ Projet Java STRI 2014
 - Ce qui doit encore être fait (code + IHM) :
 	- Connexion visiteur
 	- Rejoindre canal (à finir + gérer les canaux privés)
-	- Créer canal
 	- Envoyer un message privé
 	- Quitter un canal -> influe sur la liste des mecs présents sur un canal
 	- Gestion des canaux ouverts (page utilisateur)
 	- Rendre les IHM redimensionnable et que sa merde pas
 	- Gérer la liste des mecs connectés en cas de déconnexion ou de click sur la croix
 	- Gestion des banissements (canaux et appli)
-	- Gestion des canaux privés
+	- Gestion des canaux privés (fini a 80%)
 	- Gérer la liste des mecs en ligne dans un canal
 	- Modélisation UML (Diagramme de classe bien commencé)
 	- Dossier de conception

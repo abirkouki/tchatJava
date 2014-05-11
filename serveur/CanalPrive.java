@@ -28,9 +28,9 @@ public class CanalPrive extends Canal {
 	 * @param titreCanal
 	 * @param createur
 	 */
-	public CanalPrive(int idCanal, String titreCanal, Utilisateur createur) {
+	public CanalPrive(int idCanal, String titreCanal, Utilisateur createur, ArrayList<Utilisateur> listeInvite) {
 		super(idCanal,titreCanal, createur);
-		this.listeInvite = new ArrayList<Utilisateur>();
+		this.listeInvite = listeInvite;
 		this.listeInvite.add(this.getCreateur());
 	}
 	

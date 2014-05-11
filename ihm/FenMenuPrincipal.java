@@ -116,15 +116,5 @@ public class FenMenuPrincipal {
 		libCopyright.setBounds(354, 632, 314, 15);
 		panel.add(libCopyright);
 		
-		JButton btnNewButton = new JButton("New button");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				testIhm test = new testIhm();
-				test.ouvrirFenetre();
-			}
-		});
-		btnNewButton.setBounds(106, 225, 117, 25);
-		panel.add(btnNewButton);
-		
 	}
 }
