@@ -13,12 +13,13 @@ import client.Utilisateur;
 public class CanalPublic extends Canal{
 
 	/**
-	 * 
+	 * Identifiant de sérialisation.
 	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Construit un canal public
+	 * @param idCanal Identifiant du canal
 	 * @param titreCanal Titre du canal
 	 * @param createur Créateur du canal
 	 */

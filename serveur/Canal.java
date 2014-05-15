@@ -15,7 +15,7 @@ import client.Utilisateur;
 public class Canal implements Serializable{
 	
 	/**
-	 * 
+	 * Identifiant automatique de sérialisation
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -51,6 +51,7 @@ public class Canal implements Serializable{
 	
 	/**
 	 * Construit un canal en lui donnant un titre et en spécifiant qui en est le créateur
+	 * @param idCanal Identifiant du canal
 	 * @param titre Titre du canal, permet aux utilisateurs de connaitre le theme de la discussion
 	 * @param createur Utilisateur qui a créer le canal.
 	 */
@@ -106,16 +107,16 @@ public class Canal implements Serializable{
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * Accesseurs sur la liste des clients qui sont connectés sur le canal
+	 * @return Liste des clients connectés sur le canal
 	 */
 	public ArrayList<Utilisateur> getListeConnectes(){
 		return this.listeUtilisateursConectes;
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * Accesseurs sur la liste des messages d'un canal
+	 * @return Liste des messages qui ont été envoyés sur un canal
 	 */
 	public ArrayList<String> getLitseMessages(){
 		return this.listeMessages;

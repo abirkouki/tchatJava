@@ -33,14 +33,23 @@ import javax.swing.JTextPane;
 
 public class FenInscription {
 
+	
 	private JFrame frmApllicationTchatStri;
+	
 	private JTextField saiNom;
+	
 	private JTextField saiPrenom;
+	
 	private JTextField saiLogin;
+	
 	private JPasswordField passwordField;
+	
 	private JPasswordField passwordField_1;
+	
 	private Socket sockConnexion;
+	
 	private ArrayList<Utilisateur> listeUtilisateurs;
+	
 	/**
 	 * Buffer permettant de lire les messages du serveur
 	 */
@@ -52,14 +61,15 @@ public class FenInscription {
 	private PrintWriter ecrire;
 
 	/**
-	 * Launch the application.
+	 * Ouvre la fenêtre.
 	 */
 	public void ouvrirFenetre() {
 		this.frmApllicationTchatStri.setVisible(true);
 	}
 
 	/**
-	 * Create the application.
+	 * Construit la fenêtre permettant de réaliser une inscription.
+	 * @param sockConnexion Socket de connexion du client.
 	 */
 	public FenInscription(Socket sockConnexion) {
 		this.sockConnexion = sockConnexion;

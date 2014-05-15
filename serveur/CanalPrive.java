@@ -15,9 +15,10 @@ import client.Utilisateur;
 public class CanalPrive extends Canal {
 	
 	/**
-	 * 
+	 * Identifiant de sérialisation.
 	 */
 	private static final long serialVersionUID = 4791033860115958541L;
+	
 	/**
 	 * Liste des utilisateurs autorisés à rejoindre le canal
 	 */
@@ -25,8 +26,10 @@ public class CanalPrive extends Canal {
 	
 	/**
 	 * Initialise un canal privé avec un créateur et un titre. La liste des utilisateurs invité est par défaut initialisé avec juste le créateur.
-	 * @param titreCanal
-	 * @param createur
+	 * @param titreCanal Titre du canal
+	 * @param createur Utilisateur qui a créé le canal
+	 * @param idCanal Identifiant du canal
+	 * @param listeInvite Liste des utilisateurs qui pourront accèder au canal.
 	 */
 	public CanalPrive(int idCanal, String titreCanal, Utilisateur createur, ArrayList<Utilisateur> listeInvite) {
 		super(idCanal,titreCanal, createur);

@@ -61,6 +61,8 @@ public class Authentification implements Runnable {
 	/**
 	 * Constructeur de la classe Authentification
 	 * @param sockConnexion Socket de connexion du client
+	 * @param sockServ Socket du serveur.
+	 * @param serveur Serveur sur lequel tourne actuellement l'application.
 	 */
 	public Authentification(Socket sockConnexion, ServerSocket sockServ, Serveur serveur){
 		this.sockConnexion = sockConnexion;

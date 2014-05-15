@@ -41,8 +41,9 @@ public class Application implements Runnable {
 	
 	
 	/**
-	 * Créer une application serveur permettant de gérer les requêtes clientes
-	 * @param sockConnexion Identifiant de la connexion du client
+	 * Créer une application serveur permettant de gérer les requêtes clientes.
+	 * @param sockConnexion Identifiant de la connexion du client.
+	 * @param serveur Serveur qui héberge actuellement l'application.
 	 */
 	public Application(Socket sockConnexion, Serveur serveur){
 		this.sockConnexion = sockConnexion;	
@@ -164,6 +165,8 @@ public class Application implements Runnable {
 				}
 				/* On l'ajoute à la liste des canaux du serveur */
 				this.serveur.addCanal(canal);
+				/* On sauvegarde la liste des canaux */
+				this.serveur.saveCanaux();
 				/* on renvoie la confirmation de la création à l'utilisateur */
 				envoyerMesg("1");
 			}

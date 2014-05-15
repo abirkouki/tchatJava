@@ -39,10 +39,26 @@ import javax.swing.JList;
 
 public class FenAccueil {
 
+	/**
+	 * Frame principale de la fenêtre
+	 */
 	private JFrame frmApplicationTchatStri;
+	
+	/**
+	 * Socket de connexion du client.
+	 */
 	private Socket sockConnexion;
+	
+	/**
+	 * Utilisateur courrant de l'application
+	 */
 	private Utilisateur utilisateur;
+	
+	/**
+	 * Champs de saisie permettant de donner une justification à un statut d'absence
+	 */
 	private JTextField saiJustification;
+	
 	/**
 	 * Buffer permettant de lire les messages du serveur
 	 */
@@ -52,10 +68,14 @@ public class FenAccueil {
 	 * Bufer d'écriture pour envoyer des messages au serveur
 	 */
 	private PrintWriter ecrire;
+	
+	/**
+	 * Fenêtre interne permettant de rejoindre les canaux.
+	 */
 	private final JInternalFrame intFenRejCanal = new JInternalFrame("Rejoindre un canal");
 	
 	/**
-	 * Launch the application.
+	 * Ouvre la fenêtre.
 	 */
 	public void ouvrirFenetre(){
 		this.frmApplicationTchatStri.setVisible(true);
@@ -63,7 +83,9 @@ public class FenAccueil {
 	
 
 	/**
-	 * Create the application.
+	 * Construit une fenêtre d'accueil et affecte les valeurs aux attributs.
+	 * @param sockConnexion Socket de connexion du client
+	 * @param infosUtil Informations permettant de créer un utilisateur correspondant au client.
 	 */
 	public FenAccueil(Socket sockConnexion, String infosUtil) {
 		this.sockConnexion = sockConnexion;
@@ -120,7 +142,7 @@ public class FenAccueil {
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialise la fenêtre.
 	 */
 	private void initialize() {
 		frmApplicationTchatStri = new JFrame();
@@ -249,7 +271,7 @@ public class FenAccueil {
 		libStatut.setBounds(769, 12, 64, 27);
 		panel.add(libStatut);
 		
-		intFenRejCanal.setBounds(310, 240, 436, 252);
+		intFenRejCanal.setBounds(273, 253, 436, 252);
 		panel.add(intFenRejCanal);
 		
 		final JPanel panel_1 = new JPanel();
@@ -312,6 +334,8 @@ public class FenAccueil {
 					/* Le serveur n'a pas attesté la bonne réception de la requête */
 					JOptionPane.showMessageDialog(panel, "ERREUR, votre requête n'a pas été traitée par le serveur","Erreur requête non traitée",JOptionPane.ERROR_MESSAGE);
 				}
+				
+				
 				
 			}
 		});

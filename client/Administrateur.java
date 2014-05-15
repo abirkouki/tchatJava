@@ -4,6 +4,7 @@
 package client;
 
 /**
+ * Classe caractérisant un utulisateur de type Administrateur, un administrateur possède des opérations supplémentaires sur l'application.
  * @author florian
  *
  */

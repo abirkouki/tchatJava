@@ -14,10 +14,12 @@ import java.rmi.server.SocketSecurityException;
 import client.Utilisateur;
 
 /**
+ * Classe permettant de réaliser une inscription d'un utilisateur sur l'application
  * @author florian
  *
  */
 public class Inscription implements Runnable{
+	
 	/**
 	 * Nom du nouveau membre
 	 */
@@ -70,6 +72,9 @@ public class Inscription implements Runnable{
 	
 	/**
 	 * Initialise le processus d'inscription avec la socket de connexion du client
+	 * @param sockConnexion Socket de connexion du client
+	 * @param sockServ Socket du serveur
+	 * @param serveur Serveur sur lequel tourne l'application
 	 */
 	public Inscription(Socket sockConnexion, ServerSocket sockServ, Serveur serveur){
 		this.sockConnexion = sockConnexion;
@@ -111,6 +116,9 @@ public class Inscription implements Runnable{
 		}
 	}
 	
+	/**
+	 * Porcessus d'inscription
+	 */
 	public void run() {
 		Serveur serv =  new Serveur();
 		/* On attend le message de l'utilisateur avec tous les champs (nom/prenom/login/password) */
@@ -135,6 +143,7 @@ public class Inscription implements Runnable{
 		/* On sauvegarde la nouvelle liste des utilisateurs */
 		if(serv.saveUtilisateurs() != 0){
 			/* Echec de la sauvegarde de la liste des utilisateurs, on abandonne tout et on informe le client */
+			serv.initUtilisateurs();
 			envoyerMesg("0");
 		}else{
 			/* L'utilisateur a bien été ajouté */

@@ -54,6 +54,7 @@ public class ConnexionServeur implements Runnable{
 	
 	/**
 	 * Constructeur de la connexion permettant de pointer sur le serveur passé en paramètre
+	 * @param sockServeur Socket du serveur qui héberge actuellement  l'application.
 	 * @param serveur Serveur sur lequel les client vont réaliser la connexion.
 	 */
 	public ConnexionServeur(ServerSocket sockServeur, Serveur serveur){
@@ -64,6 +65,7 @@ public class ConnexionServeur implements Runnable{
 	
 
 	/**
+	 * Accesseur sur la socket du serveur.
 	 * @return La socket du serveur
 	 */
 	public ServerSocket getSockServeur() {
@@ -72,6 +74,7 @@ public class ConnexionServeur implements Runnable{
 
 
 	/**
+	 * Accesseur sur la socket de connexion du client.
 	 * @return La socket de connexion au serveur
 	 */
 	public Socket getSockConnexion() {

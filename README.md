@@ -14,6 +14,7 @@ Projet Java STRI 2014
 	- Affichage de la liste des canaux quand click sur rejoindre un canal
 
 - Ce qui doit encore être fait (code + IHM) :
+    - Crypter les passwords
 	- Connexion visiteur
 	- Rejoindre canal (à finir + gérer les canaux privés)
 	- Envoyer un message privé
@@ -28,5 +29,3 @@ Projet Java STRI 2014
 	- Dossier de conception
 	- Manuel Utilisateur
 	- Surement pleins de trucs que j'ai zapper
-
-PS : Les IHM sont des IHM développeurs et ne sont donc pas faite pour un bon rendu visuel mais pour donner une idée des IHM finales ...

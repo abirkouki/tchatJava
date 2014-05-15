@@ -29,10 +29,26 @@ import java.awt.event.KeyEvent;
 
 public class FenConnexion {
 
+	/**
+	 * Frame principale de l'application
+	 */
 	private JFrame frmApplication;
+	
+	/**
+	 * Champs de saisie pour le login de l'utilisateur
+	 */
 	private JTextField saiLogin;
+	
+	/**
+	 * Champs de saisie pour le mot de passe.
+	 */
 	private JPasswordField saiPass;
+	
+	/**
+	 * Socket de connexion du client.
+	 */
 	private Socket sockConnexion;
+	
 	/**
 	 * Buffer permettant de lire les messages du serveur
 	 */
@@ -59,7 +75,8 @@ public class FenConnexion {
 	}
 
 	/**
-	 * Create the application.
+	 * Construit la fenêtre de connexion.
+	 * @param sockConnexion Socket de connexion du client.
 	 */
 	public FenConnexion(Socket sockConnexion) {
 		this.sockConnexion = sockConnexion;
@@ -100,7 +117,7 @@ public class FenConnexion {
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialise la fenêtre de connexion avec tous les composants.
 	 */
 	private void initialize() {
 		frmApplication = new JFrame();

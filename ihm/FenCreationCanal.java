@@ -3,6 +3,8 @@ package ihm;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -29,8 +31,19 @@ import client.Utilisateur;
 
 public class FenCreationCanal {
 
+	/**
+	 * Socket de connexion du client.
+	 */
 	private Socket sockConnexion;
+	
+	/**
+	 * Utilisateur de l'application
+	 */
 	private Utilisateur utilisateur;
+	
+	/**
+	 * Frame de l'application
+	 */
 	private JFrame frmApplicationTchatStri;
 
 	/**
@@ -42,13 +55,29 @@ public class FenCreationCanal {
 	 * Bufer d'écriture pour envoyer des messages au serveur
 	 */
 	private PrintWriter ecrire;
+	
+	/**
+	 * Champs de saisie permettant de donné le titre du canal
+	 */
 	private JTextField saiTitreCanal;
+	
+	/**
+	 * Libellé pour les boutons radios permettant de choisir le type de canal
+	 */
 	private final JLabel libTypeCanal = new JLabel("Type de canal :");
+	
+	/**
+	 * Tableau contenant la liste des utilisateurs
+	 */
 	private JTable tableau;
+	
+	/**
+	 * Chaine contenant les identifiants des utilisateurs qui pourront rejoindre le canal privé (séparés par des #)
+	 */
 	private String listeInvite = "";
 
 	/**
-	 * Launch the application.
+	 * Ouvre la fenêtre.
 	 */
 	public void ouvrirFenetre(){
 		this.frmApplicationTchatStri.setVisible(true);
@@ -56,8 +85,9 @@ public class FenCreationCanal {
 	
 
 	/**
-	 * Create the application.
-	 * @throws InterruptedException 
+	 * Créer une fenêtre de création de canal
+	 * @param sockConnexion Socket de connexion du client.
+	 * @param utilisateur Utilisateur utilisant la fenêtre.
 	 */
 	public FenCreationCanal(Socket sockConnexion,Utilisateur utilisateur){
 		this.sockConnexion = sockConnexion;
@@ -107,7 +137,7 @@ public class FenCreationCanal {
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialise la frame avec les différents composants.
 	 */
 	private void initialize() {
 		
@@ -157,7 +187,7 @@ public class FenCreationCanal {
 		libTypeCanal.setFont(new Font("Liberation Serif", Font.PLAIN, 18));
 		
 		/* Par défaut le tableau est vide */
-		final Vector donneesInit = new Vector();
+		final List<Object> donneesInit = new ArrayList<Object>();
 		
 	   
 	   /* On prépare le type des colones */
@@ -166,14 +196,18 @@ public class FenCreationCanal {
 	   
 	   /* Modèle pour notre tableau */
 	   class ModeleTableau extends AbstractTableModel{
-			private Vector donnees;
+			/**
+			 * 
+			 */
+		   private static final long serialVersionUID = 1L;
+			private List<Object> donnees;
 			private String[] titreCol = new String[]{"Id","Nom","Prénom", "Invité"};
 			private Class[] classCol;
 	 
-			public ModeleTableau(Vector donnees, Class[] classCol){
+			public ModeleTableau(List<Object> donneesInit, Class[] classCol){
 				super();
 				this.classCol = classCol;
-				this.donnees = donnees;
+				this.donnees = donneesInit;
 			}
 			
 			public String getColumnName(int col) {

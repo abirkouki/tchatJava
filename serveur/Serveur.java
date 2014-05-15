@@ -149,8 +149,8 @@ public class Serveur {
 	
 	/**
 	 * Ajoute un utilisateur dans la liste
-	 * @param id
-	 * @param utilisateur
+	 * @param id Identifiant de l'utilisateur qui va être ajouté
+	 * @param utilisateur Utilisateur qui va être ajouté à la liste
 	 */
 	public void addUtilisateur(int id, Utilisateur utilisateur){
 		this.listeUtilisateurs.add(id,utilisateur);
@@ -158,7 +158,7 @@ public class Serveur {
 	
 	/**
 	 * Retourne le nombre d'utilisateurs inscrits
-	 * @return
+	 * @return Nombre d'utilisateurs inscrits sur l'application.
 	 */
 	public int getNbUtilisateurs(){
 		return this.listeUtilisateurs.size();

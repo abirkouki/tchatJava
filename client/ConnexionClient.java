@@ -76,6 +76,7 @@ public class ConnexionClient {
 	
 	/**
 	 * Réalise la connexion du client au serveur et intialise la socket de connexion.
+	 * @param requete Type de requete désirée par le client.
 	 */
 	public void connect(int requete){
 		int codeServeur; /* code de début ou de fin de processus envoyé par le serveur */

@@ -17,12 +17,20 @@ import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+/**
+ * Interface graphique de la première fenêtre, permettant de choisir entre une inscription et une connexion.
+ * @author florian
+ *
+ */
 public class FenMenuPrincipal {
-
+	
+	/**
+	 * Frame de la fenêtre.
+	 */
 	private JFrame frmApplicationtchatStri;
 
 	/**
-	 * Launch the application.
+	 * Créer la fenêtre et l'ouvre.
 	 */
 	public void ouvrirFenetre() {
 		EventQueue.invokeLater(new Runnable() {
@@ -38,7 +46,7 @@ public class FenMenuPrincipal {
 	}
 
 	/**
-	 * Create the application.
+	 * Initialise la fenêtre
 	 */
 	public FenMenuPrincipal() {
 		initialize();
@@ -53,9 +61,10 @@ public class FenMenuPrincipal {
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialise la fenêtre avec les différents éléments qui la compose.
 	 */
 	private void initialize() {
+		
 		frmApplicationtchatStri = new JFrame();
 		frmApplicationtchatStri.setTitle("Application Tchat STRI");
 		frmApplicationtchatStri.setResizable(false);

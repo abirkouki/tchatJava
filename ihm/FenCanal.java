@@ -45,15 +45,41 @@ import javax.swing.JSplitPane;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class FenCanal implements FocusListener {
-
+public class FenCanal{
+	
+	/**
+	 * Frame principale de la fenêtre.
+	 */
 	private JFrame frmApplicationTchatStri;
+	
+	/**
+	 * Socket de connexion du client
+	 */
 	private Socket sockConnexion;
+	
+	/**
+	 * Champs de saisie permettant d'envoyer un message sur le canal.
+	 */
 	private JTextField saiMesg;
+	
+	/**
+	 * Canal correspondant à la fenêtre.
+	 */
 	private Canal canal;
+	
+	/**
+	 * Utilisateur de la fenêtre.
+	 */
 	private Utilisateur utilisateur;
-	private Boolean focus;
+	
+	/**
+	 * Permet de réaliser un retour à la ligne
+	 */
 	private String newLine = System.getProperty("line.separator");
+	
+	/**
+	 * Zone de texte permettant d'afficher les messages des clients.
+	 */
 	private JTextPane txtTchat;
 	
 	/**
@@ -67,7 +93,7 @@ public class FenCanal implements FocusListener {
 	private PrintWriter ecrire;
 
 	/**
-	 * Launch the application.
+	 * Ouvre la fenêtre
 	 */
 	public void ouvrirFenetre(){
 		this.frmApplicationTchatStri.setVisible(true);
@@ -75,14 +101,16 @@ public class FenCanal implements FocusListener {
 	
 
 	/**
-	 * Create the application.
-	 * @throws InterruptedException 
+	 * Créer une fenêtre de canal.
+	 * @param sockConnexion Socket de connexion du client.
+	 * @param canal Canal correspondant à la fenêtre
+	 * @param utilisateur Utilisateur utilisant l'application
+	 * @throws InterruptedException
 	 */
 	public FenCanal(Socket sockConnexion, Canal canal, Utilisateur utilisateur) throws InterruptedException {
 		this.sockConnexion = sockConnexion;
 		this.canal = canal;
 		this.utilisateur = utilisateur;
-		this.focus = false;
 		initialize();
 	}
 	
@@ -126,6 +154,10 @@ public class FenCanal implements FocusListener {
 			System.out.println("Imposible d'envoyer un message au client");
 		}
 	}
+		/**
+		 * Fonction permettant d'actualiser la liste des messages
+		 * @param txtTchat Zone de texte contenant les messages.
+		 */
 		public void actualiser(JTextPane txtTchat){
 			/* On vérifie que le champs de saisie n'est pas focus et qu'il est vide */
 			if(saiMesg.getText().compareTo("")==0){
@@ -153,7 +185,7 @@ public class FenCanal implements FocusListener {
 		
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialise la fenêtre avec tous ses composants.
 	 * @throws InterruptedException 
 	 */
 	private void initialize() throws InterruptedException {
@@ -220,7 +252,6 @@ public class FenCanal implements FocusListener {
 		saiMesg.setBounds(23, 586, 621, 35);
 		panel.add(saiMesg);
 		saiMesg.setColumns(10);
-		saiMesg.addFocusListener(this);
 		
 		JLabel libNomCanal = new JLabel("Vous êtes actuellement sur le canal : "+this.canal.getTitre());
 		libNomCanal.setFont(new Font("Liberation Serif", Font.BOLD, 17));
@@ -320,21 +351,5 @@ public class FenCanal implements FocusListener {
 			}
 		};
 		th.start();
-	}
-
-
-	@Override
-	public void focusGained(FocusEvent arg0) {
-		// TODO Auto-generated method stub
-		this.focus = true;
-		
-	}
-
-
-	@Override
-	public void focusLost(FocusEvent arg0) {
-		// TODO Auto-generated method stub
-		this.focus = false;
-		
 	}
 }

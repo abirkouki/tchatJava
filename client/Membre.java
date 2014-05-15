@@ -10,7 +10,7 @@ package client;
 public class Membre extends Utilisateur {
 
 	/**
-	 * 
+	 * Attribut de Serializable
 	 */
 	private static final long serialVersionUID = 1L;
 	
