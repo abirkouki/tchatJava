@@ -120,38 +120,47 @@ public class Inscription implements Runnable{
 	 * Porcessus d'inscription
 	 */
 	public void run() {
-		Serveur serv =  new Serveur();
-		/* On attend le message de l'utilisateur avec tous les champs (nom/prenom/login/password) */
-		String infos = new String();
-		infos = lireMesg();
-		System.out.println("Message reçu du client : "+infos);
-		/* On décompose le message reçu */
-		String[] infosDecomp = infos.split("/");
-		/* On affecte aux champs la bonne valeur */
-		this.nom = infosDecomp[0];
-		this.prenom = infosDecomp[1];
-		this.login = infosDecomp[2];
-		this.motDePasse = infosDecomp[3];
-		/* On récupère la liste des utilisateurs */
-		serv.initUtilisateurs();
-		/* On récupère le nombre d'utilisateurs déjà inscrits pour affecter l'identifiant au nouvel utilisateur */
-		int id = serv.getListeUtilisateurs().size();
-		/* On créer le nouvel utilisateur */
-		Utilisateur nouvelUtilisateur = new Utilisateur(id, this.login, this.nom, this.prenom, this.motDePasse, 1);
-		/* On l'ajoute dans la liste des utilisateurs */
-		serv.addUtilisateur(id, nouvelUtilisateur);
-		/* On sauvegarde la nouvelle liste des utilisateurs */
-		if(serv.saveUtilisateurs() != 0){
-			/* Echec de la sauvegarde de la liste des utilisateurs, on abandonne tout et on informe le client */
-			serv.initUtilisateurs();
-			envoyerMesg("0");
-		}else{
-			/* L'utilisateur a bien été ajouté */
-			envoyerMesg("1");
-			/* On créer ensuite le thread qui va rediriger sur la classe ConnexionServeur */
-			this.thConnexion = new Thread(new ConnexionServeur(this.sockServ,this.serveur));
-			/* On lance le thread */
-			this.thConnexion.start();
+		/* On attend la demande utilisateur */
+		if(Integer.parseInt(lireMesg()) == 1){
+			/* On envoie la liste des logins au programme client pour qu'il vérifie la disponibilité du login */
+			int i; /* indice de parcours de la liste des utilisateurs */
+			String logins = ""; /* chaine contenant les logins séparés par des / */
+			for(i=0;i<this.serveur.getListeUtilisateurs().size();i++){
+				logins += this.serveur.getListeUtilisateurs().get(i).getLogin()+"/";
+			}
+			envoyerMesg(logins);
+			/* On attend le message de l'utilisateur avec tous les champs (nom/prenom/login/password) */
+			String infos = new String();
+			infos = lireMesg();
+			System.out.println("Message reçu du client : "+infos);
+			/* On décompose le message reçu */
+			String[] infosDecomp = infos.split("/");
+			/* On affecte aux champs la bonne valeur */
+			this.nom = infosDecomp[0];
+			this.prenom = infosDecomp[1];
+			this.login = infosDecomp[2];
+			this.motDePasse = infosDecomp[3];
+			/* On récupère la liste des utilisateurs */
+			this.serveur.initUtilisateurs();
+			/* On récupère le nombre d'utilisateurs déjà inscrits pour affecter l'identifiant au nouvel utilisateur */
+			int id = this.serveur.getListeUtilisateurs().size();
+			/* On créer le nouvel utilisateur */
+			Utilisateur nouvelUtilisateur = new Utilisateur(id, this.login, this.nom, this.prenom, this.motDePasse, 1);
+			/* On l'ajoute dans la liste des utilisateurs */
+			this.serveur.addUtilisateur(id, nouvelUtilisateur);
+			/* On sauvegarde la nouvelle liste des utilisateurs */
+			if(this.serveur.saveUtilisateurs() != 0){
+				/* Echec de la sauvegarde de la liste des utilisateurs, on abandonne tout et on informe le client */
+				this.serveur.initUtilisateurs();
+				envoyerMesg("0");
+			}else{
+				/* L'utilisateur a bien été ajouté */
+				envoyerMesg("1");
+				/* On créer ensuite le thread qui va rediriger sur la classe ConnexionServeur */
+				this.thConnexion = new Thread(new ConnexionServeur(this.sockServ,this.serveur));
+				/* On lance le thread */
+				this.thConnexion.start();
+			}
 		}
 	}
 

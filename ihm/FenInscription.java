@@ -152,6 +152,14 @@ public class FenInscription {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		
+		/* On envoie le début du processus au serveur */
+		envoyerMesg("1");
+		/* On récupère la liste des utilisateurs */
+		String logins = lireMesg();
+		String[] loginsDecomp = logins.split("/");
+		
+		
 		frmApllicationTchatStri = new JFrame();
 		frmApllicationTchatStri.setTitle("Application Tchat STRI");
 		frmApllicationTchatStri.setBounds(100, 100, 1024, 700);
@@ -277,10 +285,6 @@ public class FenInscription {
 			public void actionPerformed(ActionEvent e) {
 				/* On vérifie les infos */
 				Boolean erreur = false; /* Présence d'erreurs dans le formulaire */
-				/* On récupère la liste des utilisateurs */
-				initListeUtilisateurs();
-				/* On va en premier lieu vérifier que le login n'est pas déjà utilisé */
-				int i; /* indice de parcours de la liste des utilisateurs */
 				/* On transforme les password en String */
 				String mdp = new String(passwordField.getPassword());
 				String confirm = new String(passwordField_1.getPassword());
@@ -289,11 +293,11 @@ public class FenInscription {
 					erreur = true;
 					libErreur.setText("ERREUR : Vous devez remplir tous les champs");
 				}
-				/* On parcours la liste en entier */
-				for(i=0;i<listeUtilisateurs.size();i++){
-					/* On vérifie que le login n'est pas utilisé */
-					if(saiLogin.getText().compareTo(listeUtilisateurs.get(i).getLogin()) == 0){
-						/* Si le login est déjà utilisé on met erreur à true */
+				int i; /* indice de parcours de la liste des utilisateurs */
+				/* On vérifie que le login n'est pas déjà utilisé */
+				for(i=0;i<loginsDecomp.length;i++){
+					if(loginsDecomp[i].compareTo(saiLogin.getText()) == 0){
+						/* logins identiques */
 						erreur = true;
 						libErreur.setText("ERREUR : Le login que vous avez choisi est déjà utilisé");
 					}
