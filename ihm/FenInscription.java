@@ -157,7 +157,7 @@ public class FenInscription {
 		envoyerMesg("1");
 		/* On récupère la liste des utilisateurs */
 		String logins = lireMesg();
-		String[] loginsDecomp = logins.split("/");
+		final String[] loginsDecomp = logins.split("/");
 		
 		
 		frmApllicationTchatStri = new JFrame();

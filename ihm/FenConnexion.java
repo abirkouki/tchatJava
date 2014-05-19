@@ -160,6 +160,7 @@ public class FenConnexion {
 			public void keyPressed(KeyEvent e) {
 				 int code = e.getKeyCode ();
                  if (code == KeyEvent.VK_ENTER){
+                	 envoyerMesg("0");
                 	 Boolean erreur = false; /* Variable pour la présence d'erreurs */
      				/* On récupère la valeur des deux champs */
      				String login = saiLogin.getText();
@@ -202,6 +203,7 @@ public class FenConnexion {
 			public void keyPressed(KeyEvent e) {
 				 int code = e.getKeyCode ();
                  if (code == KeyEvent.VK_ENTER){
+                	 envoyerMesg("0");
                 	 Boolean erreur = false; /* Variable pour la présence d'erreurs */
      				/* On récupère la valeur des deux champs */
      				String login = saiLogin.getText();
@@ -242,6 +244,7 @@ public class FenConnexion {
 			public void keyPressed(KeyEvent e) {
 				 int code = e.getKeyCode ();
                  if (code == KeyEvent.VK_ENTER){
+                	 envoyerMesg("0");
                 	 Boolean erreur = false; /* Variable pour la présence d'erreurs */
      				/* On récupère la valeur des deux champs */
      				String login = saiLogin.getText();
@@ -276,6 +279,7 @@ public class FenConnexion {
 		/* Click sur le bouton Valider */
 		btnValider.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				envoyerMesg("0");
 				Boolean erreur = false; /* Variable pour la présence d'erreurs */
 				/* On récupère la valeur des deux champs */
 				String login = saiLogin.getText();
@@ -349,6 +353,14 @@ public class FenConnexion {
 		panel.add(btnAnnuler);
 		
 		JButton btnVisiteur = new JButton("Se connecter en tant que Visiteur");
+		btnVisiteur.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				/* click sur le bouton "se connecter en tant que visiteur */
+				FenConnexionVisiteur fenConnexion = new FenConnexionVisiteur(sockConnexion);
+				fenConnexion.ouvrirFenetre();
+				fermerFenetre();
+			}
+		});
 		btnVisiteur.setFont(new Font("Liberation Serif", Font.BOLD, 15));
 		btnVisiteur.setBounds(372, 549, 277, 25);
 		panel.add(btnVisiteur);

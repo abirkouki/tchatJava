@@ -224,7 +224,7 @@ public class FenCanal{
                 if (code == KeyEvent.VK_ENTER){
                 	/* On vérifie que le sai n'est pas vide */
     				if(saiMesg.getText().compareTo("") != 0){
-    					/* on vérifie qu'il n'y a pas de | dans le message */
+    					/* on vérifie qu'il n'y a pas de # dans le message */
     					if(saiMesg.getText().contains("#")){
     						JOptionPane.showMessageDialog(panel, "ERREUR, le caractère # est interdit !","ERREUR, caractère interdit",JOptionPane.ERROR_MESSAGE);
     					}else{
@@ -232,9 +232,15 @@ public class FenCanal{
     						envoyerMesg("4");
     						/* On attend la réponse du serveur */
     						if(Integer.parseInt(lireMesg()) == 4){
-    							/* on envoie le message au serveur */
-    							System.out.println("on envoie :"+String.valueOf(utilisateur.getId())+"#"+String.valueOf(canal.getId())+"#"+saiMesg.getText());
-    							envoyerMesg(String.valueOf(utilisateur.getId())+"#"+String.valueOf(canal.getId())+"#"+saiMesg.getText());
+    							/* On regarde si il s'agit d'un visiteur */
+    							if(utilisateur.getId() == -1){
+    								envoyerMesg(String.valueOf(utilisateur.getId())+"#"+utilisateur.getNom()+"#"+utilisateur.getPrenom()+"#"+String.valueOf(canal.getId())+"#"+saiMesg.getText());
+    							}else{
+    								/* on envoie le message au serveur */
+        							System.out.println("on envoie :"+String.valueOf(utilisateur.getId())+"#"+String.valueOf(canal.getId())+"#"+saiMesg.getText());
+        							envoyerMesg(String.valueOf(utilisateur.getId())+"#"+String.valueOf(canal.getId())+"#"+saiMesg.getText());
+    							}
+    							
     							/* On vérifie que le serveur a bien reçu le message */
     							if(Integer.parseInt(lireMesg()) == 1){
     								saiMesg.setText("");
@@ -273,7 +279,7 @@ public class FenCanal{
 			public void actionPerformed(ActionEvent arg0) {
 				/* On vérifie que le sai n'est pas vide */
 				if(saiMesg.getText().compareTo("") != 0){
-					/* on vérifie qu'il n'y a pas de | dans le message */
+					/* on vérifie qu'il n'y a pas de # dans le message */
 					if(saiMesg.getText().contains("#")){
 						JOptionPane.showMessageDialog(panel, "ERREUR, le caractère # est interdit !","ERREUR, caractère interdit",JOptionPane.ERROR_MESSAGE);
 					}else{
@@ -281,9 +287,15 @@ public class FenCanal{
 						envoyerMesg("4");
 						/* On attend la réponse du serveur */
 						if(Integer.parseInt(lireMesg()) == 4){
-							/* on envoie le message au serveur */
-							System.out.println("on envoie :"+String.valueOf(utilisateur.getId())+"#"+String.valueOf(canal.getId())+"#"+saiMesg.getText());
-							envoyerMesg(String.valueOf(utilisateur.getId())+"#"+String.valueOf(canal.getId())+"#"+saiMesg.getText());
+							/* On regarde si il s'agit d'un visiteur */
+							if(utilisateur.getId() == -1){
+								envoyerMesg(String.valueOf(utilisateur.getId())+"#"+utilisateur.getNom()+"#"+utilisateur.getPrenom()+"#"+String.valueOf(canal.getId())+"#"+saiMesg.getText());
+							}else{
+								/* on envoie le message au serveur */
+    							System.out.println("on envoie :"+String.valueOf(utilisateur.getId())+"#"+String.valueOf(canal.getId())+"#"+saiMesg.getText());
+    							envoyerMesg(String.valueOf(utilisateur.getId())+"#"+String.valueOf(canal.getId())+"#"+saiMesg.getText());
+							}
+							
 							/* On vérifie que le serveur a bien reçu le message */
 							if(Integer.parseInt(lireMesg()) == 1){
 								saiMesg.setText("");

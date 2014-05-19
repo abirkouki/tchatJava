@@ -126,18 +126,28 @@ public class Application implements Runnable {
 				/* Requête pour rejoindre un canal */
 				String listeCanaux = "";
 				int i;
-				/* Gérer les canaux privés */
-				for(i=0;i<this.serveur.getListeCanaux().size();i++){
-					if(this.serveur.getListeCanaux().get(i) instanceof CanalPrive){
-						/* si c'est un canal privé on regarde la liste des invités */
-						CanalPrive canPriv = (CanalPrive) this.serveur.getListeCanaux().get(i);
-						if(canPriv.isInvite(idUtil) == true){
-							listeCanaux += String.valueOf(this.serveur.getListeCanaux().get(i).getId())+"#"+this.serveur.getListeCanaux().get(i).getTitre()+"/";
-						}
-					}else{
+				/* On regarde si l'utilisateur est Admin sur l'application ou pas */
+				if(this.serveur.getUtilisateur(idUtil).getGrade() == 2){
+					/* Si il est admin, alors il a accès à tous les canaux */
+					for(i=0;i<this.serveur.getListeCanaux().size();i++){
 						listeCanaux += String.valueOf(this.serveur.getListeCanaux().get(i).getId())+"#"+this.serveur.getListeCanaux().get(i).getTitre()+"/";
-					}	
+					}
+				}else{
+					/* Si l'utilisateur n'est pas admin alors on regarde la liste des invités sur les canaux */
+					/* Gérer les canaux privés */
+					for(i=0;i<this.serveur.getListeCanaux().size();i++){
+						if(this.serveur.getListeCanaux().get(i) instanceof CanalPrive){
+							/* si c'est un canal privé on regarde la liste des invités */
+							CanalPrive canPriv = (CanalPrive) this.serveur.getListeCanaux().get(i);
+							if(canPriv.isInvite(idUtil) == true){
+								listeCanaux += String.valueOf(this.serveur.getListeCanaux().get(i).getId())+"#"+this.serveur.getListeCanaux().get(i).getTitre()+"/";
+							}
+						}else{
+							listeCanaux += String.valueOf(this.serveur.getListeCanaux().get(i).getId())+"#"+this.serveur.getListeCanaux().get(i).getTitre()+"/";
+						}	
+					}
 				}
+				/* on envoie la liste */
 				envoyerMesg(listeCanaux);
 			}
 			if(requeteClient == 3){
@@ -178,13 +188,23 @@ public class Application implements Runnable {
 				String message;
 				String[] messageDecomp;
 				message = lireMesg();
-				System.out.println("Message reçu du client : "+message);
-				messageDecomp = message.split("#"); /* on décompose la chaine idUser#idCanal#message */
-				System.out.println("MesgDecomp : "+messageDecomp[0]+" "+messageDecomp[1]+" "+messageDecomp[2]);
-				int idUser = Integer.parseInt(messageDecomp[0]);
-				int idCanal = Integer.parseInt(messageDecomp[1]);
-				/* on monte la chaine qui sera enregistrée (Nom prenom) : message */
-				String message2 = "("+this.serveur.getUtilisateur(idUser).getNom()+" "+this.serveur.getUtilisateur(idUser).getPrenom()+") : "+messageDecomp[2];
+				//System.out.println("Message reçu du client : "+message);
+				messageDecomp = message.split("#"); /* on décompose la chaine idUser#idCanal#message ou pour les visiteur -1#nom#prenom#idCanal#message */
+				String message2 = "";
+				int idCanal;
+				if(Integer.parseInt(messageDecomp[0]) == -1){
+					/* visiteur */
+					idCanal = Integer.parseInt(messageDecomp[3]);
+					message2 = "("+messageDecomp[1]+" "+messageDecomp[2]+") : "+messageDecomp[4];
+				}else{
+					/* membre */
+					int idUser = Integer.parseInt(messageDecomp[0]);
+					idCanal = Integer.parseInt(messageDecomp[1]);
+					/* on monte la chaine qui sera enregistrée (Nom prenom) : message */
+					message2 = "("+this.serveur.getUtilisateur(idUser).getNom()+" "+this.serveur.getUtilisateur(idUser).getPrenom()+") : "+messageDecomp[2];
+				}
+				//System.out.println("MesgDecomp : "+messageDecomp[0]+" "+messageDecomp[1]+" "+messageDecomp[2]);
+				
 				Canal canal = this.serveur.getCanal(idCanal);
 				System.out.println("Mesg : "+message2);
 				/* on enregistre le nouveau message dans la liste des messages du canal */
