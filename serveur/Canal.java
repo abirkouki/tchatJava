@@ -50,6 +50,11 @@ public class Canal implements Serializable{
 	private ArrayList<String> listeMessages;
 	
 	/**
+	 * Liste des utilisateurs qui ont été bannis d'un canal
+	 */
+	private ArrayList<Utilisateur> blackList;
+	
+	/**
 	 * Construit un canal en lui donnant un titre et en spécifiant qui en est le créateur
 	 * @param idCanal Identifiant du canal
 	 * @param titre Titre du canal, permet aux utilisateurs de connaitre le theme de la discussion
@@ -64,6 +69,7 @@ public class Canal implements Serializable{
 		this.listeModerateurs = new ArrayList<Utilisateur>();
 		this.listeModerateurs.add(createur);
 		this.listeMessages = new ArrayList<String>();
+		this.blackList = new ArrayList<Utilisateur>();
 	}
 	
 	/**
@@ -128,5 +134,22 @@ public class Canal implements Serializable{
 	 */
 	public void addMessage(String message){
 		this.listeMessages.add(message);
+	}
+	
+	/**
+	 * Vérifie si un utilisateur a été bannis ou pas d'un canal
+	 * @param idUtilisateur Identifiant de l'utilisateur.
+	 * @return True si l'utilisateur a bien été banni, False si l'utilisateur n'a pas été banni.
+	 */
+	public Boolean isBanni(int idUtilisateur){
+		/* On parcours la liste des utilisateurs bannis pour vérifier si l'utilisateur y est ou pas */
+		int i; /* indice de parcours de la liste */
+		for(i=0;i<this.blackList.size();i++){
+			if(this.blackList.get(i).getId() == idUtilisateur){
+				/* L'identifiant est bien dans la liste des bannis */
+				return true;
+			}
+		}
+		return false;
 	}
 }

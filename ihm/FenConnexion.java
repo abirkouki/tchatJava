@@ -298,13 +298,17 @@ public class FenConnexion {
 						/* Erreur de login ou de Mdp */
 						libInfo.setText("ERREUR : Votre login ou votre mot de passe est incorrect");
 					}else{
-						/* on récupère les infos de l'utilisateur */
-						String infosUtil = lireMesg();
-						/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
-						FenAccueil fenAccueil = new FenAccueil(sockConnexion, infosUtil);
-						fenAccueil.ouvrirFenetre();
-						fermerFenetre();
-						
+						if(codeServ == 2){
+							/* utilisateur banni */
+							libInfo.setText("INFO : Vous avez été banni de l'application, la connexion est donc impossible");
+						}else{
+							/* on récupère les infos de l'utilisateur */
+							String infosUtil = lireMesg();
+							/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
+							FenAccueil fenAccueil = new FenAccueil(sockConnexion, infosUtil);
+							fenAccueil.ouvrirFenetre();
+							fermerFenetre();
+						}
 					}
 				}
 				}

@@ -47,6 +47,11 @@ public class Serveur {
 	protected ArrayList<Canal> listeCanaux;
 	
 	/**
+	 * Liste des utilisateur qui ont été bannis de l'application
+	 */
+	private ArrayList<Utilisateur> blackList;
+	
+	/**
 	 * Démare le serveur avec toutes ses initialisations
 	 */
 	public void demarerServeur(){
@@ -56,6 +61,8 @@ public class Serveur {
 			this.initUtilisateurs();
 			/* On initialise la liste des canaux sauvegardés */
 			this.initCanaux();
+			/* on initialise la liste des utilisateurs bannis */
+			this.initBlackList();
 			/* On créer une liste vide des utilisateurs connectés */
 			this.listeConnectes = new ArrayList<Utilisateur>();
 			/* On initialise la socket avec le numero de port fourni en paramètre */
@@ -284,5 +291,80 @@ public class Serveur {
 	 */
 	public ArrayList<Utilisateur> getListeConnecte(){
 		return this.listeConnectes;
+	}
+	
+	/* Fonctions sur la liste des utilisateurs bannis */
+	
+	/**
+	 * Initialise la liste des utilisateurs bannis
+	 */
+	public void initBlackList() {
+		this.blackList = new ArrayList<Utilisateur>();
+		ObjectInputStream entree;
+		try{
+			entree = new ObjectInputStream(new FileInputStream("blackList.dat"));
+			ArrayList<Utilisateur> readObject = (ArrayList<Utilisateur>) entree.readObject();
+			this.blackList = readObject;
+			entree.close();
+			System.out.println("Initialisation de la black liste -> OK");
+	
+		}
+		catch(ClassNotFoundException c)
+		{
+			System.out.println("ERREUR initialisation de la black liste -> Problème de classe");
+			c.printStackTrace();
+			
+		}
+		catch(FileNotFoundException f)
+		{
+			System.out.println("ERREUR initialisation de la black liste -> Fichier introuvable");
+			f.printStackTrace();
+	
+		}
+		catch(IOException e)
+		{
+			System.out.println("ERREUR initialisation de la black liste -> KO");
+			e.printStackTrace();
+	
+		}
+	}
+	
+	/**
+	 * Sauvegarde la liste des utilisateurs bannis
+	 * @return 0 si la sauvegarde a bien été réalisée, -1 si il y a une erreur avec la sauvegarde.
+	 */
+	public int saveBlackListe(){
+		ObjectOutputStream sortie;
+		try{
+			sortie = new ObjectOutputStream(new FileOutputStream("saveUtilisateurs.dat"));
+			sortie.writeObject(this.blackList);
+			System.out.println("Sauvegarde de la liste des utilisateurs bannis -> OK");
+			sortie.close();
+			return 0;
+		}
+		catch (FileNotFoundException fileexcept){
+			System.out.println("Fichier introuvable pour la sauvegarde des utilisateurs bannis");
+			return -1;
+		}
+		catch (IOException exception){
+			System.out.println("Sauvegarde de la liste des utilisateurs bannis -> KO");
+			exception.printStackTrace();
+			return -1;
+		}
+	}
+	
+	/**
+	 * Permet de savoir si un utilisateur a été banni de l'application ou pas
+	 * @param utilisateur Utilisateur pour lequel on souhaite réaliser la vérification
+	 * @return True si l'utilisateur a été banni et False sinon.
+	 */
+	public Boolean isBanni(Utilisateur utilisateur){
+		int i;
+		for(i=0;i<this.blackList.size();i++){
+			if(utilisateur.equals(this.blackList.get(i))){
+				return true;
+			}
+		}
+		return false;
 	}
 }

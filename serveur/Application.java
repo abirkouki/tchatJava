@@ -139,7 +139,7 @@ public class Application implements Runnable {
 						if(this.serveur.getListeCanaux().get(i) instanceof CanalPrive){
 							/* si c'est un canal privé on regarde la liste des invités */
 							CanalPrive canPriv = (CanalPrive) this.serveur.getListeCanaux().get(i);
-							if(canPriv.isInvite(idUtil) == true){
+							if(canPriv.isInvite(idUtil) == true && canPriv.isBanni(idUtil) == false){
 								listeCanaux += String.valueOf(this.serveur.getListeCanaux().get(i).getId())+"#"+this.serveur.getListeCanaux().get(i).getTitre()+"/";
 							}
 						}else{

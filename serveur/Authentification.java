@@ -111,7 +111,6 @@ public class Authentification implements Runnable {
 		int requeteClient = Integer.parseInt(lireMesg()); /* Identifiant de la requete cliente */
 		if(requeteClient == 0){
 			Boolean erreur = true;
-			Serveur serv = new Serveur();
 			do{
 				/* On attend les infos du client */
 				String infos = lireMesg();
@@ -120,28 +119,32 @@ public class Authentification implements Runnable {
 				String[] infosDecomp = infos.split("/");
 				this.login = infosDecomp[0];
 				this.pass = infosDecomp[1];
-				/* On récupère la liste des utilisateurs */
-				serv.initUtilisateurs();
+				/* On raffraichit la liste des utilisateurs */
+				this.serveur.initUtilisateurs();
 				/* On parcours la liste pour vérifier si la combinaison login + mdp est correcte */
 				int i; /* indice de parcours de la liste */
 				Boolean loginExist = false;
-				for(i=0;i<serv.getListeUtilisateurs().size();i++){
-					if(this.login.compareTo(serv.getListeUtilisateurs().get(i).getLogin()) == 0){
+				for(i=0;i<this.serveur.getListeUtilisateurs().size();i++){
+					if(this.login.compareTo(this.serveur.getListeUtilisateurs().get(i).getLogin()) == 0){
 						/* On a localisé l'utilisateur on vérifie maintenant son mot de passe */
 						loginExist = true;
-						if(this.pass.compareTo(serv.getListeUtilisateurs().get(i).getPassword()) == 0){
+						if(this.pass.compareTo(this.serveur.getListeUtilisateurs().get(i).getPassword()) == 0 && this.serveur.isBanni(this.serveur.getListeUtilisateurs().get(i))== false){
 							/* Les mots de passes correspondent */
 							envoyerMesg("1");
 							/* On ajoute l'utilisateur à la liste des utlisateurs connectés */
-							Utilisateur nouvUtil = new Utilisateur(serv.getListeUtilisateurs().get(i).getId(), serv.getListeUtilisateurs().get(i).getLogin(), serv.getListeUtilisateurs().get(i).getNom(), serv.getListeUtilisateurs().get(i).getPrenom(), serv.getListeUtilisateurs().get(i).getPassword(), serv.getListeUtilisateurs().get(i).getGrade());
+							Utilisateur nouvUtil = new Utilisateur(this.serveur.getListeUtilisateurs().get(i).getId(), this.serveur.getListeUtilisateurs().get(i).getLogin(), this.serveur.getListeUtilisateurs().get(i).getNom(), this.serveur.getListeUtilisateurs().get(i).getPrenom(), this.serveur.getListeUtilisateurs().get(i).getPassword(), this.serveur.getListeUtilisateurs().get(i).getGrade());
 							this.serveur.addConnecte(nouvUtil);
 							/* On envoi toutes les infos relatives à l'utilisateur */
-							envoyerMesg(serv.getListeUtilisateurs().get(i).getId()+"/"+serv.getListeUtilisateurs().get(i).getLogin()+"/"+serv.getListeUtilisateurs().get(i).getNom()+"/"+serv.getListeUtilisateurs().get(i).getPrenom()+"/"+serv.getListeUtilisateurs().get(i).getPassword()+"/"+serv.getListeUtilisateurs().get(i).getGrade());
+							envoyerMesg(this.serveur.getListeUtilisateurs().get(i).getId()+"/"+this.serveur.getListeUtilisateurs().get(i).getLogin()+"/"+this.serveur.getListeUtilisateurs().get(i).getNom()+"/"+this.serveur.getListeUtilisateurs().get(i).getPrenom()+"/"+this.serveur.getListeUtilisateurs().get(i).getPassword()+"/"+this.serveur.getListeUtilisateurs().get(i).getGrade());
 							/* On met le booleen a false pour sortir de la boucle */
 							erreur = false;
 						}else{
-							/* Les mots de passes sont différents */
-							envoyerMesg("0");
+							if(this.serveur.isBanni(this.serveur.getListeUtilisateurs().get(i))== true){
+								envoyerMesg("2"); /* utilisateur banni */
+							}else{
+								/* Les mots de passes sont différents */
+								envoyerMesg("0");
+							}
 							
 						}
 					}
