@@ -173,5 +173,12 @@ public class Utilisateur implements Serializable {
 	public void setGrade(int grade){
 		this.grade = grade;
 	}
+	
+	/**
+	 * 
+	 */
+	public void setId(int id){
+		this.id = id;
+	}
 
 }

@@ -47,7 +47,7 @@ public class Application implements Runnable {
 	 */
 	public Application(Socket sockConnexion, Serveur serveur){
 		this.sockConnexion = sockConnexion;	
-		this.serveur = serveur;
+		this.serveur = serveur; 
 	}
 	
 	/**
@@ -98,8 +98,8 @@ public class Application implements Runnable {
 			//System.out.println("On a recu comme req : "+reqCli);
 			requeteClient = Integer.parseInt(reqCli);
 			/* On identifie la requête client et on lui confirme que on a bien reçu sa requête en lui renvoyant l'identifiant */
-			if(requeteClient == 1){
-				/* Demande de modification de statut */
+			if(requeteClient == 1){ /* Demande de modification de statut */
+				
 				/* on confirme la bonne réception de la demande */
 				envoyerMesg("1");
 				/* On attend les nouvelles infos sous forme idUser/statut/justif */
@@ -118,12 +118,12 @@ public class Application implements Runnable {
 				/* On informe le client que le changement de statut a bien été pris en compte */
 				envoyerMesg("1");
 			}
-			if(requeteClient == 2){
+			if(requeteClient == 2){ /* Requête pour rejoindre un canal */
 				/* On atteste la bonne réception de la requête */
 				envoyerMesg("2");
 				/* On attend que le client nous envoie l'identifiant de l'utilisateur */
 				int idUtil = Integer.parseInt(lireMesg());
-				/* Requête pour rejoindre un canal */
+				
 				String listeCanaux = "";
 				int i;
 				/* On regarde si l'utilisateur est Admin sur l'application ou pas */
@@ -149,9 +149,45 @@ public class Application implements Runnable {
 				}
 				/* on envoie la liste */
 				envoyerMesg(listeCanaux);
+				/* on récupère l'identifiant du canal */
+				int idCanal = Integer.parseInt(lireMesg());
+				System.out.println("id canal = "+idCanal);
+				Boolean trouve = false;
+				Boolean moderateur=false;
+				String infosCanal="";
+				/* On regarde que l'identifiant est correct */
+				for(i=0;i<this.serveur.getListeCanaux().size();i++){
+					if(this.serveur.getListeCanaux().get(i).getId() == idCanal){
+						trouve = true;
+						infosCanal = String.valueOf(this.serveur.getListeCanaux().get(i).getId())+"/"+this.serveur.getListeCanaux().get(i).getTitre();
+						int j;
+						/* on regarde si l'utilisateur est modérateur du canal */
+						for(j=0;j<this.serveur.getListeCanaux().get(i).getListeModerateurs().size();j++){
+							if(this.serveur.getListeCanaux().get(i).getListeModerateurs().get(j).getId() == idUtil){
+								moderateur = true;
+							}
+						}
+					}
+				}
+				if(trouve == true){
+					/* on a trouvé le canal */
+					if(moderateur == true){
+						/* on répond favorablement et l'utilisateur est modérateur */
+						envoyerMesg("2");
+					}else{
+						/* on répond favorablement */
+						envoyerMesg("1");
+					}
+					envoyerMesg(infosCanal);
+					/* on ajoute l'utilisateur à la liste des connectés */
+					this.serveur.getCanal(idCanal).getListeConnectes().add(this.serveur.getUtilisateur(idUtil));
+				}else{
+					/* impossible de rejoindre le canal */
+					envoyerMesg("0");
+				}
 			}
-			if(requeteClient == 3){
-				/* Demande de création d'un canal */
+			if(requeteClient == 3){ /* Demande de création d'un canal */
+				
 				/* On confirme la bonne réception de la demande */
 				envoyerMesg("3");
 				/* On attend les infos de l'utilisateur */
@@ -180,8 +216,8 @@ public class Application implements Runnable {
 				/* on renvoie la confirmation de la création à l'utilisateur */
 				envoyerMesg("1");
 			}
-			if(requeteClient == 4){
-				/* Envoie d'un message sur un canal */
+			if(requeteClient == 4){ /* Envoie d'un message sur un canal */
+				
 				/* on confirme la bonne réception de la demande */
 				envoyerMesg("4");
 				/* on récupère la chaine du client qu'il va falloir décomposer */
@@ -217,8 +253,8 @@ public class Application implements Runnable {
 					envoyerMesg("0");
 				}
 			}
-			if(requeteClient == 5){
-				/* Actualisation des messages d'un canal */
+			if(requeteClient == 5){ /* Actualisation d'un canal */
+				
 				/* on confirme la bonne réception de la demande */
 				envoyerMesg("5");
 				/* On lit l'identifiant du canal */
@@ -239,14 +275,43 @@ public class Application implements Runnable {
 						}
 						/* on envoie la chaine des messages */
 						envoyerMesg(messages);
+						/* on envoi la liste des utilisateurs connectés */
+						String listeUsers="";
+						if(this.serveur.getListeCanaux().get(i).getListeConnectes().size()>0){
+								for(j=0;j<this.serveur.getListeCanaux().get(i).getListeConnectes().size();j++){
+									System.out.println("for listeconnect");
+									/* on vérifie si c'est un modérateur du canal */
+									int x;
+									Boolean moderateur = false;
+									for(x=0;x<this.serveur.getListeCanaux().get(i).getListeModerateurs().size();x++){
+										System.out.println("for listMod");
+										if(this.serveur.getListeCanaux().get(i).getListeConnectes().get(j) == this.serveur.getListeCanaux().get(i).getListeModerateurs().get(x) || this.serveur.getListeCanaux().get(i).getListeConnectes().get(j) == this.serveur.getListeCanaux().get(i).getCreateur()){
+											System.out.println("Modo trouvé");
+											moderateur = true;
+										}
+									}
+									if(moderateur == true){
+										System.out.println("Modo on add");
+										listeUsers += this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getNom()+" "+this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getPrenom()+" (Modérateur)#";
+									}else{
+										System.out.println("Pad modo on add");
+										listeUsers += this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getNom()+" "+this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getPrenom()+"#";
+									}
+								}
+								System.out.println(listeUsers);
+								envoyerMesg(this.serveur.getListeCanaux().get(i).getTitre()+"/"+listeUsers);
+								System.out.println("on a envoyé");
+						}else{
+							envoyerMesg(this.serveur.getListeCanaux().get(i).getTitre()+"/"+"0");
+						}
 					}
 				}
 			}
-			if(requeteClient == 6){
-				/* déconnexion */
+			if(requeteClient == 6){ /* déconnexion */
+				
 			}
-			if(requeteClient == 7){
-				/*Demande de la liste des utilisateurs */
+			if(requeteClient == 7){ /*Demande de la liste des utilisateurs */
+				
 				/* on confirme la bonne réception de la requête */
 				envoyerMesg("7");
 				/* On envoi la liste des utilisateurs (id#nom#prenom) séparés par des / */

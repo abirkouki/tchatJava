@@ -65,6 +65,11 @@ public class Serveur {
 			this.initBlackList();
 			/* On créer une liste vide des utilisateurs connectés */
 			this.listeConnectes = new ArrayList<Utilisateur>();
+			/* on vide la liste des connectés sur les canaux */
+			int i;
+			for(i=0;i<this.listeCanaux.size();i++){
+				this.listeCanaux.get(i).viderListeConnectes();
+			}
 			/* On initialise la socket avec le numero de port fourni en paramètre */
 			this.sockServeur = new ServerSocket(2369);
 			/* On affiche un message pour informer du succes de la création de la socket */

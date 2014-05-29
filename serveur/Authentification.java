@@ -107,67 +107,75 @@ public class Authentification implements Runnable {
 	 * Boucle permettant de vérifier les identifiants d'un utilisateur et de le connecter
 	 */
 	public void run() {
-		/* On attend la demande client (0 : authentification normale ou 1 : authentification en tant que visiteur) */
-		int requeteClient = Integer.parseInt(lireMesg()); /* Identifiant de la requete cliente */
-		if(requeteClient == 0){
-			Boolean erreur = true;
-			do{
-				/* On attend les infos du client */
-				String infos = lireMesg();
-				
-				/* On décompose en login + mdp */
-				String[] infosDecomp = infos.split("/");
-				this.login = infosDecomp[0];
-				this.pass = infosDecomp[1];
-				/* On raffraichit la liste des utilisateurs */
-				this.serveur.initUtilisateurs();
-				/* On parcours la liste pour vérifier si la combinaison login + mdp est correcte */
-				int i; /* indice de parcours de la liste */
-				Boolean loginExist = false;
-				for(i=0;i<this.serveur.getListeUtilisateurs().size();i++){
-					if(this.login.compareTo(this.serveur.getListeUtilisateurs().get(i).getLogin()) == 0){
-						/* On a localisé l'utilisateur on vérifie maintenant son mot de passe */
-						loginExist = true;
-						if(this.pass.compareTo(this.serveur.getListeUtilisateurs().get(i).getPassword()) == 0 && this.serveur.isBanni(this.serveur.getListeUtilisateurs().get(i))== false){
-							/* Les mots de passes correspondent */
-							envoyerMesg("1");
-							/* On ajoute l'utilisateur à la liste des utlisateurs connectés */
-							Utilisateur nouvUtil = new Utilisateur(this.serveur.getListeUtilisateurs().get(i).getId(), this.serveur.getListeUtilisateurs().get(i).getLogin(), this.serveur.getListeUtilisateurs().get(i).getNom(), this.serveur.getListeUtilisateurs().get(i).getPrenom(), this.serveur.getListeUtilisateurs().get(i).getPassword(), this.serveur.getListeUtilisateurs().get(i).getGrade());
-							this.serveur.addConnecte(nouvUtil);
-							/* On envoi toutes les infos relatives à l'utilisateur */
-							envoyerMesg(this.serveur.getListeUtilisateurs().get(i).getId()+"/"+this.serveur.getListeUtilisateurs().get(i).getLogin()+"/"+this.serveur.getListeUtilisateurs().get(i).getNom()+"/"+this.serveur.getListeUtilisateurs().get(i).getPrenom()+"/"+this.serveur.getListeUtilisateurs().get(i).getPassword()+"/"+this.serveur.getListeUtilisateurs().get(i).getGrade());
-							/* On met le booleen a false pour sortir de la boucle */
-							erreur = false;
-						}else{
-							if(this.serveur.isBanni(this.serveur.getListeUtilisateurs().get(i))== true){
-								envoyerMesg("2"); /* utilisateur banni */
+		while(true){
+			/* On attend la demande client (0 : authentification normale ou 1 : authentification en tant que visiteur) */
+			int requeteClient = Integer.parseInt(lireMesg()); /* Identifiant de la requete cliente */
+			if(requeteClient == 0){
+				Boolean erreur = true;
+					String infos = "";
+					String[] infosDecomp;
+					/* On attend les infos du client */
+					infos = lireMesg();
+					System.out.println(infos);
+					/* On décompose en login + mdp */
+					infosDecomp = infos.split("/");
+					this.login = infosDecomp[0];
+					this.pass = infosDecomp[1];
+					/* On raffraichit la liste des utilisateurs */
+					this.serveur.initUtilisateurs();
+					/* On parcours la liste pour vérifier si la combinaison login + mdp est correcte */
+					int i; /* indice de parcours de la liste */
+					Boolean loginExist = false;
+					for(i=0;i<this.serveur.getListeUtilisateurs().size();i++){
+						if(this.login.equals(this.serveur.getListeUtilisateurs().get(i).getLogin())){
+							/* On a localisé l'utilisateur on vérifie maintenant son mot de passe */
+							loginExist = true;
+							System.out.println("Login trouvé");
+							if(this.pass.equals(this.serveur.getListeUtilisateurs().get(i).getPassword()) && this.serveur.isBanni(this.serveur.getListeUtilisateurs().get(i))== false){
+								/* Les mots de passes correspondent */
+								envoyerMesg("1");
+								System.out.println("Mdp ok");
+								/* On ajoute l'utilisateur à la liste des utlisateurs connectés */
+								Utilisateur nouvUtil = new Utilisateur(this.serveur.getListeUtilisateurs().get(i).getId(), this.serveur.getListeUtilisateurs().get(i).getLogin(), this.serveur.getListeUtilisateurs().get(i).getNom(), this.serveur.getListeUtilisateurs().get(i).getPrenom(), this.serveur.getListeUtilisateurs().get(i).getPassword(), this.serveur.getListeUtilisateurs().get(i).getGrade());
+								this.serveur.addConnecte(nouvUtil);
+								/* On envoi toutes les infos relatives à l'utilisateur */
+								envoyerMesg(this.serveur.getListeUtilisateurs().get(i).getId()+"/"+this.serveur.getListeUtilisateurs().get(i).getLogin()+"/"+this.serveur.getListeUtilisateurs().get(i).getNom()+"/"+this.serveur.getListeUtilisateurs().get(i).getPrenom()+"/"+this.serveur.getListeUtilisateurs().get(i).getPassword()+"/"+this.serveur.getListeUtilisateurs().get(i).getGrade());
+								erreur = false;
 							}else{
-								/* Les mots de passes sont différents */
-								envoyerMesg("0");
+								if(this.serveur.isBanni(this.serveur.getListeUtilisateurs().get(i))== true){
+									envoyerMesg("2"); /* utilisateur banni */
+								}else{
+									/* Les mots de passes sont différents */
+									envoyerMesg("0");
+									System.out.println("Mdp pas ok");
+								}
+								
 							}
-							
 						}
 					}
-				}
-				if(loginExist == false){
-					/* le login n'existe pas */
-					erreur = true;
-					envoyerMesg("0");
-				}
-			}while(erreur != false);
-			/* On lance le thread de Tchat*/
-			System.out.println("Début de processus de Tchat");
-			this.thApplication = new Thread(new Application(this.sockConnexion, this.serveur));
-			this.thApplication.start();
+					if(loginExist == false){
+						/* le login n'existe pas */
+						erreur = true;
+						envoyerMesg("0");
+						System.out.println("Login pas ok");
+					}
+					if(erreur == false){
+						/* On lance le thread de Tchat*/
+						System.out.println("Début de processus de Tchat normal");
+						this.thApplication = new Thread(new Application(this.sockConnexion, this.serveur));
+						this.thApplication.start();
+						System.out.println("Thread start");
+						break;
+					}
+			}
+			if(requeteClient == 1){
+				/* Connexion en tant que visiteur */
+				/* On lance le thread de Tchat*/
+				System.out.println("Début de processus de Tchat visiteur");
+				this.thApplication = new Thread(new Application(this.sockConnexion, this.serveur));
+				this.thApplication.start();
+			}
 		}
-		if(requeteClient == 1){
-			/* Connexion en tant que visiteur */
-			/* On lance le thread de Tchat*/
-			System.out.println("Début de processus de Tchat");
-			this.thApplication = new Thread(new Application(this.sockConnexion, this.serveur));
-			this.thApplication.start();
-		}
-
 	}
 
 }

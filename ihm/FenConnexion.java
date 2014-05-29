@@ -175,16 +175,22 @@ public class FenConnexion {
 	    				if(erreur == false){
 	    					/* On attend la réponse du serveur 0 : : login ou mdp faux ou 1 : ok */
 	    					int codeServ = Integer.parseInt(lireMesg());
+	    					System.out.println("Code serv = "+String.valueOf(codeServ));
 	    					if(codeServ == 0){
 	    						/* Erreur de login ou de Mdp */
 	    						libInfo.setText("ERREUR : Votre login ou votre mot de passe est incorrect");
 	    					}else{
-	    						/* on récupère les infos de l'utilisateur */
-	    						String infosUtil = lireMesg();
-	    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
-	    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, infosUtil);
-	    						fenAccueil.ouvrirFenetre();
-	    						fermerFenetre();
+	    						if(codeServ == 2){
+	    							libInfo.setText("ERREUR : Vous avez été banni de l'application");
+	    						}else{
+	    							/* on récupère les infos de l'utilisateur */
+		    						String infosUtil = lireMesg();
+		    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
+		    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, infosUtil);
+		    						fenAccueil.ouvrirFenetre();
+		    						fermerFenetre();
+	    						}
+	    						
 	    						
 	    					}
 	    				}
@@ -218,16 +224,22 @@ public class FenConnexion {
 	    				if(erreur == false){
 	    					/* On attend la réponse du serveur 0 : : login ou mdp faux ou 1 : ok */
 	    					int codeServ = Integer.parseInt(lireMesg());
+	    					System.out.println("Code serv = "+String.valueOf(codeServ));
 	    					if(codeServ == 0){
 	    						/* Erreur de login ou de Mdp */
 	    						libInfo.setText("ERREUR : Votre login ou votre mot de passe est incorrect");
 	    					}else{
-	    						/* on récupère les infos de l'utilisateur */
-	    						String infosUtil = lireMesg();
-	    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
-	    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, infosUtil);
-	    						fenAccueil.ouvrirFenetre();
-	    						fermerFenetre();
+	    						if(codeServ == 2){
+	    							libInfo.setText("ERREUR : Vous avez été banni de l'application");
+	    						}else{
+	    							/* on récupère les infos de l'utilisateur */
+		    						String infosUtil = lireMesg();
+		    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
+		    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, infosUtil);
+		    						fenAccueil.ouvrirFenetre();
+		    						fermerFenetre();
+	    						}
+	    						
 	    						
 	    					}
 	    				}
@@ -259,16 +271,22 @@ public class FenConnexion {
 	    				if(erreur == false){
 	    					/* On attend la réponse du serveur 0 : : login ou mdp faux ou 1 : ok */
 	    					int codeServ = Integer.parseInt(lireMesg());
+	    					System.out.println("Code serv = "+String.valueOf(codeServ));
 	    					if(codeServ == 0){
 	    						/* Erreur de login ou de Mdp */
 	    						libInfo.setText("ERREUR : Votre login ou votre mot de passe est incorrect");
 	    					}else{
-	    						/* on récupère les infos de l'utilisateur */
-	    						String infosUtil = lireMesg();
-	    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
-	    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, infosUtil);
-	    						fenAccueil.ouvrirFenetre();
-	    						fermerFenetre();
+	    						if(codeServ == 2){
+	    							libInfo.setText("ERREUR : Vous avez été banni de l'application");
+	    						}else{
+	    							/* on récupère les infos de l'utilisateur */
+		    						String infosUtil = lireMesg();
+		    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
+		    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, infosUtil);
+		    						fenAccueil.ouvrirFenetre();
+		    						fermerFenetre();
+	    						}
+	    						
 	    						
 	    					}
 	    				}
@@ -280,7 +298,7 @@ public class FenConnexion {
 		btnValider.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				envoyerMesg("0");
-				Boolean erreur = false; /* Variable pour la présence d'erreurs */
+           	 Boolean erreur = false; /* Variable pour la présence d'erreurs */
 				/* On récupère la valeur des deux champs */
 				String login = saiLogin.getText();
 				String pass = new String(saiPass.getPassword());
@@ -289,28 +307,30 @@ public class FenConnexion {
 					erreur = true;
 					libInfo.setText("ERREUR : Vous devez saisir votre Login ET votre Mot de passe");
 				}else{
-				/* Si tous les champs sont bien remplis on envoie la demande de connexion au serveur : chaine de forme login/password */
-				envoyerMesg(login+"/"+pass);
-				if(erreur == false){
-					/* On attend la réponse du serveur 0 : : login ou mdp faux ou 1 : ok */
-					int codeServ = Integer.parseInt(lireMesg());
-					if(codeServ == 0){
-						/* Erreur de login ou de Mdp */
-						libInfo.setText("ERREUR : Votre login ou votre mot de passe est incorrect");
-					}else{
-						if(codeServ == 2){
-							/* utilisateur banni */
-							libInfo.setText("INFO : Vous avez été banni de l'application, la connexion est donc impossible");
-						}else{
-							/* on récupère les infos de l'utilisateur */
-							String infosUtil = lireMesg();
-							/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
-							FenAccueil fenAccueil = new FenAccueil(sockConnexion, infosUtil);
-							fenAccueil.ouvrirFenetre();
-							fermerFenetre();
-						}
-					}
-				}
+   				/* Si tous les champs sont bien remplis on envoie la demande de connexion au serveur : chaine de forme login/password */
+   				envoyerMesg(login+"/"+pass);
+	   				if(erreur == false){
+	   					/* On attend la réponse du serveur 0 : : login ou mdp faux ou 1 : ok */
+	   					int codeServ = Integer.parseInt(lireMesg());
+	   					System.out.println("Code serv = "+String.valueOf(codeServ));
+	   					if(codeServ == 0){
+	   						/* Erreur de login ou de Mdp */
+	   						libInfo.setText("ERREUR : Votre login ou votre mot de passe est incorrect");
+	   					}else{
+	   						if(codeServ == 2){
+	   							libInfo.setText("ERREUR : Vous avez été banni de l'application");
+	   						}else{
+	   								/* on récupère les infos de l'utilisateur */
+		    						String infosUtil = lireMesg();
+		    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
+		    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, infosUtil);
+		    						fenAccueil.ouvrirFenetre();
+		    						fermerFenetre();
+	   						}
+	   						
+	   						
+	   					}
+	   				}
 				}
 			}
 		});

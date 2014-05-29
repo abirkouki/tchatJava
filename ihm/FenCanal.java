@@ -44,6 +44,8 @@ import java.awt.event.FocusListener;
 import javax.swing.JSplitPane;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.border.CompoundBorder;
+import javax.swing.UIManager;
 
 public class FenCanal{
 	
@@ -91,6 +93,21 @@ public class FenCanal{
 	 * Bufer d'écriture pour envoyer des messages au serveur
 	 */
 	private PrintWriter ecrire;
+	
+	/**
+	 * Titre du canal
+	 */
+	private JLabel libNomCanal;
+	
+	/**
+	 * Liste des utilisateurs connectés sur le canal
+	 */
+	private JList listListeUsers;
+	
+	/**
+	 * Permet de savoir si l'utilisateur est un modérateur du canal
+	 */
+	private Boolean isModerateur;
 
 	/**
 	 * Ouvre la fenêtre
@@ -107,10 +124,11 @@ public class FenCanal{
 	 * @param utilisateur Utilisateur utilisant l'application
 	 * @throws InterruptedException
 	 */
-	public FenCanal(Socket sockConnexion, Canal canal, Utilisateur utilisateur) throws InterruptedException {
+	public FenCanal(Socket sockConnexion, Canal canal, Utilisateur utilisateur, Boolean moderateur) throws InterruptedException {
 		this.sockConnexion = sockConnexion;
 		this.canal = canal;
 		this.utilisateur = utilisateur;
+		this.isModerateur = moderateur;
 		initialize();
 	}
 	
@@ -155,7 +173,7 @@ public class FenCanal{
 		}
 	}
 		/**
-		 * Fonction permettant d'actualiser la liste des messages
+		 * Fonction permettant d'actualiser la liste des messages, le titre du canal et la liste des utilisateurs présents dans le canal.
 		 * @param txtTchat Zone de texte contenant les messages.
 		 */
 		public void actualiser(JTextPane txtTchat){
@@ -169,7 +187,11 @@ public class FenCanal{
 					envoyerMesg(String.valueOf(canal.getId()));
 					/* On attend la réponse du serveur avec tout les messages */
 					String messages = lireMesg();
-					System.out.println("Message du serveur : "+messages);
+					
+					
+					//System.out.println("Message du serveur : "+messages);
+					
+					/* On met à jour les messages */
 					String[] messagesDecomp = messages.split("#"); /* on décompose */
 					int nbMessages = messagesDecomp.length; /* on récupère le nombre de messages */
 					int i; /* indice de parcours */
@@ -179,6 +201,25 @@ public class FenCanal{
 					}
 					/* On ajoute la nouvelle chaine au champs texte */
 					this.txtTchat.setText(messages);
+					
+					/* On met à jour le titre */
+					/* On récupère le titre du canal */
+					String titre = lireMesg();
+					System.out.println("Mesg recu :"+titre);
+					this.libNomCanal.setText("Vous êtes actuellement sur le canal : "+titre.split("/")[0]);
+					System.out.println("On a passé l'étape du titre");
+					/* On met à jour la liste des utilisateurs connectés sur le canal */
+					/* Les visiteurs ne sont pas affichés dans cette liste car ils ne sont pas membres */
+					/* On récupère la liste des utilisateurs du canal */
+					if(titre.split("/")[1].compareTo("0") == 0){
+						/* pas d'utilisateur connectés */
+					}else{
+							
+							String[] utilCanalDecomp = titre.split("/")[1].split("#");
+							System.out.println(titre.split("/")[1]);
+							this.listListeUsers.removeAll();
+							this.listListeUsers.setListData(utilCanalDecomp);
+					}
 				}
 			}
 		}
@@ -207,13 +248,9 @@ public class FenCanal{
 		
 		this.txtTchat.setEditable(false);
 		
-		DefaultListModel listModel = new DefaultListModel();
-		listModel.addElement("user1");
-		listModel.addElement("user2");
-		listModel.addElement("user3");
-		JList listListeUsers = new JList(listModel);
-		listListeUsers.setBackground(Color.LIGHT_GRAY);
-		listListeUsers.setBounds(820, 489, 155, -433);
+		listListeUsers = new JList();
+		listListeUsers.setBackground(UIManager.getColor("ColorChooser.swatchesDefaultRecentColor"));
+		listListeUsers.setBounds(782, 65, 228, 433);
 		panel.add(listListeUsers);
 		
 		saiMesg = new JTextField();
@@ -259,7 +296,7 @@ public class FenCanal{
 		panel.add(saiMesg);
 		saiMesg.setColumns(10);
 		
-		JLabel libNomCanal = new JLabel("Vous êtes actuellement sur le canal : "+this.canal.getTitre());
+		libNomCanal = new JLabel("Vous êtes actuellement sur le canal : "+this.canal.getTitre());
 		libNomCanal.setFont(new Font("Liberation Serif", Font.BOLD, 17));
 		libNomCanal.setBounds(23, 0, 747, 27);
 		panel.add(libNomCanal);
@@ -345,6 +382,11 @@ public class FenCanal{
 		btnEnvoyer.setFont(new Font("Liberation Serif", Font.BOLD, 15));
 		btnEnvoyer.setBounds(656, 592, 117, 25);
 		panel.add(btnEnvoyer);
+		
+		JButton btnModifTitre = new JButton("Editer");
+		btnModifTitre.setFont(new Font("Liberation Serif", Font.BOLD, 12));
+		btnModifTitre.setBounds(779, 7, 73, 17);
+		panel.add(btnModifTitre);
 		
 		
 		

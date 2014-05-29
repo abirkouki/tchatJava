@@ -278,10 +278,7 @@ public class FenAccueil {
 		intFenRejCanal.getContentPane().add(panel_1, BorderLayout.CENTER);
 		panel_1.setLayout(null);
 		
-		JButton btnRejoinde = new JButton("Rejoinde");
-		btnRejoinde.setFont(new Font("Liberation Serif", Font.BOLD, 15));
-		btnRejoinde.setBounds(313, 183, 101, 25);
-		panel_1.add(btnRejoinde);
+		
 		
 		final DefaultListModel listCanauxModele = new DefaultListModel();
 		
@@ -306,7 +303,7 @@ public class FenAccueil {
 					/* On envoie l'identifiant de l'utilisateur */
 					envoyerMesg(String.valueOf(utilisateur.getId()));
 					/* On attend la liste des canaux que l'on va décomposée et stockée dans une Map composé de l'identifiant du canal et de son nom */
-					Map<Integer, String> canauxDispo = new HashMap<Integer, String>();
+					final Map<Integer, String> canauxDispo = new HashMap<Integer, String>();
 					int i; /* indice de parcours de la liste */
 					String listeCanaux;
 					String[] listeCanauxDecomp;
@@ -321,10 +318,62 @@ public class FenAccueil {
 						listCanauxModele.addElement(listeCanauxDecomp[i].split("#")[1]);
 					}
 					/* On fabrique la liste */
-					JList listCanaux = new JList();
+					final JList listCanaux = new JList();
 					listCanaux.setModel(listCanauxModele);
 					listCanaux.setBounds(12, 12, 402, 145);
 					panel_1.add(listCanaux);
+					
+					JButton btnRejoinde = new JButton("Rejoinde");
+					btnRejoinde.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent arg0) {
+							/* On demande au serveur de rejoindre le canal sélectionné */
+							int index = listCanaux.getSelectedIndex();
+							/* on vérifie que l'utilisateur a bien selectionné un canal */
+							if(index < 0){
+								JOptionPane.showMessageDialog(panel, "ERREUR, vous n'avez pas sélectionné de canal","Erreur pas de canal sélectionné",JOptionPane.ERROR_MESSAGE);
+							}else{
+								/* on envoie au serveur que l'on souhaite rejoindre le canal en lui envoyant l'identifiant du canal */
+								envoyerMesg(String.valueOf(index));
+								/* On attend la réponse du serveur 0 : erreur / 1 : ok utilisateur / 2 : ok modérateur */
+								int rep = Integer.parseInt(lireMesg());
+								System.out.println("rep ="+rep);
+								if(rep == 0){
+									/* erreur */
+									JOptionPane.showMessageDialog(panel, "ERREUR, impossible de rejoindre le canal","Erreur impossible de rejoindre le canal",JOptionPane.ERROR_MESSAGE);
+								}else{
+									/* Si c'est ok pour une connexion on récup les infos du canal */
+									String infosCanal = lireMesg();
+									System.out.println("infos canl = "+infosCanal);
+									if(rep == 1){
+										/* ok utilisateur */
+										Canal canal = new Canal(Integer.parseInt(infosCanal.split("/")[0]), infosCanal.split("/")[1], null);
+										try {
+											FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, false);
+											fenCanal.ouvrirFenetre();
+											fermerFenetre();
+										} catch (InterruptedException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
+									}else{
+										/* ok modérateur */
+										Canal canal = new Canal(Integer.parseInt(infosCanal.split("/")[0]), infosCanal.split("/")[1], null);
+										try {
+											FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, true);
+											fenCanal.ouvrirFenetre();
+											fermerFenetre();
+										} catch (InterruptedException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
+									}
+								}
+							}
+						}
+					});
+					btnRejoinde.setFont(new Font("Liberation Serif", Font.BOLD, 15));
+					btnRejoinde.setBounds(313, 183, 101, 25);
+					panel_1.add(btnRejoinde);
 					
 					/* On affiche ensuite la fenêtre interne */
 					intFenRejCanal.setVisible(true);

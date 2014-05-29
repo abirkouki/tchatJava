@@ -137,6 +137,13 @@ public class Canal implements Serializable{
 	}
 	
 	/**
+	 * Vide la liste des utilisateurs connectés sur le canal (pour le redémarage du serveur)
+	 */
+	public void viderListeConnectes(){
+		this.listeUtilisateursConectes = new ArrayList<Utilisateur>();
+	}
+	
+	/**
 	 * Vérifie si un utilisateur a été bannis ou pas d'un canal
 	 * @param idUtilisateur Identifiant de l'utilisateur.
 	 * @return True si l'utilisateur a bien été banni, False si l'utilisateur n'a pas été banni.

@@ -169,7 +169,7 @@ public class FenConnexionVisiteur {
 						Canal canal = new Canal(0, "Par défaut", null);
 						Utilisateur utilisateur = new Utilisateur(-1, "visit", saiNom.getText(), saiPrenom.getText(), "visit", 0);
 						try {
-							FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur);
+							FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, false);
 							fenCanal.ouvrirFenetre();
 							fermerFenetre();
 						} catch (InterruptedException e) {
