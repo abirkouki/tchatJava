@@ -26,6 +26,7 @@ import java.awt.Font;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
@@ -271,19 +272,27 @@ public class FenAccueil {
 		libStatut.setBounds(769, 12, 64, 27);
 		panel.add(libStatut);
 		
-		intFenRejCanal.setBounds(273, 253, 436, 252);
+		intFenRejCanal.setBounds(314, 252, 436, 252);
 		panel.add(intFenRejCanal);
 		
 		final JPanel panel_1 = new JPanel();
 		intFenRejCanal.getContentPane().add(panel_1, BorderLayout.CENTER);
 		panel_1.setLayout(null);
-		
-		
-		
+		final JButton btnAdmin = new JButton("Administration");
+		btnAdmin.setFont(new Font("Liberation Serif", Font.BOLD, 25));
+		btnAdmin.setBounds(373, 460, 275, 35);
+		btnAdmin.setVisible(false);
+		panel.add(btnAdmin);
+		/* Si l'utilisateur est administrateur on lui ajoute le bouton d'administration */
+		if(this.utilisateur.getGrade() == 2){
+			btnAdmin.setVisible(true);
+		}
+		final JButton btnCompte = new JButton("Gestion du compte");
+		final JButton btnCreer = new JButton("Créer un canal");
 		final DefaultListModel listCanauxModele = new DefaultListModel();
 		
 			
-		JButton btnRejoindre = new JButton("Rejoindre un canal");
+		final JButton btnRejoindre = new JButton("Rejoindre un canal");
 		btnRejoindre.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				/*Canal canal = new Canal(0, "Par défaut", null);
@@ -296,6 +305,11 @@ public class FenAccueil {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}*/
+				/* On cache les boutons pour corriger un beug graphique */
+				btnRejoindre.setVisible(false);
+				btnCompte.setVisible(false);
+				btnCreer.setVisible(false);
+				btnAdmin.setVisible(false);
 				/* On envoie la requete au serveur */
 				envoyerMesg("2");
 				/* On regarde que le serveur atteste bonne réception de la requete */
@@ -321,59 +335,84 @@ public class FenAccueil {
 					final JList listCanaux = new JList();
 					listCanaux.setModel(listCanauxModele);
 					listCanaux.setBounds(12, 12, 402, 145);
-					panel_1.add(listCanaux);
 					
-					JButton btnRejoinde = new JButton("Rejoinde");
-					btnRejoinde.addActionListener(new ActionListener() {
+					JScrollPane scrollPane = new JScrollPane();
+					scrollPane.setBounds(12, 12, 402, 145);
+					panel_1.add(scrollPane);
+					scrollPane.setViewportView(listCanaux);
+					
+					JButton btnRejoinde2 = new JButton("Rejoinde");
+					btnRejoinde2.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent arg0) {
 							/* On demande au serveur de rejoindre le canal sélectionné */
-							int index = listCanaux.getSelectedIndex();
-							/* on vérifie que l'utilisateur a bien selectionné un canal */
-							if(index < 0){
-								JOptionPane.showMessageDialog(panel, "ERREUR, vous n'avez pas sélectionné de canal","Erreur pas de canal sélectionné",JOptionPane.ERROR_MESSAGE);
-							}else{
-								/* on envoie au serveur que l'on souhaite rejoindre le canal en lui envoyant l'identifiant du canal */
-								envoyerMesg(String.valueOf(index));
-								/* On attend la réponse du serveur 0 : erreur / 1 : ok utilisateur / 2 : ok modérateur */
-								int rep = Integer.parseInt(lireMesg());
-								System.out.println("rep ="+rep);
-								if(rep == 0){
-									/* erreur */
-									JOptionPane.showMessageDialog(panel, "ERREUR, impossible de rejoindre le canal","Erreur impossible de rejoindre le canal",JOptionPane.ERROR_MESSAGE);
+							envoyerMesg("8");
+							if(Integer.parseInt(lireMesg()) == 8){
+								int index = listCanaux.getSelectedIndex();
+								/* on vérifie que l'utilisateur a bien selectionné un canal */
+								if(index < 0){
+									JOptionPane.showMessageDialog(panel, "ERREUR, vous n'avez pas sélectionné de canal","Erreur pas de canal sélectionné",JOptionPane.ERROR_MESSAGE);
 								}else{
-									/* Si c'est ok pour une connexion on récup les infos du canal */
-									String infosCanal = lireMesg();
-									System.out.println("infos canl = "+infosCanal);
-									if(rep == 1){
-										/* ok utilisateur */
-										Canal canal = new Canal(Integer.parseInt(infosCanal.split("/")[0]), infosCanal.split("/")[1], null);
-										try {
-											FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, false);
-											fenCanal.ouvrirFenetre();
-											fermerFenetre();
-										} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
+									/* on envoie au serveur que l'on souhaite rejoindre le canal en lui envoyant l'identifiant du canal */
+									envoyerMesg(String.valueOf(utilisateur.getId())+"#"+String.valueOf(index));
+									/* On attend la réponse du serveur 0 : erreur / 1 : ok utilisateur / 2 : ok modérateur */
+									int rep = Integer.parseInt(lireMesg());
+									System.out.println("rep ="+rep);
+									if(rep == 0){
+										/* erreur */
+										JOptionPane.showMessageDialog(panel, "ERREUR, impossible de rejoindre le canal","Erreur impossible de rejoindre le canal",JOptionPane.ERROR_MESSAGE);
 									}else{
-										/* ok modérateur */
-										Canal canal = new Canal(Integer.parseInt(infosCanal.split("/")[0]), infosCanal.split("/")[1], null);
-										try {
-											FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, true);
-											fenCanal.ouvrirFenetre();
-											fermerFenetre();
-										} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
+										/* Si c'est ok pour une connexion on récup les infos du canal */
+										String infosCanal = lireMesg();
+										System.out.println("infos canl = "+infosCanal);
+										if(rep == 1){
+											/* ok utilisateur */
+											Canal canal = new Canal(Integer.parseInt(infosCanal.split("/")[0]), infosCanal.split("/")[1], null);
+											try {
+												FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, false);
+												fenCanal.ouvrirFenetre();
+												fermerFenetre();
+											} catch (InterruptedException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+										}else{
+											/* ok modérateur */
+											Canal canal = new Canal(Integer.parseInt(infosCanal.split("/")[0]), infosCanal.split("/")[1], null);
+											try {
+												FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, true);
+												fenCanal.ouvrirFenetre();
+												fermerFenetre();
+											} catch (InterruptedException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
 										}
 									}
 								}
 							}
 						}
 					});
-					btnRejoinde.setFont(new Font("Liberation Serif", Font.BOLD, 15));
-					btnRejoinde.setBounds(313, 183, 101, 25);
-					panel_1.add(btnRejoinde);
+					btnRejoinde2.setFont(new Font("Liberation Serif", Font.BOLD, 15));
+					btnRejoinde2.setBounds(313, 183, 101, 25);
+					panel_1.add(btnRejoinde2);
+					
+					JButton btnAnnuler2 = new JButton("Annuler");
+					btnAnnuler2.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent arg0) {
+							/* on ferme la internaFrame et on réaffiche les boutons */
+							intFenRejCanal.setVisible(false);
+							listCanauxModele.removeAllElements(); /* on vide la liste */
+							btnRejoindre.setVisible(true);
+							btnCompte.setVisible(true);
+							btnCreer.setVisible(true);
+							if(utilisateur.getGrade()==2){
+								btnAdmin.setVisible(true);
+							}
+						}
+					});
+					btnAnnuler2.setFont(new Font("Liberation Serif", Font.BOLD, 15));
+					btnAnnuler2.setBounds(200, 183, 101, 25);
+					panel_1.add(btnAnnuler2);
 					
 					/* On affiche ensuite la fenêtre interne */
 					intFenRejCanal.setVisible(true);
@@ -392,7 +431,7 @@ public class FenAccueil {
 		btnRejoindre.setBounds(373, 264, 275, 35);
 		panel.add(btnRejoindre);
 		
-		JButton btnCreer = new JButton("Créer un canal");
+		
 		btnCreer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				FenCreationCanal fenCreCan = new FenCreationCanal(sockConnexion, utilisateur);
@@ -404,18 +443,12 @@ public class FenAccueil {
 		btnCreer.setBounds(373, 311, 275, 35);
 		panel.add(btnCreer);
 		
-		JButton btnCompte = new JButton("Gestion du compte");
+		
 		btnCompte.setFont(new Font("Liberation Serif", Font.BOLD, 25));
 		btnCompte.setBounds(373, 413, 275, 35);
 		panel.add(btnCompte);
 		
-		/* Si l'utilisateur est administrateur on lui ajoute le bouton d'administration */
-		if(this.utilisateur.getGrade() == 2){
-			JButton btnAdmin = new JButton("Administration");
-			btnAdmin.setFont(new Font("Liberation Serif", Font.BOLD, 25));
-			btnAdmin.setBounds(373, 460, 275, 35);
-			panel.add(btnAdmin);
-		}
+		
 		
 		JButton btnDeconnexion = new JButton("Déconnexion");
 		btnDeconnexion.addActionListener(new ActionListener() {

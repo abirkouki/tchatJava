@@ -16,6 +16,7 @@ Projet Java STRI 2014
 	- Gestion de la liste des utilisateurs bannis d'un canal ou de l'application
 	- Rejoindre un canal
 	- Afficher et actualiser la liste des utilisateurs présents sur un canal
+	- Modifier le titre d'un canal
 
 - Ce qui doit encore être fait (code + IHM) :
     - Bannir/Débannir un utilisateur (appli et canal)

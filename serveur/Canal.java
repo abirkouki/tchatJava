@@ -65,7 +65,6 @@ public class Canal implements Serializable{
 		this.titreCanal = titreCanal;
 		this.idCanal = idCanal;
 		this.listeUtilisateursConectes = new ArrayList<Utilisateur>();
-		this.listeUtilisateursConectes.add(createur);
 		this.listeModerateurs = new ArrayList<Utilisateur>();
 		this.listeModerateurs.add(createur);
 		this.listeMessages = new ArrayList<String>();
@@ -86,6 +85,14 @@ public class Canal implements Serializable{
 	 */
 	public String getTitre(){
 		return this.titreCanal;
+	}
+	
+	/**
+	 * Modifie le titre d'un canal
+	 * @param titre Nouveau titre du canal
+	 */
+	public void setTitre(String titre){
+		this.titreCanal = titre;
 	}
 	
 	/**

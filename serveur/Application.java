@@ -149,42 +149,7 @@ public class Application implements Runnable {
 				}
 				/* on envoie la liste */
 				envoyerMesg(listeCanaux);
-				/* on récupère l'identifiant du canal */
-				int idCanal = Integer.parseInt(lireMesg());
-				System.out.println("id canal = "+idCanal);
-				Boolean trouve = false;
-				Boolean moderateur=false;
-				String infosCanal="";
-				/* On regarde que l'identifiant est correct */
-				for(i=0;i<this.serveur.getListeCanaux().size();i++){
-					if(this.serveur.getListeCanaux().get(i).getId() == idCanal){
-						trouve = true;
-						infosCanal = String.valueOf(this.serveur.getListeCanaux().get(i).getId())+"/"+this.serveur.getListeCanaux().get(i).getTitre();
-						int j;
-						/* on regarde si l'utilisateur est modérateur du canal */
-						for(j=0;j<this.serveur.getListeCanaux().get(i).getListeModerateurs().size();j++){
-							if(this.serveur.getListeCanaux().get(i).getListeModerateurs().get(j).getId() == idUtil){
-								moderateur = true;
-							}
-						}
-					}
-				}
-				if(trouve == true){
-					/* on a trouvé le canal */
-					if(moderateur == true){
-						/* on répond favorablement et l'utilisateur est modérateur */
-						envoyerMesg("2");
-					}else{
-						/* on répond favorablement */
-						envoyerMesg("1");
-					}
-					envoyerMesg(infosCanal);
-					/* on ajoute l'utilisateur à la liste des connectés */
-					this.serveur.getCanal(idCanal).getListeConnectes().add(this.serveur.getUtilisateur(idUtil));
-				}else{
-					/* impossible de rejoindre le canal */
-					envoyerMesg("0");
-				}
+				
 			}
 			if(requeteClient == 3){ /* Demande de création d'un canal */
 				
@@ -285,7 +250,7 @@ public class Application implements Runnable {
 									Boolean moderateur = false;
 									for(x=0;x<this.serveur.getListeCanaux().get(i).getListeModerateurs().size();x++){
 										System.out.println("for listMod");
-										if(this.serveur.getListeCanaux().get(i).getListeConnectes().get(j) == this.serveur.getListeCanaux().get(i).getListeModerateurs().get(x) || this.serveur.getListeCanaux().get(i).getListeConnectes().get(j) == this.serveur.getListeCanaux().get(i).getCreateur()){
+										if(this.serveur.getListeCanaux().get(i).getListeConnectes().get(j) == this.serveur.getListeCanaux().get(i).getListeModerateurs().get(x)){
 											System.out.println("Modo trouvé");
 											moderateur = true;
 										}
@@ -307,7 +272,28 @@ public class Application implements Runnable {
 					}
 				}
 			}
-			if(requeteClient == 6){ /* déconnexion */
+			if(requeteClient == 6){ /* Modification d'un canal */
+				envoyerMesg("6"); /* on confirme la bonne réception de la requête */
+				/* on attend la demande client 1 : modif titre / 2 : modif liste membre / 3 : modif liste moderateurs */
+				int idReq = Integer.parseInt(lireMesg());
+				/* on regarde la demande */
+				if(idReq == 1){
+					/* demande de modification du titre d'un canal */
+					envoyerMesg("1"); /* on confirme la demande */
+					String titre = lireMesg(); /* idCanal#Titre */
+					Canal canal = this.serveur.getCanal(Integer.parseInt(titre.split("#")[0]));
+					/* on vérifie que on a bien trouvé le canal */
+					if(canal != null){
+						/* on modifie le titre */
+						canal.setTitre(titre.split("#")[1]);
+						this.serveur.saveCanaux(); /* on sauvegarde la liste des canaux */
+						envoyerMesg("1");
+					}else{
+						/* on indique l'erreur */
+						envoyerMesg("0");
+					}
+					
+				}
 				
 			}
 			if(requeteClient == 7){ /*Demande de la liste des utilisateurs */
@@ -321,6 +307,48 @@ public class Application implements Runnable {
 					utilisateurs += String.valueOf(this.serveur.getListeUtilisateurs().get(i).getId())+"#"+this.serveur.getListeUtilisateurs().get(i).getNom()+"#"+this.serveur.getListeUtilisateurs().get(i).getPrenom()+"/";
 				}
 				envoyerMesg(utilisateurs);
+			}
+			if(requeteClient == 8){ /* Demande rejoindre un canal */
+				envoyerMesg("8");
+				/* on récupère l'identifiant du canal et l'identifiant utilisateur*/
+				String mesg = lireMesg(); /* idUtil#idCanal */
+				int idCanal = Integer.parseInt(mesg.split("#")[1]);
+				int idUtil = Integer.parseInt(mesg.split("#")[0]);
+				int i;
+				System.out.println("id canal = "+idCanal);
+				Boolean trouve = false;
+				Boolean moderateur=false;
+				String infosCanal="";
+				/* On regarde que l'identifiant est correct */
+				for(i=0;i<this.serveur.getListeCanaux().size();i++){
+					if(this.serveur.getListeCanaux().get(i).getId() == idCanal){
+						trouve = true;
+						infosCanal = String.valueOf(this.serveur.getListeCanaux().get(i).getId())+"/"+this.serveur.getListeCanaux().get(i).getTitre();
+						int j;
+						/* on regarde si l'utilisateur est modérateur du canal */
+						for(j=0;j<this.serveur.getListeCanaux().get(i).getListeModerateurs().size();j++){
+							if(this.serveur.getListeCanaux().get(i).getListeModerateurs().get(j).getId() == idUtil){
+								moderateur = true;
+							}
+						}
+					}
+				}
+				if(trouve == true){ 
+					/* on a trouvé le canal */
+					if(moderateur == true){
+						/* on répond favorablement et l'utilisateur est modérateur */
+						envoyerMesg("2");
+					}else{
+						/* on répond favorablement */
+						envoyerMesg("1");
+					}
+					envoyerMesg(infosCanal);
+					/* on ajoute l'utilisateur à la liste des connectés */
+					this.serveur.getCanal(idCanal).getListeConnectes().add(this.serveur.getUtilisateur(idUtil));
+				}else{
+					/* impossible de rejoindre le canal */
+					envoyerMesg("0");
+				}
 			}
 		}
 		

@@ -46,6 +46,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.border.CompoundBorder;
 import javax.swing.UIManager;
+import javax.swing.JInternalFrame;
 
 public class FenCanal{
 	
@@ -108,6 +109,16 @@ public class FenCanal{
 	 * Permet de savoir si l'utilisateur est un modérateur du canal
 	 */
 	private Boolean isModerateur;
+	
+	/**
+	 * Champs de saisie du titre du canal
+	 */
+	private JTextField saiTitre;
+	
+	/**
+	 * Variable permettant de savoir si on a modifié le titre
+	 */
+	private Boolean modifTitre = false;
 
 	/**
 	 * Ouvre la fenêtre
@@ -178,7 +189,7 @@ public class FenCanal{
 		 */
 		public void actualiser(JTextPane txtTchat){
 			/* On vérifie que le champs de saisie n'est pas focus et qu'il est vide */
-			if(saiMesg.getText().compareTo("")==0){
+			if(saiMesg.getText().compareTo("")==0 && modifTitre == false){
 				/* On envoie une demande d'actualisation au serveur */
 				envoyerMesg("5");
 				/* On attend la confirmation */
@@ -206,7 +217,7 @@ public class FenCanal{
 					/* On récupère le titre du canal */
 					String titre = lireMesg();
 					System.out.println("Mesg recu :"+titre);
-					this.libNomCanal.setText("Vous êtes actuellement sur le canal : "+titre.split("/")[0]);
+					this.saiTitre.setText(titre.split("/")[0]);
 					System.out.println("On a passé l'étape du titre");
 					/* On met à jour la liste des utilisateurs connectés sur le canal */
 					/* Les visiteurs ne sont pas affichés dans cette liste car ils ne sont pas membres */
@@ -296,9 +307,9 @@ public class FenCanal{
 		panel.add(saiMesg);
 		saiMesg.setColumns(10);
 		
-		libNomCanal = new JLabel("Vous êtes actuellement sur le canal : "+this.canal.getTitre());
+		libNomCanal = new JLabel("Vous êtes actuellement sur le canal : ");
 		libNomCanal.setFont(new Font("Liberation Serif", Font.BOLD, 17));
-		libNomCanal.setBounds(23, 0, 747, 27);
+		libNomCanal.setBounds(23, 0, 283, 27);
 		panel.add(libNomCanal);
 		
 		JButton btnQuitter = new JButton("Quitter Canal");
@@ -383,10 +394,70 @@ public class FenCanal{
 		btnEnvoyer.setBounds(656, 592, 117, 25);
 		panel.add(btnEnvoyer);
 		
-		JButton btnModifTitre = new JButton("Editer");
+		final JButton btnModifTitre = new JButton("Editer");
+		btnModifTitre.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				/* click sur le bouton éditer */
+				if(modifTitre == false){
+					/* on va modifier le titre */
+					saiTitre.setEditable(true); /* on rend le champs de saisie du titre éditable */
+					saiTitre.requestFocus(); /* on focus le champs de saisie du titre */
+					btnModifTitre.setText("Valider"); /* on modifie le titre du bouton */
+					modifTitre = true;
+				}else{
+					/* on a modifié le titre */
+					saiTitre.setEditable(false);
+					btnModifTitre.setText("Editer"); /* on modifie le titre du bouton */
+					modifTitre = false;
+					/* on vérifie que le titre ne contient pas de / ou de # */
+					if(saiTitre.getText().contains("#") || saiTitre.getText().contains("/")){
+						/* on affiche un mesg d'erreur */
+						JOptionPane.showMessageDialog(panel, "ERREUR, le titre ne peut pas contenir de # ou de /","ERREUR, titre incorrect",JOptionPane.ERROR_MESSAGE);
+					}else{
+						/* on envoie la requete au serveur */
+						envoyerMesg("6");
+						if(Integer.parseInt(lireMesg()) == 6){
+							/* le serveur a répondu */
+							envoyerMesg("1"); /* on envoi une demande de modification de titre */
+							if(Integer.parseInt(lireMesg()) == 1){
+								/* le serveur valide la demande, on lui envoi les infos idCanal#titre */
+								envoyerMesg(String.valueOf(canal.getId())+"#"+saiTitre.getText());
+								if(Integer.parseInt(lireMesg()) == 1){
+									/* la modification a été effectuée avec succès */
+									actualiser(txtTchat); /* on actualise */
+									JOptionPane.showMessageDialog(panel, "Le titre du canal a bien été modifié","Titre modifié",JOptionPane.INFORMATION_MESSAGE);
+								}else{
+									JOptionPane.showMessageDialog(panel, "ERREUR, le titre du canal n'a pas été modifié","ERREUR, titre non modifié",JOptionPane.ERROR_MESSAGE);
+								}
+							}else{
+								JOptionPane.showMessageDialog(panel, "ERREUR, le titre du canal n'a pas été modifié","ERREUR, titre non modifié",JOptionPane.ERROR_MESSAGE);
+							}
+						}else{
+							JOptionPane.showMessageDialog(panel, "ERREUR, le titre du canal n'a pas été modifié","ERREUR, titre non modifié",JOptionPane.ERROR_MESSAGE);
+						}
+					}
+				}
+			}
+		});
 		btnModifTitre.setFont(new Font("Liberation Serif", Font.BOLD, 12));
 		btnModifTitre.setBounds(779, 7, 73, 17);
 		panel.add(btnModifTitre);
+		
+		saiTitre = new JTextField();
+		saiTitre.setFont(new Font("Liberation Serif", Font.PLAIN, 17));
+		saiTitre.setEditable(false);
+		saiTitre.setBackground(UIManager.getColor("CheckBox.background"));
+		saiTitre.setBounds(310, 0, 460, 27);
+		panel.add(saiTitre);
+		saiTitre.setColumns(10);
+		saiTitre.setText(this.canal.getTitre());
+		
+		/* on affiche le bouton seulement si l'utilisateur est un modérateur du canal */
+		if(this.isModerateur == true){
+			btnModifTitre.setVisible(true);
+		}else{
+			btnModifTitre.setVisible(false);
+		}
 		
 		
 		
