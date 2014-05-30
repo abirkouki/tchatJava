@@ -1,52 +1,38 @@
 package ihm;
 
-import java.awt.EventQueue;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.util.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
-
-import java.awt.BorderLayout;
-
-import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JEditorPane;
-import javax.swing.JSeparator;
-import javax.swing.JTextPane;
-import javax.swing.JList;
-import javax.swing.ListModel;
-
-import java.awt.Color;
-
-import javax.swing.AbstractListModel;
 import javax.swing.JTextField;
-
-import java.awt.Font;
-
-import javax.swing.JButton;
-
-import client.Utilisateur;
-import serveur.Canal;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-
-import javax.swing.JSplitPane;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import javax.swing.border.CompoundBorder;
+import javax.swing.JTextPane;
 import javax.swing.UIManager;
-import javax.swing.JInternalFrame;
+import javax.swing.table.AbstractTableModel;
+
+import com.sun.org.apache.bcel.internal.generic.LUSHR;
+
+import serveur.Canal;
+import client.Utilisateur;
 
 public class FenCanal{
 	
@@ -59,6 +45,11 @@ public class FenCanal{
 	 * Socket de connexion du client
 	 */
 	private Socket sockConnexion;
+	
+	/**
+	 * Permet de savoir si il s'agit d'un canal privé ou pas
+	 */
+	private Boolean isPrive;
 	
 	/**
 	 * Champs de saisie permettant d'envoyer un message sur le canal.
@@ -101,6 +92,16 @@ public class FenCanal{
 	private JLabel libNomCanal;
 	
 	/**
+	 * Tableau contenant la liste des utilisateurs
+	 */
+	private JTable tableau;
+	
+	/**
+	 * Chaine contenant les identifiants des utilisateurs connectés sur le canal
+	 */
+	private String listeInvite = "";
+	
+	/**
 	 * Liste des utilisateurs connectés sur le canal
 	 */
 	private JList listListeUsers;
@@ -135,11 +136,12 @@ public class FenCanal{
 	 * @param utilisateur Utilisateur utilisant l'application
 	 * @throws InterruptedException
 	 */
-	public FenCanal(Socket sockConnexion, Canal canal, Utilisateur utilisateur, Boolean moderateur) throws InterruptedException {
+	public FenCanal(Socket sockConnexion, Canal canal, Utilisateur utilisateur, Boolean moderateur, Boolean prive) throws InterruptedException {
 		this.sockConnexion = sockConnexion;
 		this.canal = canal;
 		this.utilisateur = utilisateur;
 		this.isModerateur = moderateur;
+		this.isPrive = prive;
 		initialize();
 	}
 	
@@ -251,11 +253,11 @@ public class FenCanal{
 		frmApplicationTchatStri.getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(23, 27, 747, 547);
-		panel.add(scrollPane);
+		final JScrollPane scrollPaneMesg = new JScrollPane();
+		scrollPaneMesg.setBounds(23, 27, 747, 547);
+		panel.add(scrollPaneMesg);
 		this.txtTchat = new JTextPane();
-		scrollPane.setViewportView(txtTchat);
+		scrollPaneMesg.setViewportView(txtTchat);
 		
 		this.txtTchat.setEditable(false);
 		
@@ -313,13 +315,45 @@ public class FenCanal{
 		panel.add(libNomCanal);
 		
 		JButton btnQuitter = new JButton("Quitter Canal");
+		btnQuitter.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				/* on envoi au serveur une demande de déconnexion d'un canal */
+				envoyerMesg("9");
+				/* on attend la réponse du serveur */
+				if(Integer.parseInt(lireMesg())==9){
+					/* le serveur confirme la demande de déconnexion */
+					envoyerMesg(String.valueOf(canal.getId())+"#"+String.valueOf(utilisateur.getId()));
+					/* On attend la réponse du serveur */
+					if(Integer.parseInt(lireMesg()) == 1){
+						/* Déconnexion ok */
+						/* on retourne sur la page d'accueil */
+						FenAccueil fenAcc = new FenAccueil(sockConnexion,String.valueOf(utilisateur.getId())+"/"+utilisateur.getLogin()+"/"+utilisateur.getNom()+"/"+utilisateur.getPrenom()+"/"+utilisateur.getPassword()+"/"+String.valueOf(utilisateur.getGrade()));
+						fenAcc.ouvrirFenetre();
+						fermerFenetre();
+					}else{
+						JOptionPane.showMessageDialog(panel, "ERREUR, votre demande de déconnexion du canal a échouée","ERREUR, déconnexion canal",JOptionPane.ERROR_MESSAGE);
+					}
+				}else{
+					JOptionPane.showMessageDialog(panel, "ERREUR, votre demande de déconnexion du canal a échouée","ERREUR, déconnexion canal",JOptionPane.ERROR_MESSAGE);
+				}
+				
+			}
+		});
 		btnQuitter.setFont(new Font("Liberation Serif", Font.BOLD, 15));
-		btnQuitter.setBounds(858, 592, 139, 25);
+		btnQuitter.setBounds(23, 640, 139, 25);
 		panel.add(btnQuitter);
 		
 		JButton btnAccueil = new JButton("Retour Accueil");
+		btnAccueil.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				/* On ferme la fenêtre du canal et on affiche la page d'accueil */
+				FenAccueil fenAcc = new FenAccueil(sockConnexion,String.valueOf(utilisateur.getId())+"/"+utilisateur.getLogin()+"/"+utilisateur.getNom()+"/"+utilisateur.getPrenom()+"/"+utilisateur.getPassword()+"/"+String.valueOf(utilisateur.getGrade()));
+				fenAcc.ouvrirFenetre();
+				fermerFenetre();
+			}
+		});
 		btnAccueil.setFont(new Font("Liberation Serif", Font.BOLD, 15));
-		btnAccueil.setBounds(858, 629, 139, 25);
+		btnAccueil.setBounds(871, 640, 139, 25);
 		panel.add(btnAccueil);
 		
 		JButton btnEnvoyer = new JButton("Envoyer");
@@ -447,16 +481,254 @@ public class FenCanal{
 		saiTitre.setFont(new Font("Liberation Serif", Font.PLAIN, 17));
 		saiTitre.setEditable(false);
 		saiTitre.setBackground(UIManager.getColor("CheckBox.background"));
-		saiTitre.setBounds(310, 0, 460, 27);
+		saiTitre.setBounds(293, 0, 477, 27);
 		panel.add(saiTitre);
 		saiTitre.setColumns(10);
 		saiTitre.setText(this.canal.getTitre());
 		
+		/* Fenêtre interne pour modifier le grade des utilisateurs */
+		final JInternalFrame intFenModifGrade = new JInternalFrame("Modifier le grade des utilisateurs du canal");
+		intFenModifGrade.setBounds(12, 81, 998, 493);
+		intFenModifGrade.setOpaque(false);
+		panel.add(intFenModifGrade);
+		final JPanel panel_1 = new JPanel();
+		intFenModifGrade.getContentPane().add(panel_1, BorderLayout.CENTER);
+		panel_1.setLayout(null);
+		
+		/* Par défaut le tableau est vide */
+		final List<Object> donneesInit = new ArrayList<Object>();
+		
+	   
+	   /* On prépare le type des colones */
+	   Class[] typeColones = {String.class, String.class, String.class, Boolean.class, Boolean.class};
+	   
+	   
+	   /* Modèle pour notre tableau */
+	   class ModeleTableau extends AbstractTableModel{
+			/**
+			 * 
+			 */
+		   private static final long serialVersionUID = 1L;
+			private List<Object> donnees;
+			private String[] titreCol = new String[]{"Id","Nom","Prénom", "Modérateur", "Banni"};
+			private Class[] classCol;
+	 
+			public ModeleTableau(List<Object> donneesInit, Class[] classCol){
+				super();
+				this.classCol = classCol;
+				this.donnees = donneesInit;
+			}
+			
+			public String getColumnName(int col) {
+			     return this.titreCol[col];
+			}
+	 
+			public int getColumnCount() {
+				return this.titreCol.length;
+			}
+	 
+			public int getRowCount() {
+				return this.donnees.size();
+			}
+	 
+			public Object getValueAt(int row, int col) {
+				Object[] obj = (Object[]) this.donnees.get(row);
+				return obj[col];
+			}
+	 
+			public boolean isCellEditable(int arg0, int arg1) {
+				if(arg1 > 2){
+					return true;
+				}else{
+					return false;
+				}
+				
+			}
+	 
+			public Class getColumnClass(int arg0) {
+				return this.classCol[arg0];
+			}
+			
+			/* Pour ajouter une ligne au Model */
+			public void addRow(Object[] donnees){
+				this.donnees.add(donnees);
+				/* Pour que le changement dans les donnees soit pris en compte */
+				fireTableDataChanged(); 
+			}
+			
+			public void setValueAt(Object val, int row, int col) {
+				Object[] obj = (Object[]) this.donnees.get(row);
+				obj[col] = val;
+			}
+	 
+		}
+	   
+	   /* On construit le modèle par défaut */
+	   final ModeleTableau modele = new ModeleTableau(donneesInit, typeColones);
+		
+		/* bouton permettant de modifier le grade des utilisateur sur le canal */
+		final JButton btnModifUtil = new JButton("Grades");
+		btnModifUtil.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				/* on demande la liste des membres connectés sur le canal au serveur avec leur grade */
+				listeInvite = ""; /* on vide la liste des invités */
+				/* On demande au serveur la liste des utilisateurs */
+				envoyerMesg("10");
+				if(Integer.parseInt(lireMesg()) == 10){
+					envoyerMesg(String.valueOf(canal.getId()));
+					String listeUtils = lireMesg();
+					System.out.println(listeUtils);
+					String[] listeUtilsDecomp = listeUtils.split("/");
+					int i = 0;
+					/* On va trier dans l'ordre alphabétique des noms */
+					String temp;
+					for(i=0;i<listeUtilsDecomp.length-1;i++){
+						/* On compare i et i+1 */
+						if(listeUtilsDecomp[i].split("#")[1].compareToIgnoreCase(listeUtilsDecomp[i+1].split("#")[1])<=0 ){
+							/* si i < i+1 , on passe au suivant */
+						}else{
+							/* si i > i+1, on les inverse et on repart à 0 */
+							temp = listeUtilsDecomp[i];
+							listeUtilsDecomp[i] = listeUtilsDecomp[i+1];
+							listeUtilsDecomp[i+1] = temp;
+							i = -1;
+						}
+					}
+					/* On ajoute les utilisateurs triés dans l'ordre alphabétique dans le tableau */
+					for(i=0;i<listeUtilsDecomp.length;i++){
+						if(Integer.parseInt(listeUtilsDecomp[i].split("#")[3]) == 0){
+							/* Pas modérateur */
+							if(Integer.parseInt(listeUtilsDecomp[i].split("#")[4]) == 0){
+								/* Pas banni */
+								Object[] donnees = {listeUtilsDecomp[i].split("#")[0],listeUtilsDecomp[i].split("#")[1],listeUtilsDecomp[i].split("#")[2], new Boolean(false), new Boolean(false)};
+								modele.addRow(donnees);
+							}else{
+								/* Banni */
+								Object[] donnees = {listeUtilsDecomp[i].split("#")[0],listeUtilsDecomp[i].split("#")[1],listeUtilsDecomp[i].split("#")[2], new Boolean(false), new Boolean(true)};
+								modele.addRow(donnees);
+							}
+						}else{
+							/* Modérateur */
+							if(Integer.parseInt(listeUtilsDecomp[i].split("#")[4]) == 0){
+								/* Pas banni */
+								Object[] donnees = {listeUtilsDecomp[i].split("#")[0],listeUtilsDecomp[i].split("#")[1],listeUtilsDecomp[i].split("#")[2], new Boolean(true), new Boolean(false)};
+								modele.addRow(donnees);
+							}else{
+								/* Banni */
+								Object[] donnees = {listeUtilsDecomp[i].split("#")[0],listeUtilsDecomp[i].split("#")[1],listeUtilsDecomp[i].split("#")[2], new Boolean(true), new Boolean(true)};
+								modele.addRow(donnees);
+							}
+						}
+						
+					}
+					
+					/* on créer le tableau à partir du modèle */
+					   tableau = new JTable(modele);
+					   /* On masque la colone Id */
+						  tableau.getColumnModel().getColumn(0).setMinWidth(0);
+						  tableau.getColumnModel().getColumn(0).setMaxWidth(0);
+						  
+						  /* On bloque le redimensionnement des colones */
+						  tableau.getTableHeader().setReorderingAllowed(false);
+						  tableau.getTableHeader().setResizingAllowed(false);
+						  
+						  /* On ajoute un ascenceur au tableau */
+						   JScrollPane scrollPane = new JScrollPane(tableau);
+						   scrollPane.setBounds(270, 27, 856, 516);
+						   scrollPane.setBackground(new Color(238,238,238));
+						   scrollPane.setOpaque(true);
+						   intFenModifGrade.getContentPane().add(scrollPane, BorderLayout.NORTH);
+						   scrollPane.setViewportView(tableau);
+						   intFenModifGrade.setVisible(true);
+						   scrollPaneMesg.setVisible(false);
+						   listListeUsers.setVisible(false);
+						   btnModifUtil.setVisible(false);
+						   JButton btnTermine = new JButton("Termine");
+						   btnTermine.addActionListener(new ActionListener() {
+						   	public void actionPerformed(ActionEvent arg0) {
+						   		/* On parcours chaque ligne du tableau*/
+						   		int j; /* indice de parcours des lignes du tableau */
+						   		for(j=0;j<tableau.getRowCount();j++){
+						   			/* on regarde la valeur de la colone Modérateur */
+						   			if(tableau.getValueAt(j, 3).equals(true)){
+						   				/* L'utilisateur est coché comme modérateur */
+						   				/* On regarde si banni est coché */
+						   				if(tableau.getValueAt(j, 4).equals(true)){
+						   					/* L'utilisateur est banni aussi */
+						   					listeInvite += String.valueOf(tableau.getValueAt(j, 0))+"#1#1/";
+						   				}else{
+						   					listeInvite += String.valueOf(tableau.getValueAt(j, 0))+"#1#0/";
+						   				}	
+						   			}else{
+						   				/* On regarde si banni est coché */
+						   				if(tableau.getValueAt(j, 4).equals(true)){
+						   					/* L'utilisateur est banni aussi */
+						   					listeInvite += String.valueOf(tableau.getValueAt(j, 0))+"#0#1/";
+						   				}else{
+						   					listeInvite += String.valueOf(tableau.getValueAt(j, 0))+"#0#0/";
+						   				}
+						   			}
+						   		}
+						   		/* On envoi la demande de mise à jour des membres */
+						   		envoyerMesg("11");
+						   		/* Si le serveur répond favorablement on envoi l'identifiant du canal */
+						   		if(Integer.parseInt(lireMesg()) == 11){
+						   			/* on envoi l'identifiant du canal */
+						   			envoyerMesg(String.valueOf(canal.getId()));
+						   			/* On envoi ensuite la liste des infos */
+						   			envoyerMesg(listeInvite);
+						   			/* On attend la réponse du serveur */
+						   			if(Integer.parseInt(lireMesg()) == 1){
+						   				/* la modification est ok */
+						   				JOptionPane.showMessageDialog(panel, "Mise à jour des grades terminée","Mise à jour des grades",JOptionPane.INFORMATION_MESSAGE);
+						   				/* On affiche un message et on relance la page */
+						   				try {
+											FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, isModerateur,isPrive);
+											fenCanal.ouvrirFenetre();
+											fermerFenetre();
+										} catch (InterruptedException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
+						   			}else{
+						   				JOptionPane.showMessageDialog(panel, "ERREUR, la mise à jour des grades utilisateurs a échouée","ERREUR, mise à jour des grades",JOptionPane.ERROR_MESSAGE);
+						   			}
+						   		}else{
+						   			JOptionPane.showMessageDialog(panel, "ERREUR, la mise à jour des grades utilisateurs a échouée","ERREUR, mise à jour des grades",JOptionPane.ERROR_MESSAGE);
+						   		}
+						   		
+						   	}
+						   });
+						   btnTermine.setFont(new Font("Liberation Serif", Font.BOLD, 15));
+						   btnTermine.setBounds(845, 12, 131, 25);
+						   panel_1.add(btnTermine);
+				}
+			}
+		});
+		btnModifUtil.setFont(new Font("Liberation Serif", Font.BOLD, 15));
+		btnModifUtil.setBounds(840, 510, 139, 25);
+		panel.add(btnModifUtil);
+		
+		if(isPrive == true){
+			/* On affiche le bouton ajouter des invité seulement si il s'agit d'un canal privé */
+			JButton btnAddInvites = new JButton("Ajouter Invités");
+			btnAddInvites.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					/* On affiche la liste des utilisateurs pour modifier la liste des invités */
+				}
+			});
+			btnAddInvites.setFont(new Font("Liberation Serif", Font.BOLD, 15));
+			btnAddInvites.setBounds(840, 549, 139, 25);
+			panel.add(btnAddInvites);
+		}
+		
 		/* on affiche le bouton seulement si l'utilisateur est un modérateur du canal */
 		if(this.isModerateur == true){
 			btnModifTitre.setVisible(true);
+			btnModifUtil.setVisible(true);
 		}else{
 			btnModifTitre.setVisible(false);
+			btnModifUtil.setVisible(false);
 		}
 		
 		

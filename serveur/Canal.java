@@ -151,6 +151,37 @@ public class Canal implements Serializable{
 	}
 	
 	/**
+	 * Vide la liste des modérateurs sur le canal
+	 */
+	public void viderListeModerateurs(){
+		this.listeModerateurs = new ArrayList<Utilisateur>();
+	}
+	
+	/**
+	 * Accesseur sur la liste des utilisateurs bannis d'un canal
+	 * @return Liste des utilisateurs bannis du canal
+	 */
+	public ArrayList<Utilisateur> getBlackList(){
+		return this.blackList;
+	}
+	
+	/**
+	 * Regarde si un utilisateur est déjà connecté sur un canal
+	 * @param utilisateur Utilisateur qui veut rejoindre le canal
+	 * @return True si l'utilisateur est déjà connecté et False sinon
+	 */
+	public Boolean isConnect(Utilisateur utilisateur){
+		int i;
+		Boolean trouve = false;
+		for(i=0;i<this.listeUtilisateursConectes.size();i++){
+			if(utilisateur.equals(this.listeUtilisateursConectes.get(i))){
+				trouve = true;
+			}
+		}
+		return trouve;
+	}
+	
+	/**
 	 * Vérifie si un utilisateur a été bannis ou pas d'un canal
 	 * @param idUtilisateur Identifiant de l'utilisateur.
 	 * @return True si l'utilisateur a bien été banni, False si l'utilisateur n'a pas été banni.
@@ -160,6 +191,23 @@ public class Canal implements Serializable{
 		int i; /* indice de parcours de la liste */
 		for(i=0;i<this.blackList.size();i++){
 			if(this.blackList.get(i).getId() == idUtilisateur){
+				/* L'identifiant est bien dans la liste des bannis */
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Vérifie si un utilisateur est modérateur d'un canal ou pas
+	 * @param idUtilisateur Identifiant de l'utilisateur
+	 * @return True si il est modo et false sinon
+	 */
+	public Boolean isModo(int idUtilisateur){
+		/* On parcours la liste des utilisateurs bannis pour vérifier si l'utilisateur y est ou pas */
+		int i; /* indice de parcours de la liste */
+		for(i=0;i<this.listeModerateurs.size();i++){
+			if(this.listeModerateurs.get(i).getId() == idUtilisateur){
 				/* L'identifiant est bien dans la liste des bannis */
 				return true;
 			}

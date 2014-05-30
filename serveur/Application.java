@@ -99,7 +99,6 @@ public class Application implements Runnable {
 			requeteClient = Integer.parseInt(reqCli);
 			/* On identifie la requête client et on lui confirme que on a bien reçu sa requête en lui renvoyant l'identifiant */
 			if(requeteClient == 1){ /* Demande de modification de statut */
-				
 				/* on confirme la bonne réception de la demande */
 				envoyerMesg("1");
 				/* On attend les nouvelles infos sous forme idUser/statut/justif */
@@ -323,7 +322,12 @@ public class Application implements Runnable {
 				for(i=0;i<this.serveur.getListeCanaux().size();i++){
 					if(this.serveur.getListeCanaux().get(i).getId() == idCanal){
 						trouve = true;
-						infosCanal = String.valueOf(this.serveur.getListeCanaux().get(i).getId())+"/"+this.serveur.getListeCanaux().get(i).getTitre();
+						/* on regarde si il s'agit d'un canal privé ou pas */
+						if(this.serveur.getListeCanaux().get(i) instanceof CanalPrive){
+							infosCanal = "1"+"/"+String.valueOf(this.serveur.getListeCanaux().get(i).getId())+"/"+this.serveur.getListeCanaux().get(i).getTitre();
+						}else{
+							infosCanal = "0"+"/"+String.valueOf(this.serveur.getListeCanaux().get(i).getId())+"/"+this.serveur.getListeCanaux().get(i).getTitre();
+						}
 						int j;
 						/* on regarde si l'utilisateur est modérateur du canal */
 						for(j=0;j<this.serveur.getListeCanaux().get(i).getListeModerateurs().size();j++){
@@ -343,14 +347,113 @@ public class Application implements Runnable {
 						envoyerMesg("1");
 					}
 					envoyerMesg(infosCanal);
-					/* on ajoute l'utilisateur à la liste des connectés */
-					this.serveur.getCanal(idCanal).getListeConnectes().add(this.serveur.getUtilisateur(idUtil));
+					/* on ajoute l'utilisateur à la liste des connectés si il n'y est pas déjà */
+					if(this.serveur.getCanal(idCanal).isConnect(this.serveur.getUtilisateur(idUtil))== false){
+						this.serveur.getCanal(idCanal).getListeConnectes().add(this.serveur.getUtilisateur(idUtil));
+					}
 				}else{
 					/* impossible de rejoindre le canal */
 					envoyerMesg("0");
 				}
 			}
-		}
+			if(requeteClient == 9){ /* Déco d'un canal */
+				/* on confirme la réception de la demande */
+				envoyerMesg("9");
+				/* On attend l'id canal et l'id utilisateur : idCanal#idUtil */
+				String ids = lireMesg();
+				int idCanal = Integer.parseInt(ids.split("#")[0]);
+				int idUtil = Integer.parseInt(ids.split("#")[1]);
+				/* On recherche le canal */
+				if(this.serveur.getCanal(idCanal) != null){
+					/* on a trouvé le canal on supprime l'utilisateur de la liste des connectés */
+					int i;
+					Boolean trouve = false;
+					for(i=0;i<this.serveur.getCanal(idCanal).getListeConnectes().size();i++){
+						if(this.serveur.getUtilisateur(idUtil) == this.serveur.getCanal(idCanal).getListeConnectes().get(i)){
+							/* on a trouvé l'utilisateur on le supprime */
+							this.serveur.getCanal(idCanal).getListeConnectes().remove(i);
+							trouve = true;
+						}
+					}
+					if(trouve != true){
+						/* l'utilisateur n'a pas été trouvé */
+						envoyerMesg("0");
+					}else{
+						envoyerMesg("1");
+					}
+				}else{
+					envoyerMesg("0");
+				}
+			}
+			if(requeteClient == 10){ /*Demande de la liste des utilisateurs d'un canal avec leur grade */
+				
+				/* on confirme la bonne réception de la requête */
+				envoyerMesg("10");
+				/* On demande l'id canal */
+				int idCanal = Integer.parseInt(lireMesg());
+				/* On envoi la liste des utilisateurs (id#nom#prenom) séparés par des / */
+				String utilisateurs = "";
+				int i;
+				for(i=0;i<this.serveur.getCanal(idCanal).getListeConnectes().size();i++){
+					if(this.serveur.getCanal(idCanal).isModo(this.serveur.getCanal(idCanal).getListeConnectes().get(i).getId())== true){
+						/* L'utilisateur est modérateur */
+						/* On regarde si il est banni */
+						if(this.serveur.getCanal(idCanal).isBanni(this.serveur.getCanal(idCanal).getListeConnectes().get(i).getId())== true){
+							/* il est banni */
+							utilisateurs += String.valueOf(this.serveur.getCanal(idCanal).getListeConnectes().get(i).getId())+"#"+this.serveur.getCanal(idCanal).getListeConnectes().get(i).getNom()+"#"+this.serveur.getCanal(idCanal).getListeConnectes().get(i).getPrenom()+"#1#1/";
+						}else{
+							utilisateurs += String.valueOf(this.serveur.getCanal(idCanal).getListeConnectes().get(i).getId())+"#"+this.serveur.getCanal(idCanal).getListeConnectes().get(i).getNom()+"#"+this.serveur.getCanal(idCanal).getListeConnectes().get(i).getPrenom()+"#1#0/";
+						}
+					}else{
+						/* il n'est pas modo */
+						/* On regarde si il est banni */
+						if(this.serveur.getCanal(idCanal).isBanni(this.serveur.getCanal(idCanal).getListeConnectes().get(i).getId())== true){
+							/* il est banni */
+							utilisateurs += String.valueOf(this.serveur.getCanal(idCanal).getListeConnectes().get(i).getId())+"#"+this.serveur.getCanal(idCanal).getListeConnectes().get(i).getNom()+"#"+this.serveur.getCanal(idCanal).getListeConnectes().get(i).getPrenom()+"#0#1/";
+						}else{
+							utilisateurs += String.valueOf(this.serveur.getCanal(idCanal).getListeConnectes().get(i).getId())+"#"+this.serveur.getCanal(idCanal).getListeConnectes().get(i).getNom()+"#"+this.serveur.getCanal(idCanal).getListeConnectes().get(i).getPrenom()+"#0#0/";
+						}
+					}
+					
+				}
+				envoyerMesg(utilisateurs);
+			}
+			if(requeteClient == 11){ /* Modification des grades utilisateurs sur un canal */
+				/* on confirme la demande */
+				envoyerMesg("11");
+				/* on récupère l'identifiant du canal */
+				int idCanal = Integer.parseInt(lireMesg());
+				/* On récupère les infos */
+				String infos = lireMesg();
+				/* On décompose les infos par utilisateurs */
+				String infosUtil[] = infos.split("/");
+				/* On va effectuer le traitement nécessaire pour chaques utilisateur */
+				/* On vide dabord la liste des moderateurs */
+				this.serveur.getCanal(idCanal).viderListeModerateurs();
+				/* pour chaques utilisateur on regarde dabord s'il est banni (prioritaire) */
+				int i;
+				for(i=0;i<infosUtil.length;i++){
+					if(Integer.parseInt(infosUtil[i].split("#")[2]) == 1){
+						/* si il est banni on l'ajoute à la blacklist et on le supprime de la liste des connectés */
+						this.serveur.getCanal(idCanal).getBlackList().add(this.serveur.getUtilisateur(Integer.parseInt(infosUtil[i].split("#")[0])));
+						int j;
+						for(j=0;j<this.serveur.getCanal(idCanal).getListeConnectes().size();j++){
+							if(this.serveur.getCanal(idCanal).getListeConnectes().get(j).getId() ==Integer.parseInt(infosUtil[i].split("#")[0]) ){
+								this.serveur.getCanal(idCanal).getListeConnectes().remove(j);
+							}
+						}
+						
+					}else{
+						/* Si il n'est pas banni on regarde si il est modérateur et si oui on l'ajoute */
+						if(Integer.parseInt(infosUtil[i].split("#")[1]) == 1){
+							this.serveur.getCanal(idCanal).getListeModerateurs().add(this.serveur.getUtilisateur(Integer.parseInt(infosUtil[i].split("#")[0])));
+						}
+					}
+				}
+				envoyerMesg("1");
+			}
+			
+		} /* fin de la boucle infinie */
 		
 	}
 

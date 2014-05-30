@@ -31,6 +31,8 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 
 import serveur.Canal;
+import serveur.CanalPrive;
+import serveur.CanalPublic;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -317,7 +319,7 @@ public class FenAccueil {
 					/* On envoie l'identifiant de l'utilisateur */
 					envoyerMesg(String.valueOf(utilisateur.getId()));
 					/* On attend la liste des canaux que l'on va décomposée et stockée dans une Map composé de l'identifiant du canal et de son nom */
-					final Map<Integer, String> canauxDispo = new HashMap<Integer, String>();
+					final ArrayList<String> canauxDispo = new ArrayList<String>();
 					int i; /* indice de parcours de la liste */
 					String listeCanaux;
 					String[] listeCanauxDecomp;
@@ -327,7 +329,7 @@ public class FenAccueil {
 					nbCanaux = listeCanauxDecomp.length;
 					/* On ajoute les canaux dans la Map */
 					for(i=0;i<nbCanaux;i++){
-						canauxDispo.put(Integer.parseInt(listeCanauxDecomp[i].split("#")[0]), listeCanauxDecomp[i].split("#")[1]);
+						canauxDispo.add(i, listeCanauxDecomp[i].split("#")[0]);
 						/* Au passage on les ajoute a la JList */
 						listCanauxModele.addElement(listeCanauxDecomp[i].split("#")[1]);
 					}
@@ -353,7 +355,7 @@ public class FenAccueil {
 									JOptionPane.showMessageDialog(panel, "ERREUR, vous n'avez pas sélectionné de canal","Erreur pas de canal sélectionné",JOptionPane.ERROR_MESSAGE);
 								}else{
 									/* on envoie au serveur que l'on souhaite rejoindre le canal en lui envoyant l'identifiant du canal */
-									envoyerMesg(String.valueOf(utilisateur.getId())+"#"+String.valueOf(index));
+									envoyerMesg(String.valueOf(utilisateur.getId())+"#"+canauxDispo.get(index));
 									/* On attend la réponse du serveur 0 : erreur / 1 : ok utilisateur / 2 : ok modérateur */
 									int rep = Integer.parseInt(lireMesg());
 									System.out.println("rep ="+rep);
@@ -363,28 +365,56 @@ public class FenAccueil {
 									}else{
 										/* Si c'est ok pour une connexion on récup les infos du canal */
 										String infosCanal = lireMesg();
+										/* si commence par 1 : privé si par 0 : public */
 										System.out.println("infos canl = "+infosCanal);
 										if(rep == 1){
 											/* ok utilisateur */
-											Canal canal = new Canal(Integer.parseInt(infosCanal.split("/")[0]), infosCanal.split("/")[1], null);
-											try {
-												FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, false);
-												fenCanal.ouvrirFenetre();
-												fermerFenetre();
-											} catch (InterruptedException e) {
-												// TODO Auto-generated catch block
-												e.printStackTrace();
+											if(Integer.parseInt(infosCanal.split("/")[0])==1){
+												CanalPrive canal = new CanalPrive(Integer.parseInt(infosCanal.split("/")[1]), infosCanal.split("/")[2], null,null);
+												try {
+													FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, false,true);
+													fenCanal.ouvrirFenetre();
+													fermerFenetre();
+												} catch (InterruptedException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+												}
+											}else{
+												CanalPublic canal = new CanalPublic(Integer.parseInt(infosCanal.split("/")[1]), infosCanal.split("/")[2], null);
+												try {
+													FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, false,false);
+													fenCanal.ouvrirFenetre();
+													fermerFenetre();
+												} catch (InterruptedException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+												}
 											}
+											
+											
 										}else{
 											/* ok modérateur */
-											Canal canal = new Canal(Integer.parseInt(infosCanal.split("/")[0]), infosCanal.split("/")[1], null);
-											try {
-												FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, true);
-												fenCanal.ouvrirFenetre();
-												fermerFenetre();
-											} catch (InterruptedException e) {
-												// TODO Auto-generated catch block
-												e.printStackTrace();
+											System.out.println("On rentre en modo");
+											if(Integer.parseInt(infosCanal.split("/")[0])==1){
+												CanalPrive canal = new CanalPrive(Integer.parseInt(infosCanal.split("/")[1]), infosCanal.split("/")[2], null,null);
+												try {
+													FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, true,true);
+													fenCanal.ouvrirFenetre();
+													fermerFenetre();
+												} catch (InterruptedException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+												}
+											}else{
+												CanalPublic canal = new CanalPublic(Integer.parseInt(infosCanal.split("/")[1]), infosCanal.split("/")[2], null);
+												try {
+													FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, true,false);
+													fenCanal.ouvrirFenetre();
+													fermerFenetre();
+												} catch (InterruptedException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+												}
 											}
 										}
 									}

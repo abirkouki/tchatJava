@@ -17,12 +17,15 @@ Projet Java STRI 2014
 	- Rejoindre un canal
 	- Afficher et actualiser la liste des utilisateurs présents sur un canal
 	- Modifier le titre d'un canal
+	- Bannir un utilisateur canal
+	- Promote/Dépromote un utilisateur canal
+	- Quitter un canal nous efface de la liste des mecs connectés sur le canal
 
 - Ce qui doit encore être fait (code + IHM) :
-    - Bannir/Débannir un utilisateur (appli et canal)
+    - Modifier la liste des inivtés sur un canal privé (*)
+    - Administration de l'appli (*)
 	- Crypter les passwords
 	- Envoyer un message privé
-	- Quitter un canal -> influe sur la liste des mecs présents sur un canal (*)
 	- Gestion des canaux ouverts (page utilisateur) (*)
 	- Rendre les IHM redimensionnable et que sa merde pas
 	- Gérer la liste des mecs connectés en cas de déconnexion ou de click sur la croix (*)
