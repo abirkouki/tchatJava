@@ -308,10 +308,10 @@ public class FenInscription {
 					erreur = true;
 					libErreur.setText("ERREUR : Votre confirmation de mot de passe n'est pas identique au mot de passe");
 				}
-				/* On vérifie que il n'y a pas de / dans les saisie du l'utilisateur */
-				if(saiNom.getText().contains("/") || saiPrenom.getText().contains("/") || saiLogin.getText().contains("/")){
+				/* On vérifie que il n'y a pas de / ou de # dans les saisie du l'utilisateur */
+				if(saiNom.getText().contains("/") || saiPrenom.getText().contains("/") || saiLogin.getText().contains("/") || saiNom.getText().contains("#") || saiPrenom.getText().contains("#") || saiLogin.getText().contains("#") || mdp.contains("#")){
 					erreur = true;
-					libErreur.setText("ERREUR : Vos informations ne peuvent pas contenir de  /");
+					libErreur.setText("ERREUR : Vos informations ne peuvent pas contenir de  / ou de #");
 				}
 				/* On vérifie la valeur de erreur */
 				if(erreur != true){

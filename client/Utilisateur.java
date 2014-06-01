@@ -180,5 +180,13 @@ public class Utilisateur implements Serializable {
 	public void setId(int id){
 		this.id = id;
 	}
+	
+	/**
+	 * Modifie le mot de passe d'un utilisateur
+	 * @param mdp Nouveau mot de passe de l'utilisateur
+	 */
+	public void setPass(String mdp){
+		this.motDePasse = mdp;
+	}
 
 }

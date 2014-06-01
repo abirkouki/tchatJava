@@ -342,6 +342,15 @@ public class FenAccueil {
 			btnAdmin.setVisible(true);
 		}
 		final JButton btnCompte = new JButton("Gestion du compte");
+		btnCompte.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				/* click sur le bouton gestion de compte permet de voir ses informations personnelles et de modifier son mot de passe */
+				/* On affiche la fenêtre de compte */
+				FenCompte fenCompte = new FenCompte(sockConnexion, utilisateur);
+				fenCompte.ouvrirFenetre();
+				fermerFenetre();
+			}
+		});
 		final JButton btnCreer = new JButton("Créer un canal");
 		final DefaultListModel listCanauxModele = new DefaultListModel();
 		

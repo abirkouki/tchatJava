@@ -470,6 +470,25 @@ public class Application implements Runnable {
 				/* On envoi la liste au client */
 				envoyerMesg(listeCanaux);
 			}
+			if(requeteClient == 13){ /* Demande de modification de mot de passe */
+				/* on atteste bonne réception de la demande */
+				envoyerMesg("13");
+				/* On récupère les infos */
+				String infos = lireMesg();
+				int idUtil = Integer.parseInt(infos.split("/")[0]);
+				String mdpOld = infos.split("/")[1];
+				String mdpNew = infos.split("/")[2];
+				/* on regarde si l'ancien mot de passe correspond */
+				if(this.serveur.getUtilisateur(idUtil).getPassword().equals(mdpOld)){
+					/* Les mot de passes correspondent on procède à la modification */
+					this.serveur.getUtilisateur(idUtil).setPass(mdpNew);
+					/* on envoi le message de confirmation */
+					envoyerMesg("1");
+				}else{
+					/* les mot de passes ne correspondent pas */
+					envoyerMesg("0");
+				}
+			}
 			
 		} /* fin de la boucle infinie */
 		
