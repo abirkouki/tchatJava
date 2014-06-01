@@ -20,15 +20,14 @@ Projet Java STRI 2014
 	- Bannir un utilisateur canal
 	- Promote/Dépromote un utilisateur canal
 	- Quitter un canal nous efface de la liste des mecs connectés sur le canal
+	- Gestion des canaux ouverts (page utilisateur)
 
 - Ce qui doit encore être fait (code + IHM) :
     - Modifier la liste des inivtés sur un canal privé (*)
     - Administration de l'appli (*)
 	- Crypter les passwords
 	- Envoyer un message privé
-	- Gestion des canaux ouverts (page utilisateur) (*)
 	- Rendre les IHM redimensionnable et que sa merde pas
-	- Gérer la liste des mecs connectés en cas de déconnexion ou de click sur la croix (*)
 	- Modélisation UML (Diagramme de classe bien commencé) (*)
 	- Dossier de conception (*)
 	- Manuel Utilisateur (*)
