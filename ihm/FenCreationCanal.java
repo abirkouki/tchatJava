@@ -391,10 +391,10 @@ public class FenCreationCanal {
 					/* si le titre n'est pas rentré, on informe l'utilisateur */
 					libInfo.setText("ERREUR, vous devez donner un titre à votre canal");
 				}else{
-					/* On teste maintenant, que le titre ne contient pas de / (caractère interdit) */
-					if(saiTitreCanal.getText().contains("/") == true){
-						/* si il y a un / dans le titre on informe l'utilisateur */
-						libInfo.setText("ERREUR, le titre ne doit pas contenir de /");
+					/* On teste maintenant, que le titre ne contient pas de / ni de # (caractère interdit) */
+					if(saiTitreCanal.getText().contains("/") == true || saiTitreCanal.getText().contains("#") == true){
+						/* si il y a un / ou un # dans le titre on informe l'utilisateur */
+						libInfo.setText("ERREUR, le titre ne doit pas contenir de / ou de #");
 					}else{
 						/* On regarde si il s'agit d'un canal public ou privé */
 						int type; /* type de canal 1:public 2:privé */

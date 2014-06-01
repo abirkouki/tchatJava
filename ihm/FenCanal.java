@@ -218,9 +218,9 @@ public class FenCanal{
 					/* On met à jour le titre */
 					/* On récupère le titre du canal */
 					String titre = lireMesg();
-					System.out.println("Mesg recu :"+titre);
+					//System.out.println("Mesg recu :"+titre);
 					this.saiTitre.setText(titre.split("/")[0]);
-					System.out.println("On a passé l'étape du titre");
+					//System.out.println("On a passé l'étape du titre");
 					/* On met à jour la liste des utilisateurs connectés sur le canal */
 					/* Les visiteurs ne sont pas affichés dans cette liste car ils ne sont pas membres */
 					/* On récupère la liste des utilisateurs du canal */
@@ -229,7 +229,7 @@ public class FenCanal{
 					}else{
 							
 							String[] utilCanalDecomp = titre.split("/")[1].split("#");
-							System.out.println(titre.split("/")[1]);
+							//System.out.println(titre.split("/")[1]);
 							this.listListeUsers.removeAll();
 							this.listListeUsers.setListData(utilCanalDecomp);
 					}

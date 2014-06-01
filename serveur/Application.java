@@ -243,28 +243,28 @@ public class Application implements Runnable {
 						String listeUsers="";
 						if(this.serveur.getListeCanaux().get(i).getListeConnectes().size()>0){
 								for(j=0;j<this.serveur.getListeCanaux().get(i).getListeConnectes().size();j++){
-									System.out.println("for listeconnect");
+									//System.out.println("for listeconnect");
 									/* on vérifie si c'est un modérateur du canal */
 									int x;
 									Boolean moderateur = false;
 									for(x=0;x<this.serveur.getListeCanaux().get(i).getListeModerateurs().size();x++){
-										System.out.println("for listMod");
+										//System.out.println("for listMod");
 										if(this.serveur.getListeCanaux().get(i).getListeConnectes().get(j) == this.serveur.getListeCanaux().get(i).getListeModerateurs().get(x)){
-											System.out.println("Modo trouvé");
+											//System.out.println("Modo trouvé");
 											moderateur = true;
 										}
 									}
 									if(moderateur == true){
-										System.out.println("Modo on add");
+										//System.out.println("Modo on add");
 										listeUsers += this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getNom()+" "+this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getPrenom()+" (Modérateur)#";
 									}else{
-										System.out.println("Pad modo on add");
+										//System.out.println("Pad modo on add");
 										listeUsers += this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getNom()+" "+this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getPrenom()+"#";
 									}
 								}
-								System.out.println(listeUsers);
+								//System.out.println(listeUsers);
 								envoyerMesg(this.serveur.getListeCanaux().get(i).getTitre()+"/"+listeUsers);
-								System.out.println("on a envoyé");
+								//System.out.println("on a envoyé");
 						}else{
 							envoyerMesg(this.serveur.getListeCanaux().get(i).getTitre()+"/"+"0");
 						}
@@ -451,6 +451,24 @@ public class Application implements Runnable {
 					}
 				}
 				envoyerMesg("1");
+			}
+			if(requeteClient == 12){ /* Demande des canaux ouverts pour un utilisateur */
+				/* On cofirme la bonne réception de la demande */
+				envoyerMesg("12");
+				/* On récupère l'identifiant de l'utilisateur */
+				int idUtil = Integer.parseInt(lireMesg());
+				/* On parcours la liste des canaux et on cherche sil'utilisateur est connecté dessus */
+				int i; /* indice de parcours de la liste des canaux */
+				String listeCanaux = ""; /* chaine qui va contenir la liste des canaux sur lesquels l'utilisateur est connecté */
+				for(i=0;i<this.serveur.getListeCanaux().size();i++){
+					/* pour chaque canal on regarde si l'utilisateur est connecté dessus */
+					if(this.serveur.getListeCanaux().get(i).isConnect(this.serveur.getUtilisateur(idUtil)) == true){
+						/* L'utilisateur est connecté sur le canal , on ajoute le canal à la liste */
+						listeCanaux += String.valueOf(this.serveur.getListeCanaux().get(i).getId())+"#"+this.serveur.getListeCanaux().get(i).getTitre()+"/";
+					}
+				}
+				/* On envoi la liste au client */
+				envoyerMesg(listeCanaux);
 			}
 			
 		} /* fin de la boucle infinie */

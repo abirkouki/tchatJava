@@ -78,6 +78,11 @@ public class FenAccueil {
 	private final JInternalFrame intFenRejCanal = new JInternalFrame("Rejoindre un canal");
 	
 	/**
+	 * Correspondance Index et Identifiant d'un canal pour la liste des canaux déjà ouvert
+	 */
+	private ArrayList<String> correspondanceIndexId;
+	
+	/**
 	 * Ouvre la fenêtre.
 	 */
 	public void ouvrirFenetre(){
@@ -143,6 +148,45 @@ public class FenAccueil {
 			System.out.println("Imposible d'envoyer un message au client");
 		}
 	}
+	
+	/**
+	 * Permet de récupérer et d'afficher dans la liste déroulante la liste des canaux ouverts par l'utilisateur
+	 * @param idUtil Identifiant de l'utilisateur de l'application
+	 * @return La combo remplie si tout se passe bien et null sinon
+	 */
+	public JComboBox initListeCanaux(int idUtil){
+		/* On envoie au serveur une demande de récupération des cannaux sur lesquels l'utilisateur est connecté */
+		envoyerMesg("12");
+		/* On regarde si le serveur atteste bonne réception de notre demande */
+		if(Integer.parseInt(lireMesg()) == 12){
+			/* Serveur OK */
+			/* On envoi l'identifiant de l'utilisateur au serveur */
+			envoyerMesg(String.valueOf(idUtil));
+			/* On récupère la liste des canaux du serveur sous forme idCanal#nomCanal/idCanal#nomCanal */
+			String listeCanal = lireMesg();
+			if(listeCanal.compareTo("") == 0){
+				/* on renvoi une combo vide */
+				return(new JComboBox());
+			}
+			/* On décompose cette liste canal par canal */
+			String[] listeCanalDecomp = listeCanal.split("/");
+			/* On ajoute les canaux dans la combo prévue à cet effet et on réalise une correspondance idCanal/index dans une ArrayList */
+			JComboBox comboCanauxActifs = new JComboBox();
+			int i; /* indice de parcours du tableau des canaux */
+			this.correspondanceIndexId = new ArrayList<String>(); /* ArrayList qui va permettre la correspondance index/identifiant du canal */
+			/* on boucle pour remplir la combo */
+			for(i=0;i<listeCanalDecomp.length;i++){
+				/* Ajoute le nom du canal à la combo et on réalise la correspondance */
+				comboCanauxActifs.addItem(listeCanalDecomp[i].split("#")[1]);
+				this.correspondanceIndexId.add(i, listeCanalDecomp[i].split("#")[0]);
+			}
+			/* on retourne la combo */
+			return comboCanauxActifs;
+		}else{
+			/* Serveur non OK*/
+			return null;
+		}
+	}
 
 	/**
 	 * Initialise la fenêtre.
@@ -202,6 +246,14 @@ public class FenAccueil {
 		saiJustification.setVisible(false);
 		btnJustification.setVisible(false);
 		libJustification.setVisible(false);
+		final JComboBox comboCanauxActifs = initListeCanaux(utilisateur.getId());
+		if(comboCanauxActifs != null){
+			comboCanauxActifs.setFont(new Font("Liberation Serif", Font.PLAIN, 17));
+			comboCanauxActifs.setBounds(12, 123, 275, 24);
+			panel.add(comboCanauxActifs);
+		}else{
+			JOptionPane.showMessageDialog(panel, "Erreur avec le remplissage de la liste des canaux","Erreur remplissage liste des canaux",JOptionPane.ERROR_MESSAGE);
+		}
 		
 		final JComboBox comboStatut = new JComboBox();
 		comboStatut.setFont(new Font("Liberation Serif", Font.PLAIN, 17));
@@ -499,15 +551,93 @@ public class FenAccueil {
 		btnDeconnexion.setBounds(871, 640, 139, 25);
 		panel.add(btnDeconnexion);
 		
-		JComboBox comboCanauxActifs = new JComboBox();
-		comboCanauxActifs.setFont(new Font("Liberation Serif", Font.PLAIN, 17));
-		comboCanauxActifs.setBounds(12, 123, 275, 24);
-		panel.add(comboCanauxActifs);
-		
 		JLabel libListeActifs = new JLabel("Liste des canaux actifs :");
 		libListeActifs.setFont(new Font("Liberation Serif", Font.BOLD, 17));
-		libListeActifs.setBounds(12, 84, 275, 27);
+		libListeActifs.setBounds(12, 84, 180, 27);
 		panel.add(libListeActifs);
+		
+		JButton btnRejoindreCanal = new JButton("Rejoindre");
+		btnRejoindreCanal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				/* On vérifie que l'index sélectionné est supérieur à 0 */
+				if(comboCanauxActifs.getSelectedIndex() >= 0){
+					/* on envoie une demande au serveur */
+					envoyerMesg("8");
+					/* On attend la réponse du serveur */
+					if(Integer.parseInt(lireMesg()) == 8){
+						/* on envoi l'id canal et l'id utilisateur */
+						envoyerMesg(String.valueOf(utilisateur.getId())+"#"+correspondanceIndexId.get(comboCanauxActifs.getSelectedIndex()));
+						/* On attend la réponse du serveur 0 : erreur / 1 : ok utilisateur / 2 : ok modérateur */
+						int rep = Integer.parseInt(lireMesg());
+						System.out.println("rep ="+rep);
+						if(rep == 0){
+							/* erreur */
+							JOptionPane.showMessageDialog(panel, "ERREUR, impossible de rejoindre le canal","Erreur impossible de rejoindre le canal",JOptionPane.ERROR_MESSAGE);
+						}else{
+							/* Si c'est ok pour une connexion on récup les infos du canal */
+							String infosCanal = lireMesg();
+							/* si commence par 1 : privé si par 0 : public */
+							System.out.println("infos canl = "+infosCanal);
+							if(rep == 1){
+								/* ok utilisateur */
+								if(Integer.parseInt(infosCanal.split("/")[0])==1){
+									CanalPrive canal = new CanalPrive(Integer.parseInt(infosCanal.split("/")[1]), infosCanal.split("/")[2], null,null);
+									try {
+										FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, false,true);
+										fenCanal.ouvrirFenetre();
+										fermerFenetre();
+									} catch (InterruptedException x) {
+										// TODO Auto-generated catch block
+										x.printStackTrace();
+									}
+								}else{
+									CanalPublic canal = new CanalPublic(Integer.parseInt(infosCanal.split("/")[1]), infosCanal.split("/")[2], null);
+									try {
+										FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, false,false);
+										fenCanal.ouvrirFenetre();
+										fermerFenetre();
+									} catch (InterruptedException x) {
+										// TODO Auto-generated catch block
+										x.printStackTrace();
+									}
+								}
+								
+								
+							}else{
+								/* ok modérateur */
+								System.out.println("On rentre en modo");
+								if(Integer.parseInt(infosCanal.split("/")[0])==1){
+									CanalPrive canal = new CanalPrive(Integer.parseInt(infosCanal.split("/")[1]), infosCanal.split("/")[2], null,null);
+									try {
+										FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, true,true);
+										fenCanal.ouvrirFenetre();
+										fermerFenetre();
+									} catch (InterruptedException x) {
+										// TODO Auto-generated catch block
+										x.printStackTrace();
+									}
+								}else{
+									CanalPublic canal = new CanalPublic(Integer.parseInt(infosCanal.split("/")[1]), infosCanal.split("/")[2], null);
+									try {
+										FenCanal fenCanal = new FenCanal(sockConnexion, canal, utilisateur, true,false);
+										fenCanal.ouvrirFenetre();
+										fermerFenetre();
+									} catch (InterruptedException x) {
+										// TODO Auto-generated catch block
+										x.printStackTrace();
+									}
+								}
+							}
+						}
+					}
+				}else{
+					JOptionPane.showMessageDialog(panel, "ERREUR, vous n'avez pas sélectionné de canal dans la liste","Erreur index incorrect",JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		btnRejoindreCanal.setFont(new Font("Liberation Serif", Font.BOLD, 12));
+		btnRejoindreCanal.setBounds(193, 89, 86, 21);
+		panel.add(btnRejoindreCanal);
 		
 	}
 }
