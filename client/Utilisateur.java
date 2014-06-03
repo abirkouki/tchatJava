@@ -6,8 +6,8 @@ package client;
 import java.io.Serializable;
 
 /**
- * @author florian
- * Classe caractérisant un utilisateur de l'application cliente, caractérisé par son identifiant (attribué automatiquement à l'inscription), son nom, son prénom et son statut.
+ * @author STRI
+ * Classe caractérisant un utilisateur de l'application cliente, caractérisée par son identifiant (attribué automatiquement à l'inscription), son nom, son prénom et son statut.
  */
 public class Utilisateur implements Serializable {
 	
@@ -40,12 +40,12 @@ public class Utilisateur implements Serializable {
 	 * Statut d'un utilisateur
 	 * 0:En ligne
 	 * 1:Occupé
-	 * 2:Abscent
+	 * 2:Absent
 	 */
 	private int statut;
 	
 	/**
-	 * Justification du statut (Abscent).
+	 * Justification du statut (Absent).
 	 */
 	private String justification;
 	
@@ -61,8 +61,8 @@ public class Utilisateur implements Serializable {
 	
 
 	/**
-	 * Constrcuteur de la classe Utilisateur.
-	 * Par défaut quand on créer un utilisateur son statut est "En ligne"
+	 * Constructeur de la classe Utilisateur.
+	 * Par défaut quand on crée un utilisateur son statut est "En ligne"
 	 * @param id Identifiant (unique) qui représente un utilisateur, attribué automatiquement à l'inscription.
 	 * @param nom Nom d'un utilisateur, saisi pendant l'inscription.
 	 * @param prenom Prénom de l'utilisateur, saisi pendant l'inscription.
@@ -73,8 +73,8 @@ public class Utilisateur implements Serializable {
 	public Utilisateur(int id,String login, String nom, String prenom, String motDePasse, int grade) {
 		/* Par défaut le statut est "En ligne" -> 0 */
 		this.statut = 0;
-		/* L'utilisateur ne peut justifier que un statut "Abscent" -> 3, donc on initialise la justification à null */
-		this.justification = null;
+		/* L'utilisateur ne peut justifier qu'un statut "Absent" -> 3, donc on initialise la justification à null */
+		this.justification = "";
 		/* On affecte aux autres attributs les valeurs passées en paramètre */
 		this.id = id;
 		this.nom = nom;
@@ -93,6 +93,27 @@ public class Utilisateur implements Serializable {
 	public int getStatut() {
 		return statut;
 	}
+	
+	/**
+	 * Retourne la version en chaine de caractères du statut d'un utilisateur.
+	 * @param statut Statut version numérique de l'utilisateur
+	 * @return La version chaine de caractères du statut utilisateur ou null si le statut est incorrect
+	 */
+	public String stringStatut(int statut){
+		if(statut == 0){
+			return "En ligne";
+		}else{
+			if(statut == 1){
+				return "Occupé";
+			}else{
+				if(statut == 2){
+					return "Absent : "+this.justification;
+				}else{
+					return null;
+				}
+			}
+		}
+	}
 
 	/**
 	 * Affecte un nouveau statut à un utilisateur.
@@ -103,16 +124,16 @@ public class Utilisateur implements Serializable {
 	}
 
 	/**
-	 * Retourne la justification qu'un utilisateur a donné pour son statut "Abscent".
-	 * @return Justification à un statut "Abscent".
+	 * Retourne la justification qu'un utilisateur a donné pour son statut "Absent".
+	 * @return Justification à un statut "Absent".
 	 */
 	public String getJustification() {
 		return justification;
 	}
 
 	/**
-	 * Affecte une justification à un statut "Abscent".
-	 * @param justification justification saisie par l'utilisateur suite au passage de son statut sur "Abscent".
+	 * Affecte une justification à un statut "Absent".
+	 * @param justification justification saisie par l'utilisateur suite au passage de son statut sur "Absent".
 	 */
 	public void setJustification(String justification) {
 		this.justification = justification;
@@ -172,13 +193,6 @@ public class Utilisateur implements Serializable {
 	 */
 	public void setGrade(int grade){
 		this.grade = grade;
-	}
-	
-	/**
-	 * 
-	 */
-	public void setId(int id){
-		this.id = id;
 	}
 	
 	/**

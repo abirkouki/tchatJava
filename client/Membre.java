@@ -1,11 +1,11 @@
 /**
- * 
+ * Package contenant toutes les classes clients
  */
 package client;
 
 /**
- * @author florian
- *
+ * Un membre est un utilisateur qui est identifié sur l'application, il a donc réalisé une inscription au préalable.
+ * @author STRI
  */
 public class Membre extends Utilisateur {
 
@@ -24,6 +24,7 @@ public class Membre extends Utilisateur {
 	 * @param grade Grade de l'utilisateur
 	 */
 	public Membre(int id, String login, String nom, String prenom, String motDePasse, int grade) {
+		/* On fait appel au constructeur de la classe supérieure */
 		super(id, login, nom, prenom, motDePasse, grade);
 	}
 }

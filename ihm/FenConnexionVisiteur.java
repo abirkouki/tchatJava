@@ -1,3 +1,6 @@
+/**
+ * Package contenant toutes les fenêtres de l'application
+ */
 package ihm;
 
 import java.awt.EventQueue;
@@ -27,8 +30,16 @@ import client.Utilisateur;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+/**
+ * Fenêtre permettant de réaliser une connexion en tant que visiteur (sans être identifié)
+ * @author STRI
+ *
+ */
 public class FenConnexionVisiteur {
 
+	/**
+	 * Frame principale de l'application
+	 */
 	private JFrame frame;
 	
 	/**
@@ -42,10 +53,18 @@ public class FenConnexionVisiteur {
 	private BufferedReader lire = null;
 	
 	/**
-	 * Bufer d'écriture pour envoyer des messages au serveur
+	 * Buffer d'écriture pour envoyer des messages au serveur
 	 */
 	private PrintWriter ecrire;
+	
+	/**
+	 * Champ de saisie du nom de l'utiliateur
+	 */
 	private JTextField saiNom;
+	
+	/**
+	 * Champ de saisie du prénom de l'utilisateur
+	 */
 	private JTextField saiPrenom;
 
 	/**
@@ -92,7 +111,7 @@ public class FenConnexionVisiteur {
 			ecrire.flush();
 		}
 		catch(IOException exception){
-			System.out.println("Imposible d'envoyer un message au client");
+			System.out.println("Impossible d'envoyer un message au client");
 		}
 	}
 
@@ -165,7 +184,7 @@ public class FenConnexionVisiteur {
 						libInfo.setText("ERREUR, les caractères # et / sont interdits");
 					}else{
 						envoyerMesg("1");
-						/* On créer le canal par défaut */
+						/* On crée le canal par défaut */
 						Canal canal = new Canal(0, "Par défaut", null);
 						Utilisateur utilisateur = new Utilisateur(-1, "visit", saiNom.getText(), saiPrenom.getText(), "visit", 0);
 						try {

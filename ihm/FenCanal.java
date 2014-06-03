@@ -1,3 +1,6 @@
+/**
+ * Package contenant toutes les fenêtres de l'application
+ */
 package ihm;
 
 import java.awt.BorderLayout;
@@ -34,6 +37,11 @@ import com.sun.org.apache.bcel.internal.generic.LUSHR;
 import serveur.Canal;
 import client.Utilisateur;
 
+/**
+ * Fenêtre d'un canal.
+ * @author STRI
+ *
+ */
 public class FenCanal{
 	
 	/**
@@ -47,7 +55,7 @@ public class FenCanal{
 	private Socket sockConnexion;
 	
 	/**
-	 * Permet de savoir si il s'agit d'un canal privé ou pas
+	 * Permet de savoir s'il s'agit d'un canal privé ou pas
 	 */
 	private Boolean isPrive;
 	
@@ -97,7 +105,7 @@ public class FenCanal{
 	private JTable tableau;
 	
 	/**
-	 * Chaine contenant les identifiants des utilisateurs connectés sur le canal
+	 * Chaîne contenant les identifiants des utilisateurs connectés sur le canal
 	 */
 	private String listeInvite = "";
 	
@@ -182,7 +190,7 @@ public class FenCanal{
 			ecrire.flush();
 		}
 		catch(IOException exception){
-			System.out.println("Imposible d'envoyer un message au client");
+			System.out.println("Impossible d'envoyer un message au client");
 		}
 	}
 		/**
@@ -198,7 +206,7 @@ public class FenCanal{
 				if(Integer.parseInt(lireMesg()) == 5){
 					/* On envoie l'identifiant du canal */
 					envoyerMesg(String.valueOf(canal.getId()));
-					/* On attend la réponse du serveur avec tout les messages */
+					/* On attend la réponse du serveur avec tous les messages */
 					String messages = lireMesg();
 					
 					
@@ -212,7 +220,7 @@ public class FenCanal{
 					for(i=0;i<nbMessages;i++){
 						messages += messagesDecomp[i]+newLine;
 					}
-					/* On ajoute la nouvelle chaine au champs texte */
+					/* On ajoute la nouvelle chaîne au champs texte */
 					this.txtTchat.setText(messages);
 					
 					/* On met à jour le titre */
@@ -254,7 +262,7 @@ public class FenCanal{
 		panel.setLayout(null);
 		
 		final JScrollPane scrollPaneMesg = new JScrollPane();
-		scrollPaneMesg.setBounds(23, 27, 747, 547);
+		scrollPaneMesg.setBounds(23, 27, 621, 547);
 		panel.add(scrollPaneMesg);
 		this.txtTchat = new JTextPane();
 		scrollPaneMesg.setViewportView(txtTchat);
@@ -263,7 +271,7 @@ public class FenCanal{
 		
 		listListeUsers = new JList();
 		listListeUsers.setBackground(UIManager.getColor("ColorChooser.swatchesDefaultRecentColor"));
-		listListeUsers.setBounds(782, 65, 228, 433);
+		listListeUsers.setBounds(656, 65, 354, 433);
 		panel.add(listListeUsers);
 		
 		saiMesg = new JTextField();
@@ -278,11 +286,11 @@ public class FenCanal{
     					if(saiMesg.getText().contains("#")){
     						JOptionPane.showMessageDialog(panel, "ERREUR, le caractère # est interdit !","ERREUR, caractère interdit",JOptionPane.ERROR_MESSAGE);
     					}else{
-    						/* on envoie une requete d'envoie message au serveur */
+    						/* on envoie une requête d'envoie message au serveur */
     						envoyerMesg("4");
     						/* On attend la réponse du serveur */
     						if(Integer.parseInt(lireMesg()) == 4){
-    							/* On regarde si il s'agit d'un visiteur */
+    							/* On regarde s'il s'agit d'un visiteur */
     							if(utilisateur.getId() == -1){
     								envoyerMesg(String.valueOf(utilisateur.getId())+"#"+utilisateur.getNom()+"#"+utilisateur.getPrenom()+"#"+String.valueOf(canal.getId())+"#"+saiMesg.getText());
     							}else{
@@ -305,7 +313,7 @@ public class FenCanal{
 			}
 		});
 		saiMesg.setFont(new Font("Liberation Serif", Font.PLAIN, 17));
-		saiMesg.setBounds(23, 586, 621, 35);
+		saiMesg.setBounds(23, 586, 492, 35);
 		panel.add(saiMesg);
 		saiMesg.setColumns(10);
 		
@@ -317,7 +325,7 @@ public class FenCanal{
 		JButton btnQuitter = new JButton("Quitter Canal");
 		btnQuitter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				/* on envoi au serveur une demande de déconnexion d'un canal */
+				/* on envoie au serveur une demande de déconnexion d'un canal */
 				envoyerMesg("9");
 				/* on attend la réponse du serveur */
 				if(Integer.parseInt(lireMesg())==9){
@@ -327,7 +335,7 @@ public class FenCanal{
 					if(Integer.parseInt(lireMesg()) == 1){
 						/* Déconnexion ok */
 						/* on retourne sur la page d'accueil */
-						FenAccueil fenAcc = new FenAccueil(sockConnexion,String.valueOf(utilisateur.getId())+"/"+utilisateur.getLogin()+"/"+utilisateur.getNom()+"/"+utilisateur.getPrenom()+"/"+utilisateur.getPassword()+"/"+String.valueOf(utilisateur.getGrade()));
+						FenAccueil fenAcc = new FenAccueil(sockConnexion,utilisateur);
 						fenAcc.ouvrirFenetre();
 						fermerFenetre();
 					}else{
@@ -347,7 +355,7 @@ public class FenCanal{
 		btnAccueil.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				/* On ferme la fenêtre du canal et on affiche la page d'accueil */
-				FenAccueil fenAcc = new FenAccueil(sockConnexion,String.valueOf(utilisateur.getId())+"/"+utilisateur.getLogin()+"/"+utilisateur.getNom()+"/"+utilisateur.getPrenom()+"/"+utilisateur.getPassword()+"/"+String.valueOf(utilisateur.getGrade()));
+				FenAccueil fenAcc = new FenAccueil(sockConnexion,utilisateur);
 				fenAcc.ouvrirFenetre();
 				fermerFenetre();
 			}
@@ -365,7 +373,7 @@ public class FenCanal{
 					if(saiMesg.getText().contains("#")){
 						JOptionPane.showMessageDialog(panel, "ERREUR, le caractère # est interdit !","ERREUR, caractère interdit",JOptionPane.ERROR_MESSAGE);
 					}else{
-						/* on envoie une requete d'envoie message au serveur */
+						/* on envoie une requête d'envoie message au serveur */
 						envoyerMesg("4");
 						/* On attend la réponse du serveur */
 						if(Integer.parseInt(lireMesg()) == 4){
@@ -404,7 +412,7 @@ public class FenCanal{
     					if(saiMesg.getText().contains("#")){
     						JOptionPane.showMessageDialog(panel, "ERREUR, le caractère # est interdit !","ERREUR, caractère interdit",JOptionPane.ERROR_MESSAGE);
     					}else{
-    						/* on envoie une requete d'envoie message au serveur */
+    						/* on envoie une requête d'envoie message au serveur */
     						envoyerMesg("4");
     						/* On attend la réponse du serveur */
     						if(Integer.parseInt(lireMesg()) == 4){
@@ -425,7 +433,7 @@ public class FenCanal{
 			}
 		});
 		btnEnvoyer.setFont(new Font("Liberation Serif", Font.BOLD, 15));
-		btnEnvoyer.setBounds(656, 592, 117, 25);
+		btnEnvoyer.setBounds(527, 592, 117, 25);
 		panel.add(btnEnvoyer);
 		
 		final JButton btnModifTitre = new JButton("Editer");
@@ -434,8 +442,8 @@ public class FenCanal{
 				/* click sur le bouton éditer */
 				if(modifTitre == false){
 					/* on va modifier le titre */
-					saiTitre.setEditable(true); /* on rend le champs de saisie du titre éditable */
-					saiTitre.requestFocus(); /* on focus le champs de saisie du titre */
+					saiTitre.setEditable(true); /* on rend le champ de saisie du titre éditable */
+					saiTitre.requestFocus(); /* on focus le champ de saisie du titre */
 					btnModifTitre.setText("Valider"); /* on modifie le titre du bouton */
 					modifTitre = true;
 				}else{
@@ -448,13 +456,13 @@ public class FenCanal{
 						/* on affiche un mesg d'erreur */
 						JOptionPane.showMessageDialog(panel, "ERREUR, le titre ne peut pas contenir de # ou de /","ERREUR, titre incorrect",JOptionPane.ERROR_MESSAGE);
 					}else{
-						/* on envoie la requete au serveur */
+						/* on envoie la requête au serveur */
 						envoyerMesg("6");
 						if(Integer.parseInt(lireMesg()) == 6){
 							/* le serveur a répondu */
-							envoyerMesg("1"); /* on envoi une demande de modification de titre */
+							envoyerMesg("1"); /* on envoie une demande de modification de titre */
 							if(Integer.parseInt(lireMesg()) == 1){
-								/* le serveur valide la demande, on lui envoi les infos idCanal#titre */
+								/* le serveur valide la demande, on lui envoie les infos idCanal#titre */
 								envoyerMesg(String.valueOf(canal.getId())+"#"+saiTitre.getText());
 								if(Integer.parseInt(lireMesg()) == 1){
 									/* la modification a été effectuée avec succès */
@@ -474,14 +482,15 @@ public class FenCanal{
 			}
 		});
 		btnModifTitre.setFont(new Font("Liberation Serif", Font.BOLD, 12));
-		btnModifTitre.setBounds(779, 7, 73, 17);
+		btnModifTitre.setBounds(656, 7, 73, 17);
 		panel.add(btnModifTitre);
 		
 		saiTitre = new JTextField();
+		saiTitre.setBorder(null);
 		saiTitre.setFont(new Font("Liberation Serif", Font.PLAIN, 17));
 		saiTitre.setEditable(false);
 		saiTitre.setBackground(UIManager.getColor("CheckBox.background"));
-		saiTitre.setBounds(293, 0, 477, 27);
+		saiTitre.setBounds(293, 0, 351, 27);
 		panel.add(saiTitre);
 		saiTitre.setColumns(10);
 		saiTitre.setText(this.canal.getTitre());
@@ -499,7 +508,7 @@ public class FenCanal{
 		final List<Object> donneesInit = new ArrayList<Object>();
 		
 	   
-	   /* On prépare le type des colones */
+	   /* On prépare le type des colonnes */
 	   Class[] typeColones = {String.class, String.class, String.class, Boolean.class, Boolean.class};
 	   
 	   
@@ -552,7 +561,7 @@ public class FenCanal{
 			/* Pour ajouter une ligne au Model */
 			public void addRow(Object[] donnees){
 				this.donnees.add(donnees);
-				/* Pour que le changement dans les donnees soit pris en compte */
+				/* Pour que le changement dans les données soit pris en compte */
 				fireTableDataChanged(); 
 			}
 			
@@ -566,8 +575,8 @@ public class FenCanal{
 	   /* On construit le modèle par défaut */
 	   final ModeleTableau modele = new ModeleTableau(donneesInit, typeColones);
 		
-		/* bouton permettant de modifier le grade des utilisateur sur le canal */
-		final JButton btnModifUtil = new JButton("Grades");
+		/* bouton permettant de modifier le grade des utilisateurs sur le canal */
+		final JButton btnModifUtil = new JButton("Modifier Grades");
 		btnModifUtil.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				/* on demande la liste des membres connectés sur le canal au serveur avec leur grade */
@@ -622,13 +631,13 @@ public class FenCanal{
 						
 					}
 					
-					/* on créer le tableau à partir du modèle */
+					/* on crée le tableau à partir du modèle */
 					   tableau = new JTable(modele);
-					   /* On masque la colone Id */
+					   /* On masque la colonne Id */
 						  tableau.getColumnModel().getColumn(0).setMinWidth(0);
 						  tableau.getColumnModel().getColumn(0).setMaxWidth(0);
 						  
-						  /* On bloque le redimensionnement des colones */
+						  /* On bloque le redimensionnement des colonnes */
 						  tableau.getTableHeader().setReorderingAllowed(false);
 						  tableau.getTableHeader().setResizingAllowed(false);
 						  
@@ -649,7 +658,7 @@ public class FenCanal{
 						   		/* On parcours chaque ligne du tableau*/
 						   		int j; /* indice de parcours des lignes du tableau */
 						   		for(j=0;j<tableau.getRowCount();j++){
-						   			/* on regarde la valeur de la colone Modérateur */
+						   			/* on regarde la valeur de la colonne Modérateur */
 						   			if(tableau.getValueAt(j, 3).equals(true)){
 						   				/* L'utilisateur est coché comme modérateur */
 						   				/* On regarde si banni est coché */
@@ -669,13 +678,14 @@ public class FenCanal{
 						   				}
 						   			}
 						   		}
-						   		/* On envoi la demande de mise à jour des membres */
+						   		/* On envoie la demande de mise à jour des membres */
+						   		/* On envoie la demande de mise à jour des membres */
 						   		envoyerMesg("11");
-						   		/* Si le serveur répond favorablement on envoi l'identifiant du canal */
+						   		/* Si le serveur répond favorablement on envoie l'identifiant du canal */
 						   		if(Integer.parseInt(lireMesg()) == 11){
-						   			/* on envoi l'identifiant du canal */
+						   			/* on envoie l'identifiant du canal */
 						   			envoyerMesg(String.valueOf(canal.getId()));
-						   			/* On envoi ensuite la liste des infos */
+						   			/* On envoie ensuite la liste des infos */
 						   			envoyerMesg(listeInvite);
 						   			/* On attend la réponse du serveur */
 						   			if(Integer.parseInt(lireMesg()) == 1){
@@ -706,11 +716,11 @@ public class FenCanal{
 			}
 		});
 		btnModifUtil.setFont(new Font("Liberation Serif", Font.BOLD, 15));
-		btnModifUtil.setBounds(840, 510, 139, 25);
+		btnModifUtil.setBounds(722, 510, 257, 25);
 		panel.add(btnModifUtil);
 		
 		if(isPrive == true){
-			/* On affiche le bouton ajouter des invité seulement si il s'agit d'un canal privé */
+			/* On affiche le bouton ajouter des invités seulement s'il s'agit d'un canal privé */
 			JButton btnAddInvites = new JButton("Ajouter Invités");
 			btnAddInvites.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {

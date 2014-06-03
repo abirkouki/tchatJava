@@ -1,3 +1,6 @@
+/**
+ * Package contenant toutes les fenêtres de l'application
+ */
 package ihm;
 
 import java.awt.EventQueue;
@@ -17,6 +20,10 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
+import client.Administrateur;
+import client.Membre;
+import client.Utilisateur;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
@@ -27,6 +34,11 @@ import java.net.Socket;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+/**
+ * Fenêtre permettant à un utilisateur qui s'est inscrit sur le site de s'identifier
+ * @author STRI
+ *
+ */
 public class FenConnexion {
 
 	/**
@@ -112,7 +124,7 @@ public class FenConnexion {
 			ecrire.flush();
 		}
 		catch(IOException exception){
-			System.out.println("Imposible d'envoyer un message au client");
+			System.out.println("Impossible d'envoyer un message au client");
 		}
 	}
 
@@ -170,7 +182,7 @@ public class FenConnexion {
     					erreur = true;
     					libInfo.setText("ERREUR : Vous devez saisir votre Login ET votre Mot de passe");
     				}else{
-	    				/* Si tous les champs sont bien remplis on envoie la demande de connexion au serveur : chaine de forme login/password */
+	    				/* Si tous les champs sont bien remplis on envoie la demande de connexion au serveur : chaîne de forme login/password */
 	    				envoyerMesg(login+"/"+pass);
 	    				if(erreur == false){
 	    					/* On attend la réponse du serveur 0 : : login ou mdp faux ou 1 : ok */
@@ -185,8 +197,14 @@ public class FenConnexion {
 	    						}else{
 	    							/* on récupère les infos de l'utilisateur */
 		    						String infosUtil = lireMesg();
-		    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
-		    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, infosUtil);
+		    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et le socket en paramètres */
+		    						Utilisateur utilisateur = null;
+		    						if(Integer.parseInt(infosUtil.split("/")[5]) == 2){
+		    							utilisateur = new Administrateur(Integer.parseInt(infosUtil.split("/")[0]), infosUtil.split("/")[1], infosUtil.split("/")[2], infosUtil.split("/")[3], infosUtil.split("/")[4], Integer.parseInt(infosUtil.split("/")[5]));
+		    						}else{
+		    							utilisateur = new Membre(Integer.parseInt(infosUtil.split("/")[0]), infosUtil.split("/")[1], infosUtil.split("/")[2], infosUtil.split("/")[3], infosUtil.split("/")[4], Integer.parseInt(infosUtil.split("/")[5]));
+		    						}
+		    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, utilisateur);
 		    						fenAccueil.ouvrirFenetre();
 		    						fermerFenetre();
 	    						}
@@ -219,7 +237,7 @@ public class FenConnexion {
     					erreur = true;
     					libInfo.setText("ERREUR : Vous devez saisir votre Login ET votre Mot de passe");
     				}else{
-	    				/* Si tous les champs sont bien remplis on envoie la demande de connexion au serveur : chaine de forme login/password */
+	    				/* Si tous les champs sont bien remplis on envoie la demande de connexion au serveur : chaîne de forme login/password */
 	    				envoyerMesg(login+"/"+pass);
 	    				if(erreur == false){
 	    					/* On attend la réponse du serveur 0 : : login ou mdp faux ou 1 : ok */
@@ -234,8 +252,14 @@ public class FenConnexion {
 	    						}else{
 	    							/* on récupère les infos de l'utilisateur */
 		    						String infosUtil = lireMesg();
-		    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
-		    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, infosUtil);
+		    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et le socket en paramètres */
+		    						Utilisateur utilisateur = null;
+		    						if(Integer.parseInt(infosUtil.split("/")[5]) == 2){
+		    							utilisateur = new Administrateur(Integer.parseInt(infosUtil.split("/")[0]), infosUtil.split("/")[1], infosUtil.split("/")[2], infosUtil.split("/")[3], infosUtil.split("/")[4], Integer.parseInt(infosUtil.split("/")[5]));
+		    						}else{
+		    							utilisateur = new Membre(Integer.parseInt(infosUtil.split("/")[0]), infosUtil.split("/")[1], infosUtil.split("/")[2], infosUtil.split("/")[3], infosUtil.split("/")[4], Integer.parseInt(infosUtil.split("/")[5]));
+		    						}
+		    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, utilisateur);
 		    						fenAccueil.ouvrirFenetre();
 		    						fermerFenetre();
 	    						}
@@ -266,7 +290,7 @@ public class FenConnexion {
     					erreur = true;
     					libInfo.setText("ERREUR : Vous devez saisir votre Login ET votre Mot de passe");
     				}else{
-	    				/* Si tous les champs sont bien remplis on envoie la demande de connexion au serveur : chaine de forme login/password */
+	    				/* Si tous les champs sont bien remplis on envoie la demande de connexion au serveur : chaîne de forme login/password */
 	    				envoyerMesg(login+"/"+pass);
 	    				if(erreur == false){
 	    					/* On attend la réponse du serveur 0 : : login ou mdp faux ou 1 : ok */
@@ -281,8 +305,14 @@ public class FenConnexion {
 	    						}else{
 	    							/* on récupère les infos de l'utilisateur */
 		    						String infosUtil = lireMesg();
-		    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
-		    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, infosUtil);
+		    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et le socket en paramètres */
+		    						Utilisateur utilisateur = null;
+		    						if(Integer.parseInt(infosUtil.split("/")[5]) == 2){
+		    							utilisateur = new Administrateur(Integer.parseInt(infosUtil.split("/")[0]), infosUtil.split("/")[1], infosUtil.split("/")[2], infosUtil.split("/")[3], infosUtil.split("/")[4], Integer.parseInt(infosUtil.split("/")[5]));
+		    						}else{
+		    							utilisateur = new Membre(Integer.parseInt(infosUtil.split("/")[0]), infosUtil.split("/")[1], infosUtil.split("/")[2], infosUtil.split("/")[3], infosUtil.split("/")[4], Integer.parseInt(infosUtil.split("/")[5]));
+		    						}
+		    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, utilisateur);
 		    						fenAccueil.ouvrirFenetre();
 		    						fermerFenetre();
 	    						}
@@ -307,7 +337,7 @@ public class FenConnexion {
 					erreur = true;
 					libInfo.setText("ERREUR : Vous devez saisir votre Login ET votre Mot de passe");
 				}else{
-   				/* Si tous les champs sont bien remplis on envoie la demande de connexion au serveur : chaine de forme login/password */
+   				/* Si tous les champs sont bien remplis on envoie la demande de connexion au serveur : chaîne de forme login/password */
    				envoyerMesg(login+"/"+pass);
 	   				if(erreur == false){
 	   					/* On attend la réponse du serveur 0 : : login ou mdp faux ou 1 : ok */
@@ -322,8 +352,14 @@ public class FenConnexion {
 	   						}else{
 	   								/* on récupère les infos de l'utilisateur */
 		    						String infosUtil = lireMesg();
-		    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et la socket en paramètres */
-		    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, infosUtil);
+		    						/* On ouvre la fenêtre Principale avec les infos utilisateurs et le socket en paramètres */
+		    						Utilisateur utilisateur = null;
+		    						if(Integer.parseInt(infosUtil.split("/")[5]) == 2){
+		    							utilisateur = new Administrateur(Integer.parseInt(infosUtil.split("/")[0]), infosUtil.split("/")[1], infosUtil.split("/")[2], infosUtil.split("/")[3], infosUtil.split("/")[4], Integer.parseInt(infosUtil.split("/")[5]));
+		    						}else{
+		    							utilisateur = new Membre(Integer.parseInt(infosUtil.split("/")[0]), infosUtil.split("/")[1], infosUtil.split("/")[2], infosUtil.split("/")[3], infosUtil.split("/")[4], Integer.parseInt(infosUtil.split("/")[5]));
+		    						}
+		    						FenAccueil fenAccueil = new FenAccueil(sockConnexion, utilisateur);
 		    						fenAccueil.ouvrirFenetre();
 		    						fermerFenetre();
 	   						}
@@ -379,7 +415,7 @@ public class FenConnexion {
 		JButton btnVisiteur = new JButton("Se connecter en tant que Visiteur");
 		btnVisiteur.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				/* click sur le bouton "se connecter en tant que visiteur */
+				/* click sur le bouton "se connecter en tant que visiteur" */
 				FenConnexionVisiteur fenConnexion = new FenConnexionVisiteur(sockConnexion);
 				fenConnexion.ouvrirFenetre();
 				fermerFenetre();

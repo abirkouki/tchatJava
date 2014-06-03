@@ -1,11 +1,11 @@
 /**
- * 
+ * Package contenant toutes les classes clientes
  */
 package client;
 
 /**
- * Classe caractérisant un utulisateur de type Administrateur, un administrateur possède des opérations supplémentaires sur l'application.
- * @author florian
+ * Classe caractérisant un utilisateur de type Administrateur, un administrateur possède des opérations supplémentaires sur l'application.
+ * @author STRI
  *
  */
 public class Administrateur extends Utilisateur {
@@ -25,9 +25,7 @@ public class Administrateur extends Utilisateur {
 	 * @param grade Grade de l'utilisateur
 	 */
 	public Administrateur(int id, String login, String nom, String prenom, String motDePasse, int grade) {
+		/* On fait appel au constructeur parent */
 		super(id, login, nom, prenom, motDePasse, grade);
 	}
-
-	
-
 }

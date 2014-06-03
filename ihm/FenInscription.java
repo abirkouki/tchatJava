@@ -1,3 +1,6 @@
+/**
+ * Package contenant toutes les fenêtres de l'application
+ */
 package ihm;
 
 import javax.swing.JFrame;
@@ -31,6 +34,11 @@ import java.util.ArrayList;
 import javax.swing.JInternalFrame;
 import javax.swing.JTextPane;
 
+/**
+ * Fenêtre permettant de réaliser une inscription sur l'application.
+ * @author STRI
+ *
+ */
 public class FenInscription {
 
 	
@@ -56,7 +64,7 @@ public class FenInscription {
 	private BufferedReader lire = null;
 	
 	/**
-	 * Bufer d'écriture pour envoyer des messages au serveur
+	 * Buffer d'écriture pour envoyer des messages au serveur
 	 */
 	private PrintWriter ecrire;
 
@@ -144,7 +152,7 @@ public class FenInscription {
 			ecrire.flush();
 		}
 		catch(IOException exception){
-			System.out.println("Imposible d'envoyer un message au serveur");
+			System.out.println("Impossible d'envoyer un message au serveur");
 		}
 	}
 
@@ -308,7 +316,7 @@ public class FenInscription {
 					erreur = true;
 					libErreur.setText("ERREUR : Votre confirmation de mot de passe n'est pas identique au mot de passe");
 				}
-				/* On vérifie que il n'y a pas de / ou de # dans les saisie du l'utilisateur */
+				/* On vérifie que il n'y a pas de / ou de # dans les saisies du l'utilisateur */
 				if(saiNom.getText().contains("/") || saiPrenom.getText().contains("/") || saiLogin.getText().contains("/") || saiNom.getText().contains("#") || saiPrenom.getText().contains("#") || saiLogin.getText().contains("#") || mdp.contains("#")){
 					erreur = true;
 					libErreur.setText("ERREUR : Vos informations ne peuvent pas contenir de  / ou de #");
@@ -316,7 +324,7 @@ public class FenInscription {
 				/* On vérifie la valeur de erreur */
 				if(erreur != true){
 					/* On envoie les infos au serveur */
-					/* On concatène tout dans une chaine sous forme : nom$£€prenom$£€login$£€password */
+					/* On concatène tout dans une chaîne sous forme : nom$£€prenom$£€login$£€password */
 					String infos = saiNom.getText()+"/"+saiPrenom.getText()+"/"+saiLogin.getText()+"/"+mdp;
 					/* On envoie les infos au serveur */
 					envoyerMesg(infos);

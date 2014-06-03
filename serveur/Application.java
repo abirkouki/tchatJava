@@ -105,15 +105,9 @@ public class Application implements Runnable {
 				infosUtilisateur = lireMesg();
 				System.out.println("Message reçu du client : "+infosUtilisateur);
 				infosUtilisateurDecomp = infosUtilisateur.split("/");
-				/* On recherche l'utilisateur dans la liste des connectés */
-				int i; /* indice de parcours de la liste */
-				for(i=0;i<this.serveur.getListeConnecte().size();i++){
-					if(this.serveur.getListeConnecte().get(i).getId() == Integer.parseInt(infosUtilisateurDecomp[0])){
 						/* On a trouvé l'utilisateur, on modifie son statut */
-						this.serveur.getListeConnecte().get(i).setStatut(Integer.parseInt(infosUtilisateurDecomp[1]));
-						this.serveur.getListeConnecte().get(i).setJustification(infosUtilisateurDecomp[2]);
-					}
-				}
+						this.serveur.getUtilisateur(Integer.parseInt(infosUtilisateurDecomp[0])).setStatut(Integer.parseInt(infosUtilisateurDecomp[1]));
+						this.serveur.getUtilisateur(Integer.parseInt(infosUtilisateurDecomp[0])).setJustification(infosUtilisateurDecomp[2]);
 				/* On informe le client que le changement de statut a bien été pris en compte */
 				envoyerMesg("1");
 			}
@@ -256,10 +250,10 @@ public class Application implements Runnable {
 									}
 									if(moderateur == true){
 										//System.out.println("Modo on add");
-										listeUsers += this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getNom()+" "+this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getPrenom()+" (Modérateur)#";
+										listeUsers += this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getNom()+" "+this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getPrenom()+" {"+this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).stringStatut(this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getStatut())+"} (Modérateur)#";
 									}else{
 										//System.out.println("Pad modo on add");
-										listeUsers += this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getNom()+" "+this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getPrenom()+"#";
+										listeUsers += this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getNom()+" "+this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getPrenom()+" {"+this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).stringStatut(this.serveur.getListeCanaux().get(i).getListeConnectes().get(j).getStatut())+"}#";
 									}
 								}
 								//System.out.println(listeUsers);

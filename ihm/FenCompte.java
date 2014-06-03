@@ -1,3 +1,6 @@
+/**
+ * Package contenant toutes les fenêtres de l'application
+ */
 package ihm;
 
 import java.io.BufferedReader;
@@ -26,8 +29,16 @@ import client.Utilisateur;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+/**
+ * Fenêtre permettant à un utilisateur de voir et de modifier les informations de son compte
+ * @author STRI
+ *
+ */
 public class FenCompte {
 
+	/**
+	 * Frame principale de l'application
+	 */
 	private JFrame frame;
 	
 	/**
@@ -46,12 +57,23 @@ public class FenCompte {
 	private Socket sockConnexion;
 	
 	/**
-	 * Utilisateur courrant
+	 * Utilisateur courant
 	 */
 	private Utilisateur utilisateur;
 	
+	/**
+	 * Zone de saisie de la confirmation du nouveau mot de passe
+	 */
 	private JPasswordField saiMdpNew2;
+	
+	/**
+	 * Zone de saisie du nouveau mot de passe
+	 */
 	private JPasswordField saiMdpNew;
+	
+	/**
+	 * Zone de saisie de l'ancien mot de passe
+	 */
 	private JPasswordField saiMdpActu;
 
 	/**
@@ -99,7 +121,7 @@ public class FenCompte {
 			ecrire.flush();
 		}
 		catch(IOException exception){
-			System.out.println("Imposible d'envoyer un message au client");
+			System.out.println("Impossible d'envoyer un message au client");
 		}
 	}
 	
@@ -235,13 +257,13 @@ public class FenCompte {
 						if(mdpNew.contains("/") == true || mdpNew.contains("#") == true){
 							libInfo.setText("ERREUR : Votre mot de passe ne peut contenir de / ou de #");
 						}else{
-							/* On envoi la requete de modification de password au serveur */
+							/* On envoie la requete de modification de password au serveur */
 							envoyerMesg("13");
 							/* on attend la réponse du serveur */
 							if(Integer.parseInt(lireMesg()) == 13){
-								/* On envoi au serveur l'ancien password et l'idUtil pour qu'il vérifie la bonne correspondance */
+								/* On envoie au serveur l'ancien password et l'idUtil pour qu'il vérifie la bonne correspondance */
 								envoyerMesg(String.valueOf(utilisateur.getId())+"/"+mdpOld+"/"+mdpNew);
-								/* On attend la rep serveur 0 : Erreur / 1 :  Ok */
+								/* On attends la rep serveur 0 : Erreur / 1 :  Ok */
 								int rep = Integer.parseInt(lireMesg());
 								if(rep == 1){
 									/* Ok */
@@ -266,7 +288,7 @@ public class FenCompte {
 		btnRetour.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				/* On ferme la fenêtre du canal et on affiche la page d'accueil */
-				FenAccueil fenAcc = new FenAccueil(sockConnexion,String.valueOf(utilisateur.getId())+"/"+utilisateur.getLogin()+"/"+utilisateur.getNom()+"/"+utilisateur.getPrenom()+"/"+utilisateur.getPassword()+"/"+String.valueOf(utilisateur.getGrade()));
+				FenAccueil fenAcc = new FenAccueil(sockConnexion,utilisateur);
 				fenAcc.ouvrirFenetre();
 				fermerFenetre();
 			}

@@ -1,3 +1,6 @@
+/**
+ * Package contenant toutes les fenêtres de l'application
+ */
 package ihm;
 
 import java.awt.EventQueue;
@@ -40,6 +43,11 @@ import java.awt.event.ActionEvent;
 import javax.swing.JInternalFrame;
 import javax.swing.JList;
 
+/**
+ * Fenêtre d'accueil de l'utilisateur qui s'est identifié sur l'application.
+ * @author STRI
+ *
+ */
 public class FenAccueil {
 
 	/**
@@ -53,12 +61,12 @@ public class FenAccueil {
 	private Socket sockConnexion;
 	
 	/**
-	 * Utilisateur courrant de l'application
+	 * Utilisateur courant de l'application
 	 */
 	private Utilisateur utilisateur;
 	
 	/**
-	 * Champs de saisie permettant de donner une justification à un statut d'absence
+	 * Champ de saisie permettant de donner une justification à un statut d'absence
 	 */
 	private JTextField saiJustification;
 	
@@ -68,7 +76,7 @@ public class FenAccueil {
 	private BufferedReader lire = null;
 	
 	/**
-	 * Bufer d'écriture pour envoyer des messages au serveur
+	 * Buffer d'écriture pour envoyer des messages au serveur
 	 */
 	private PrintWriter ecrire;
 	
@@ -78,7 +86,7 @@ public class FenAccueil {
 	private final JInternalFrame intFenRejCanal = new JInternalFrame("Rejoindre un canal");
 	
 	/**
-	 * Correspondance Index et Identifiant d'un canal pour la liste des canaux déjà ouvert
+	 * Correspondance Index et Identifiant d'un canal pour la liste des canaux déjà ouverts
 	 */
 	private ArrayList<String> correspondanceIndexId;
 	
@@ -93,18 +101,11 @@ public class FenAccueil {
 	/**
 	 * Construit une fenêtre d'accueil et affecte les valeurs aux attributs.
 	 * @param sockConnexion Socket de connexion du client
-	 * @param infosUtil Informations permettant de créer un utilisateur correspondant au client.
+	 * @param utilisateur Utilisateur actuel de l'application
 	 */
-	public FenAccueil(Socket sockConnexion, String infosUtil) {
+	public FenAccueil(Socket sockConnexion, Utilisateur utilisateur) {
 		this.sockConnexion = sockConnexion;
-		String[] infosDecomp = infosUtil.split("/");
-		if(Integer.parseInt(infosDecomp[5]) == 2){
-			/* C'est un Administrateur */
-			this.utilisateur = new Administrateur(Integer.parseInt(infosDecomp[0]), infosDecomp[1], infosDecomp[2],infosDecomp[3],infosDecomp[4], Integer.parseInt(infosDecomp[5]));
-		}else{
-			/* C'est un Membre */
-			this.utilisateur = new Membre(Integer.parseInt(infosDecomp[0]), infosDecomp[1], infosDecomp[2],infosDecomp[3],infosDecomp[4], Integer.parseInt(infosDecomp[5]));
-		}
+		this.utilisateur = utilisateur;
 		initialize();
 	}
 	
@@ -152,20 +153,20 @@ public class FenAccueil {
 	/**
 	 * Permet de récupérer et d'afficher dans la liste déroulante la liste des canaux ouverts par l'utilisateur
 	 * @param idUtil Identifiant de l'utilisateur de l'application
-	 * @return La combo remplie si tout se passe bien et null sinon
+	 * @return La combo est remplie si tout se passe bien et null sinon
 	 */
 	public JComboBox initListeCanaux(int idUtil){
-		/* On envoie au serveur une demande de récupération des cannaux sur lesquels l'utilisateur est connecté */
+		/* On envoie au serveur une demande de récupération des canaux sur lesquels l'utilisateur est connecté */
 		envoyerMesg("12");
 		/* On regarde si le serveur atteste bonne réception de notre demande */
 		if(Integer.parseInt(lireMesg()) == 12){
 			/* Serveur OK */
-			/* On envoi l'identifiant de l'utilisateur au serveur */
+			/* On envoie l'identifiant de l'utilisateur au serveur */
 			envoyerMesg(String.valueOf(idUtil));
 			/* On récupère la liste des canaux du serveur sous forme idCanal#nomCanal/idCanal#nomCanal */
 			String listeCanal = lireMesg();
 			if(listeCanal.compareTo("") == 0){
-				/* on renvoi une combo vide */
+				/* on renvoie une combo vide */
 				return(new JComboBox());
 			}
 			/* On décompose cette liste canal par canal */
@@ -221,19 +222,19 @@ public class FenAccueil {
 		btnJustification.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				utilisateur.setJustification(saiJustification.getText());
-				libBienvenue.setText("Bienvenue "+utilisateur.getNom()+" "+utilisateur.getPrenom()+" (Abscent : "+utilisateur.getJustification()+")");
-				/* Requete de modification de statut */
+				libBienvenue.setText("Bienvenue "+utilisateur.getNom()+" "+utilisateur.getPrenom()+" (Absent : "+utilisateur.getJustification()+")");
+				/* Requête de modification de statut */
 				envoyerMesg("1"); /* on envoie la demande au serveur */
-				/* On attend la réponse du serveur qui doit être identique à notre requete */
+				/* On attend la réponse du serveur qui doit être identique à notre requête */
 				if(Integer.parseInt(lireMesg())==1){
-					/* Le serveur a répondu favorable, on lui envoi les infos idUtil/statut/justif */
+					/* Le serveur a répondu favorable, on lui envoie les infos idUtil/statut/justif */
 					envoyerMesg(String.valueOf(utilisateur.getId())+"/"+String.valueOf(utilisateur.getStatut())+"/"+utilisateur.getJustification());
 					/* On attend sa réponse */
 					if(Integer.parseInt(lireMesg())==1){
-						/* Reponse favorable */
+						/* Réponse favorable */
 						JOptionPane.showMessageDialog(panel, "Votre modification de statut a bien été prise en compte","Modification statut",JOptionPane.INFORMATION_MESSAGE);
 					}else{
-						/* réponse défavorable */
+						/* Réponse défavorable */
 						JOptionPane.showMessageDialog(panel, "Votre modification de statut a échouée, merci de réessayer ultérieurement","Erreur modification statut",JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -260,7 +261,18 @@ public class FenAccueil {
 		comboStatut.setBounds(843, 14, 167, 27);
 		comboStatut.addItem("En ligne");
 		comboStatut.addItem("Occupé");
-		comboStatut.addItem("Abscent");
+		comboStatut.addItem("Absent");
+		//System.out.println(utilisateur.getStatut()+" "+utilisateur.stringStatut(utilisateur.getStatut()));
+		comboStatut.setSelectedIndex(utilisateur.getStatut());
+		String statutSel = comboStatut.getSelectedItem().toString();
+		libBienvenue.setText("Bienvenue "+utilisateur.getNom()+" "+utilisateur.getPrenom()+" ("+statutSel+")");
+		if(utilisateur.getStatut() == 2){
+			saiJustification.setVisible(true);
+			btnJustification.setVisible(true);
+			libJustification.setVisible(true);
+			saiJustification.setText(utilisateur.getJustification());
+			libBienvenue.setText("Bienvenue "+utilisateur.getNom()+" "+utilisateur.getPrenom()+" (Absent : "+utilisateur.getJustification()+")");
+		}
 		class ListenerCombo implements ActionListener{
 			public void actionPerformed(ActionEvent e) {
 				String statutSelect = comboStatut.getSelectedItem().toString();
@@ -271,18 +283,18 @@ public class FenAccueil {
 					btnJustification.setVisible(false);
 					libJustification.setVisible(false);
 					libBienvenue.setText("Bienvenue "+utilisateur.getNom()+" "+utilisateur.getPrenom()+" ("+statutSelect+")");
-					/* Requete de modification de statut */
+					/* Requête de modification de statut */
 					envoyerMesg("1"); /* on envoie la demande au serveur */
-					/* On attend la réponse du serveur qui doit être identique à notre requete */
+					/* On attend la réponse du serveur qui doit être identique à notre requête */
 					if(Integer.parseInt(lireMesg())==1){
-						/* Le serveur a répondu favorable, on lui envoi les infos idUtil/statut/justif */
+						/* Le serveur a répondu favorable, on lui envoie les infos idUtil/statut/justif */
 						envoyerMesg(String.valueOf(utilisateur.getId())+"/"+String.valueOf(utilisateur.getStatut())+"/"+" ");
 						/* On attend sa réponse */
 						if(Integer.parseInt(lireMesg())==1){
-							/* Reponse favorable */
+							/* Réponse favorable */
 							JOptionPane.showMessageDialog(panel, "Votre modification de statut a bien été prise en compte","Modification statut",JOptionPane.INFORMATION_MESSAGE);
 						}else{
-							/* réponse défavorable */
+							/* Réponse défavorable */
 							JOptionPane.showMessageDialog(panel, "Votre modification de statut a échouée, merci de réessayer ultérieurement","Erreur modification statut",JOptionPane.ERROR_MESSAGE);
 						}
 					}
@@ -294,23 +306,23 @@ public class FenAccueil {
 					btnJustification.setVisible(false);
 					libJustification.setVisible(false);
 					libBienvenue.setText("Bienvenue "+utilisateur.getNom()+" "+utilisateur.getPrenom()+" ("+statutSelect+")");
-					/* Requete de modification de statut */
+					/* Requête de modification de statut */
 					envoyerMesg("1"); /* on envoie la demande au serveur */
-					/* On attend la réponse du serveur qui doit être identique à notre requete */
+					/* On attend la réponse du serveur qui doit être identique à notre requête */
 					if(Integer.parseInt(lireMesg())==1){
-						/* Le serveur a répondu favorable, on lui envoi les infos idUtil/statut/justif */
+						/* Le serveur a répondu favorable, on lui envoie les infos idUtil/statut/justif */
 						envoyerMesg(String.valueOf(utilisateur.getId())+"/"+String.valueOf(utilisateur.getStatut())+"/"+" ");
 						/* On attend sa réponse */
 						if(Integer.parseInt(lireMesg())==1){
-							/* Reponse favorable */
+							/* Réponse favorable */
 							JOptionPane.showMessageDialog(panel, "Votre modification de statut a bien été prise en compte","Modification statut",JOptionPane.INFORMATION_MESSAGE);
 						}else{
-							/* réponse défavorable */
+							/* Réponse défavorable */
 							JOptionPane.showMessageDialog(panel, "Votre modification de statut a échouée, merci de réessayer ultérieurement","Erreur modification statut",JOptionPane.ERROR_MESSAGE);
 						}
 					}
 				}
-				if(statutSelect.compareTo("Abscent") == 0){
+				if(statutSelect.compareTo("Absent") == 0){
 					utilisateur.setStatut(2);
 					saiJustification.setVisible(true);
 					btnJustification.setVisible(true);
@@ -358,28 +370,18 @@ public class FenAccueil {
 		final JButton btnRejoindre = new JButton("Rejoindre un canal");
 		btnRejoindre.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				/*Canal canal = new Canal(0, "Par défaut", null);
-				FenCanal fen;
-				try {
-					fen = new FenCanal(sockConnexion,canal, utilisateur);
-					fen.ouvrirFenetre();
-					fermerFenetre();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}*/
-				/* On cache les boutons pour corriger un beug graphique */
+				/* On cache les boutons pour corriger un bug graphique */
 				btnRejoindre.setVisible(false);
 				btnCompte.setVisible(false);
 				btnCreer.setVisible(false);
 				btnAdmin.setVisible(false);
-				/* On envoie la requete au serveur */
+				/* On envoie la requête au serveur */
 				envoyerMesg("2");
-				/* On regarde que le serveur atteste bonne réception de la requete */
+				/* On regarde que le serveur atteste bonne réception de la requête */
 				if(Integer.parseInt(lireMesg()) == 2){
 					/* On envoie l'identifiant de l'utilisateur */
 					envoyerMesg(String.valueOf(utilisateur.getId()));
-					/* On attend la liste des canaux que l'on va décomposée et stockée dans une Map composé de l'identifiant du canal et de son nom */
+					/* On attend la liste des canaux que l'on va décomposer et stocker dans une Map composée de l'identifiant du canal et de son nom */
 					final ArrayList<String> canauxDispo = new ArrayList<String>();
 					int i; /* indice de parcours de la liste */
 					String listeCanaux;
@@ -391,7 +393,7 @@ public class FenAccueil {
 					/* On ajoute les canaux dans la Map */
 					for(i=0;i<nbCanaux;i++){
 						canauxDispo.add(i, listeCanauxDecomp[i].split("#")[0]);
-						/* Au passage on les ajoute a la JList */
+						/* Au passage on les ajoute à la JList */
 						listCanauxModele.addElement(listeCanauxDecomp[i].split("#")[1]);
 					}
 					/* On fabrique la liste */
@@ -427,7 +429,6 @@ public class FenAccueil {
 										/* Si c'est ok pour une connexion on récup les infos du canal */
 										String infosCanal = lireMesg();
 										/* si commence par 1 : privé si par 0 : public */
-										System.out.println("infos canl = "+infosCanal);
 										if(rep == 1){
 											/* ok utilisateur */
 											if(Integer.parseInt(infosCanal.split("/")[0])==1){
@@ -455,7 +456,6 @@ public class FenAccueil {
 											
 										}else{
 											/* ok modérateur */
-											System.out.println("On rentre en modo");
 											if(Integer.parseInt(infosCanal.split("/")[0])==1){
 												CanalPrive canal = new CanalPrive(Integer.parseInt(infosCanal.split("/")[1]), infosCanal.split("/")[2], null,null);
 												try {
@@ -574,7 +574,7 @@ public class FenAccueil {
 					envoyerMesg("8");
 					/* On attend la réponse du serveur */
 					if(Integer.parseInt(lireMesg()) == 8){
-						/* on envoi l'id canal et l'id utilisateur */
+						/* on envoie l'id canal et l'id utilisateur */
 						envoyerMesg(String.valueOf(utilisateur.getId())+"#"+correspondanceIndexId.get(comboCanauxActifs.getSelectedIndex()));
 						/* On attend la réponse du serveur 0 : erreur / 1 : ok utilisateur / 2 : ok modérateur */
 						int rep = Integer.parseInt(lireMesg());

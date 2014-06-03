@@ -1,3 +1,6 @@
+/**
+ * Package contenant toutes les fenêtres de l'application
+ */
 package ihm;
 
 import java.awt.BorderLayout;
@@ -29,6 +32,11 @@ import javax.swing.table.AbstractTableModel;
 
 import client.Utilisateur;
 
+/**
+ * Fenêtre permettant de créer un canal de discussion.
+ * @author STRI
+ *
+ */
 public class FenCreationCanal {
 
 	/**
@@ -57,7 +65,7 @@ public class FenCreationCanal {
 	private PrintWriter ecrire;
 	
 	/**
-	 * Champs de saisie permettant de donné le titre du canal
+	 * Champ de saisie permettant de donner le titre du canal
 	 */
 	private JTextField saiTitreCanal;
 	
@@ -72,7 +80,7 @@ public class FenCreationCanal {
 	private JTable tableau;
 	
 	/**
-	 * Chaine contenant les identifiants des utilisateurs qui pourront rejoindre le canal privé (séparés par des #)
+	 * Chaîne contenant les identifiants des utilisateurs qui pourront rejoindre le canal privé (séparés par des #)
 	 */
 	private String listeInvite = "";
 
@@ -141,8 +149,6 @@ public class FenCreationCanal {
 	 */
 	private void initialize() {
 		
-		final String infosUtil;
-		infosUtil = String.valueOf(utilisateur.getId())+"/"+utilisateur.getLogin()+"/"+utilisateur.getNom()+"/"+utilisateur.getPrenom()+"/"+utilisateur.getPassword()+"/"+String.valueOf(utilisateur.getGrade());
 		frmApplicationTchatStri = new JFrame();
 		frmApplicationTchatStri.setFont(null);
 		frmApplicationTchatStri.setTitle("Application Tchat STRI");
@@ -190,7 +196,7 @@ public class FenCreationCanal {
 		final List<Object> donneesInit = new ArrayList<Object>();
 		
 	   
-	   /* On prépare le type des colones */
+	   /* On prépare le type des colonnes */
 	   Class[] typeColones = {String.class, String.class, String.class, Boolean.class};
 	   
 	   
@@ -243,7 +249,7 @@ public class FenCreationCanal {
 			/* Pour ajouter une ligne au Model */
 			public void addRow(Object[] donnees){
 				this.donnees.add(donnees);
-				/* Pour que le changement dans les donnees soit pris en compte */
+				/* Pour que le changement dans les données soit pris en compte */
 				fireTableDataChanged(); 
 			}
 			
@@ -268,9 +274,9 @@ public class FenCreationCanal {
 	   		/* On parcours chaque ligne du tableau*/
 	   		int j; /* indice de parcours des lignes du tableau */
 	   		for(j=0;j<tableau.getRowCount();j++){
-	   			/* on regarde la valeur de la colone invité */
+	   			/* on regarde la valeur de la colonne invité */
 	   			if(tableau.getValueAt(j, 3).equals(true)){
-	   				/* Si la case invité est cochée, on ajoute l'identifiant a la liste des invités */
+	   				/* Si la case invité est cochée, on ajoute l'identifiant à la liste des invités */
 	   				listeInvite += String.valueOf(tableau.getValueAt(j, 0))+"#";
 	   			}
 	   		}
@@ -313,13 +319,13 @@ public class FenCreationCanal {
 						modele.addRow(donnees);
 					}
 					
-					/* on créer le tableau à partir du modèle */
+					/* on crée le tableau à partir du modèle */
 					   tableau = new JTable(modele);
-					   /* On masque la colone Id */
+					   /* On masque la colonne Id */
 						  tableau.getColumnModel().getColumn(0).setMinWidth(0);
 						  tableau.getColumnModel().getColumn(0).setMaxWidth(0);
 						  
-						  /* On bloque le redimensionnement des colones */
+						  /* On bloque le redimensionnement des colonnes */
 						  tableau.getTableHeader().setReorderingAllowed(false);
 						  tableau.getTableHeader().setResizingAllowed(false);
 						  
@@ -338,7 +344,7 @@ public class FenCreationCanal {
 		});
 		btnAddInvit.setFont(new Font("Liberation Serif", Font.BOLD, 15));
 		btnAddInvit.setBounds(577, 424, 169, 25);
-		/* Au départ comme c'est public qui est select par défaut on met le bouton addInvit inviseble */
+		/* Au départ comme c'est public qui est select par défaut on met le bouton addInvit invisible */
 		btnAddInvit.setVisible(false);
 		panel.add(btnAddInvit);
 		
@@ -374,7 +380,7 @@ public class FenCreationCanal {
 		btnAnnuler.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				/* On ferme la fenêtre et on retourne à l'accueil */
-				FenAccueil fenAcc = new FenAccueil(sockConnexion, infosUtil);
+				FenAccueil fenAcc = new FenAccueil(sockConnexion, utilisateur);
 				fenAcc.ouvrirFenetre();
 				fermerFenetre();
 			}
@@ -407,14 +413,14 @@ public class FenCreationCanal {
 						String infosCanal = String.valueOf(utilisateur.getId())+"/"+saiTitreCanal.getText()+"/"+String.valueOf(type)+"/"+listeInvite;
 						/* On fait une demande d'ajout de canal au serveur */
 						envoyerMesg("3");
-						/* On attend que le serveur valide notre requete */
+						/* On attend que le serveur valide notre requête */
 						if(Integer.parseInt(lireMesg()) == 3){
 							/* On envoie les infos au serveur */
 							envoyerMesg(infosCanal);
 							/* On attend de voir si le serveur confirme la création du canal */
 							if(Integer.parseInt(lireMesg()) == 1){
 								JOptionPane.showMessageDialog(panel, "Votre création d'un canal a bien été prise en compte","Création d'un canal",JOptionPane.INFORMATION_MESSAGE);
-								FenAccueil fenAcc = new FenAccueil(sockConnexion, infosUtil);
+								FenAccueil fenAcc = new FenAccueil(sockConnexion, utilisateur);
 								fenAcc.ouvrirFenetre();
 								fermerFenetre();
 							}else{

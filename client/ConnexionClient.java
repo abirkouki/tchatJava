@@ -12,7 +12,7 @@ import java.net.InetAddress;
 import java.util.Scanner;
 
 /**
- * @author florian
+ * @author STRI
  * Classe permettant d'établir la connexion entre un client et le serveur.
  */
 public class ConnexionClient {
@@ -34,8 +34,8 @@ public class ConnexionClient {
 	private PrintWriter ecrire;
 	
 	/**
-	 * Retourne la socket de connexion du client
-	 * @return La socket de connexion du client
+	 * Retourne le socket de connexion du client
+	 * @return Le socket de connexion du client
 	 */
 	public Socket getSock(){
 		return this.sockConnexion;

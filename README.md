@@ -22,6 +22,7 @@ Projet Java STRI 2014
 	- Quitter un canal nous efface de la liste des mecs connectés sur le canal
 	- Gestion des canaux ouverts (page utilisateur)
 	- Modifier son mot de passe
+	- Gestion du statut dans le tchat
 
 - Ce qui doit encore être fait (code + IHM) :
     - Modifier la liste des inivtés sur un canal privé (*)

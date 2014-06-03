@@ -1,3 +1,6 @@
+/**
+ * Package contenant l'ensemble des fenêtre de l'application
+ */
 package ihm;
 
 import java.awt.EventQueue;
@@ -19,7 +22,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * Interface graphique de la première fenêtre, permettant de choisir entre une inscription et une connexion.
- * @author florian
+ * @author STRI
  *
  */
 public class FenMenuPrincipal {
@@ -30,7 +33,7 @@ public class FenMenuPrincipal {
 	private JFrame frmApplicationtchatStri;
 
 	/**
-	 * Créer la fenêtre et l'ouvre.
+	 * Crée la fenêtre et l'ouvre.
 	 */
 	public void ouvrirFenetre() {
 		EventQueue.invokeLater(new Runnable() {
@@ -115,7 +118,7 @@ public class FenMenuPrincipal {
 		btnInscription.setBounds(409, 305, 204, 35);
 		panel.add(btnInscription);
 		
-		JLabel libInfo = new JLabel("(Pour utiliser l'application en tant que visiteur, cliquez sur \"Connexion\" puis sélectionner le mode \"Visiteur\" )");
+		JLabel libInfo = new JLabel("(Pour utiliser l'application en tant que visiteur, cliquer sur \"Connexion\" puis sélectionner le mode \"Visiteur\" )");
 		libInfo.setFont(new Font("Liberation Serif", Font.BOLD | Font.ITALIC, 18));
 		libInfo.setBounds(88, 476, 845, 26);
 		panel.add(libInfo);
