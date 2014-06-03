@@ -1,5 +1,5 @@
 /**
- * 
+ * Package contenant les classes serveurs
  */
 package serveur;
 
@@ -9,7 +9,7 @@ import client.Utilisateur;
 
 /**
  * Un canal privé est un canal accessible que par les utilisateurs invités et les Administrateurs
- * @author florian
+ * @author STRI
  *
  */
 public class CanalPrive extends Canal {
@@ -25,7 +25,7 @@ public class CanalPrive extends Canal {
 	private ArrayList<Utilisateur> listeInvite;
 	
 	/**
-	 * Initialise un canal privé avec un créateur et un titre. La liste des utilisateurs invité est par défaut initialisé avec juste le créateur.
+	 * Initialise un canal privé avec un créateur et un titre. La liste des utilisateurs invités est par défaut initialisée avec juste le créateur.
 	 * @param titreCanal Titre du canal
 	 * @param createur Utilisateur qui a créé le canal
 	 * @param idCanal Identifiant du canal
@@ -40,11 +40,11 @@ public class CanalPrive extends Canal {
 	/**
 	 * Vérifie si un utilisateur est invité sur un canal de type privé
 	 * @param idUtilisateur Identifiant de l'utilisateur souhaitant rejoindre le canal
-	 * @return True si l'utilisateur est bien dans la liste des invité ou False si l'utilisateur n'est pas dans la liste des invités
+	 * @return True si l'utilisateur est bien dans la liste des invités ou False si l'utilisateur n'est pas dans la liste des invités
 	 */
 	public Boolean isInvite(int idUtilisateur){
 		int i; /* indice de parcours de la liste des invités */
-		/* On parcours toute la liste à la recherche de l'utilisateur passé en paramètre */
+		/* On parcourt toute la liste à la recherche de l'utilisateur passé en paramètre */
 		for(i=0;i<this.listeInvite.size();i++){
 			/* on compare l'identifiant en paramètre avec ceux des utilisateurs de la liste */
 			if(this.listeInvite.get(i).getId() == idUtilisateur){

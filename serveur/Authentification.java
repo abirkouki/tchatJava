@@ -1,5 +1,5 @@
 /**
- * 
+ * Package contenant les classes serveurs
  */
 package serveur;
 
@@ -13,7 +13,8 @@ import java.net.Socket;
 import client.Utilisateur;
 
 /**
- * @author florian
+ * Classe permettant à un utilisateur de s'identifier sur l'application
+ * @author STRI
  *
  */
 public class Authentification implements Runnable {
@@ -34,7 +35,7 @@ public class Authentification implements Runnable {
 	private String pass;
 	
 	/**
-	 * Buffer de lecture pour lire les messages reçu du client
+	 * Buffer de lecture pour lire les messages reçus du client
 	 */
 	private BufferedReader lire;
 	
@@ -54,7 +55,7 @@ public class Authentification implements Runnable {
 	private Thread thApplication = null;
 	
 	/**
-	 * Serveur sur lequel tourne l'aplli
+	 * Serveur sur lequel tourne l'appli
 	 */
 	private Serveur serveur;
 	
@@ -89,7 +90,7 @@ public class Authentification implements Runnable {
 	}
 	
 	/**
-	 * Envoie un message à un client, puis vide le buffer d'écriture.
+	 * Envoi un message à un client, puis vide le buffer d'écriture.
 	 * @param message Message que le serveur veut envoyer au client
 	 */
 	public void envoyerMesg(String message){
@@ -99,7 +100,7 @@ public class Authentification implements Runnable {
 			ecrire.flush();
 		}
 		catch(IOException exception){
-			System.out.println("Imposible d'envoyer un message au client");
+			System.out.println("Impossible d'envoyer un message au client");
 		}
 	}
 	
@@ -109,19 +110,19 @@ public class Authentification implements Runnable {
 	public void run() {
 		while(true){
 			/* On attend la demande client (0 : authentification normale ou 1 : authentification en tant que visiteur) */
-			int requeteClient = Integer.parseInt(lireMesg()); /* Identifiant de la requete cliente */
+			int requeteClient = Integer.parseInt(lireMesg()); /* Identifiant de la requête cliente */
 			if(requeteClient == 0){
 				Boolean erreur = true;
 					String infos = "";
 					String[] infosDecomp;
-					/* On attend les infos du client */
+					/* On attends les infos du client */
 					infos = lireMesg();
 					System.out.println(infos);
 					/* On décompose en login + mdp */
 					infosDecomp = infos.split("/");
 					this.login = infosDecomp[0];
 					this.pass = infosDecomp[1];
-					/* On raffraichit la liste des utilisateurs */
+					/* On rafraîchit la liste des utilisateurs */
 					this.serveur.initUtilisateurs();
 					/* On parcours la liste pour vérifier si la combinaison login + mdp est correcte */
 					int i; /* indice de parcours de la liste */
@@ -138,7 +139,7 @@ public class Authentification implements Runnable {
 								/* On ajoute l'utilisateur à la liste des utlisateurs connectés */
 								Utilisateur nouvUtil = new Utilisateur(this.serveur.getListeUtilisateurs().get(i).getId(), this.serveur.getListeUtilisateurs().get(i).getLogin(), this.serveur.getListeUtilisateurs().get(i).getNom(), this.serveur.getListeUtilisateurs().get(i).getPrenom(), this.serveur.getListeUtilisateurs().get(i).getPassword(), this.serveur.getListeUtilisateurs().get(i).getGrade());
 								this.serveur.addConnecte(nouvUtil);
-								/* On envoi toutes les infos relatives à l'utilisateur */
+								/* On envoie toutes les infos relatives à l'utilisateur */
 								envoyerMesg(this.serveur.getListeUtilisateurs().get(i).getId()+"/"+this.serveur.getListeUtilisateurs().get(i).getLogin()+"/"+this.serveur.getListeUtilisateurs().get(i).getNom()+"/"+this.serveur.getListeUtilisateurs().get(i).getPrenom()+"/"+this.serveur.getListeUtilisateurs().get(i).getPassword()+"/"+this.serveur.getListeUtilisateurs().get(i).getGrade());
 								erreur = false;
 							}else{

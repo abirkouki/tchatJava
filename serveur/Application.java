@@ -1,5 +1,5 @@
 /**
- * 
+ * Package contenant les classes serveurs
  */
 package serveur;
 
@@ -14,7 +14,7 @@ import client.Utilisateur;
 
 /**
  * La classe application permet de réaliser les requêtes du client une fois que celui-ci a été identifié sur l'application.
- * @author florian
+ * @author STRI
  *
  */
 public class Application implements Runnable {
@@ -25,7 +25,7 @@ public class Application implements Runnable {
 	private Socket sockConnexion;
 	
 	/**
-	 * Buffer de lecture pour lire les messages reçu du client
+	 * Buffer de lecture pour lire les messages reçus du client
 	 */
 	private BufferedReader lire;
 	
@@ -35,7 +35,7 @@ public class Application implements Runnable {
 	private PrintWriter ecrire = null;
 	
 	/**
-	 * Serveur sur lequel tourne l'aplli
+	 * Serveur sur lequel tourne l'appli
 	 */
 	private Serveur serveur;
 	
@@ -97,7 +97,7 @@ public class Application implements Runnable {
 			String reqCli = lireMesg();
 			//System.out.println("On a recu comme req : "+reqCli);
 			requeteClient = Integer.parseInt(reqCli);
-			/* On identifie la requête client et on lui confirme que on a bien reçu sa requête en lui renvoyant l'identifiant */
+			/* On identifie la requête client et on lui confirme qu'on a bien reçu sa requête en lui renvoyant l'identifiant */
 			if(requeteClient == 1){ /* Demande de modification de statut */
 				/* on confirme la bonne réception de la demande */
 				envoyerMesg("1");
@@ -114,7 +114,7 @@ public class Application implements Runnable {
 			if(requeteClient == 2){ /* Requête pour rejoindre un canal */
 				/* On atteste la bonne réception de la requête */
 				envoyerMesg("2");
-				/* On attend que le client nous envoie l'identifiant de l'utilisateur */
+				/* On attends que le client nous envoie l'identifiant de l'utilisateur */
 				int idUtil = Integer.parseInt(lireMesg());
 				
 				String listeCanaux = "";
@@ -148,17 +148,17 @@ public class Application implements Runnable {
 				
 				/* On confirme la bonne réception de la demande */
 				envoyerMesg("3");
-				/* On attend les infos de l'utilisateur */
+				/* On attends les infos de l'utilisateur */
 				String infosCanal = lireMesg();
 				String[] infosCanalDecomp = infosCanal.split("/");
-				/* On créer le canal */
+				/* On crée le canal */
 				Canal canal = null;
 				/* on vérifie le type de canal */
 				if(Integer.parseInt(infosCanalDecomp[2]) == 1){
 					/* canal public */
 					canal = new CanalPublic(this.serveur.getListeCanaux().size(), infosCanalDecomp[1], this.serveur.getUtilisateur(Integer.parseInt(infosCanalDecomp[0])));
 				}else{
-					/* On créer la liste des invité */
+					/* On crée la liste des invités */
 					String[] invites = infosCanalDecomp[3].split("#");
 					ArrayList<Utilisateur> listeInvit =  new ArrayList<Utilisateur>();
 					int i = 0;
@@ -174,16 +174,16 @@ public class Application implements Runnable {
 				/* on renvoie la confirmation de la création à l'utilisateur */
 				envoyerMesg("1");
 			}
-			if(requeteClient == 4){ /* Envoie d'un message sur un canal */
+			if(requeteClient == 4){ /* Envoi d'un message sur un canal */
 				
 				/* on confirme la bonne réception de la demande */
 				envoyerMesg("4");
-				/* on récupère la chaine du client qu'il va falloir décomposer */
+				/* on récupère la chaîne du client qu'il va falloir décomposer */
 				String message;
 				String[] messageDecomp;
 				message = lireMesg();
 				//System.out.println("Message reçu du client : "+message);
-				messageDecomp = message.split("#"); /* on décompose la chaine idUser#idCanal#message ou pour les visiteur -1#nom#prenom#idCanal#message */
+				messageDecomp = message.split("#"); /* on décompose la chaîne idUser#idCanal#message ou pour les visiteurs -1#nom#prenom#idCanal#message */
 				String message2 = "";
 				int idCanal;
 				if(Integer.parseInt(messageDecomp[0]) == -1){
@@ -194,7 +194,7 @@ public class Application implements Runnable {
 					/* membre */
 					int idUser = Integer.parseInt(messageDecomp[0]);
 					idCanal = Integer.parseInt(messageDecomp[1]);
-					/* on monte la chaine qui sera enregistrée (Nom prenom) : message */
+					/* on monte la chaîne qui sera enregistrée (Nom prenom) : message */
 					message2 = "("+this.serveur.getUtilisateur(idUser).getNom()+" "+this.serveur.getUtilisateur(idUser).getPrenom()+") : "+messageDecomp[2];
 				}
 				//System.out.println("MesgDecomp : "+messageDecomp[0]+" "+messageDecomp[1]+" "+messageDecomp[2]);
@@ -225,15 +225,15 @@ public class Application implements Runnable {
 					if(this.serveur.getListeCanaux().get(i).getId() == idCanal){
 						/* on a trouvé le canal */
 						/* on envoie la liste des messages */
-						String messages = ""; /* chaine contenant les messages séparés par # */
+						String messages = ""; /* chaîne contenant les messages séparés par # */
 						int j; /* indice de parcours de la liste des messages */
-						/* on construit la chaine que l'on va devoir envoyé */
+						/* on construit la chaîne que l'on va devoir envoyé */
 						for(j=0;j<this.serveur.getListeCanaux().get(i).getLitseMessages().size();j++){
 							messages += this.serveur.getListeCanaux().get(i).getLitseMessages().get(j)+"#";
 						}
-						/* on envoie la chaine des messages */
+						/* on envoie la chaîne des messages */
 						envoyerMesg(messages);
-						/* on envoi la liste des utilisateurs connectés */
+						/* on envoie la liste des utilisateurs connectés */
 						String listeUsers="";
 						if(this.serveur.getListeCanaux().get(i).getListeConnectes().size()>0){
 								for(j=0;j<this.serveur.getListeCanaux().get(i).getListeConnectes().size();j++){
@@ -275,7 +275,7 @@ public class Application implements Runnable {
 					envoyerMesg("1"); /* on confirme la demande */
 					String titre = lireMesg(); /* idCanal#Titre */
 					Canal canal = this.serveur.getCanal(Integer.parseInt(titre.split("#")[0]));
-					/* on vérifie que on a bien trouvé le canal */
+					/* on vérifie qu'on a bien trouvé le canal */
 					if(canal != null){
 						/* on modifie le titre */
 						canal.setTitre(titre.split("#")[1]);
@@ -293,7 +293,7 @@ public class Application implements Runnable {
 				
 				/* on confirme la bonne réception de la requête */
 				envoyerMesg("7");
-				/* On envoi la liste des utilisateurs (id#nom#prenom) séparés par des / */
+				/* On envoie la liste des utilisateurs (id#nom#prenom) séparés par des / */
 				String utilisateurs = "";
 				int i;
 				for(i=0;i<this.serveur.getListeUtilisateurs().size();i++){
@@ -353,7 +353,7 @@ public class Application implements Runnable {
 			if(requeteClient == 9){ /* Déco d'un canal */
 				/* on confirme la réception de la demande */
 				envoyerMesg("9");
-				/* On attend l'id canal et l'id utilisateur : idCanal#idUtil */
+				/* On attends l'id canal et l'id utilisateur : idCanal#idUtil */
 				String ids = lireMesg();
 				int idCanal = Integer.parseInt(ids.split("#")[0]);
 				int idUtil = Integer.parseInt(ids.split("#")[1]);
@@ -385,7 +385,7 @@ public class Application implements Runnable {
 				envoyerMesg("10");
 				/* On demande l'id canal */
 				int idCanal = Integer.parseInt(lireMesg());
-				/* On envoi la liste des utilisateurs (id#nom#prenom) séparés par des / */
+				/* On envoie la liste des utilisateurs (id#nom#prenom) séparés par des / */
 				String utilisateurs = "";
 				int i;
 				for(i=0;i<this.serveur.getCanal(idCanal).getListeConnectes().size();i++){
@@ -421,10 +421,10 @@ public class Application implements Runnable {
 				String infos = lireMesg();
 				/* On décompose les infos par utilisateurs */
 				String infosUtil[] = infos.split("/");
-				/* On va effectuer le traitement nécessaire pour chaques utilisateur */
-				/* On vide dabord la liste des moderateurs */
+				/* On va effectuer le traitement nécessaire pour chaque utilisateur */
+				/* On vide d'abord la liste des moderateurs */
 				this.serveur.getCanal(idCanal).viderListeModerateurs();
-				/* pour chaques utilisateur on regarde dabord s'il est banni (prioritaire) */
+				/* pour chaque utilisateur on regarde d'abord s'il est banni (prioritaire) */
 				int i;
 				for(i=0;i<infosUtil.length;i++){
 					if(Integer.parseInt(infosUtil[i].split("#")[2]) == 1){
@@ -447,13 +447,13 @@ public class Application implements Runnable {
 				envoyerMesg("1");
 			}
 			if(requeteClient == 12){ /* Demande des canaux ouverts pour un utilisateur */
-				/* On cofirme la bonne réception de la demande */
+				/* On confirme la bonne réception de la demande */
 				envoyerMesg("12");
 				/* On récupère l'identifiant de l'utilisateur */
 				int idUtil = Integer.parseInt(lireMesg());
-				/* On parcours la liste des canaux et on cherche sil'utilisateur est connecté dessus */
+				/* On parcourt la liste des canaux et on cherche si l'utilisateur est connecté dessus */
 				int i; /* indice de parcours de la liste des canaux */
-				String listeCanaux = ""; /* chaine qui va contenir la liste des canaux sur lesquels l'utilisateur est connecté */
+				String listeCanaux = ""; /* chaîne qui va contenir la liste des canaux sur lesquels l'utilisateur est connecté */
 				for(i=0;i<this.serveur.getListeCanaux().size();i++){
 					/* pour chaque canal on regarde si l'utilisateur est connecté dessus */
 					if(this.serveur.getListeCanaux().get(i).isConnect(this.serveur.getUtilisateur(idUtil)) == true){
@@ -461,7 +461,7 @@ public class Application implements Runnable {
 						listeCanaux += String.valueOf(this.serveur.getListeCanaux().get(i).getId())+"#"+this.serveur.getListeCanaux().get(i).getTitre()+"/";
 					}
 				}
-				/* On envoi la liste au client */
+				/* On envoie la liste au client */
 				envoyerMesg(listeCanaux);
 			}
 			if(requeteClient == 13){ /* Demande de modification de mot de passe */
@@ -476,7 +476,7 @@ public class Application implements Runnable {
 				if(this.serveur.getUtilisateur(idUtil).getPassword().equals(mdpOld)){
 					/* Les mot de passes correspondent on procède à la modification */
 					this.serveur.getUtilisateur(idUtil).setPass(mdpNew);
-					/* on envoi le message de confirmation */
+					/* on envoie le message de confirmation */
 					envoyerMesg("1");
 				}else{
 					/* les mot de passes ne correspondent pas */

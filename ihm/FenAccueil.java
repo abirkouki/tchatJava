@@ -221,21 +221,24 @@ public class FenAccueil {
 		final JButton btnJustification = new JButton("Ok");
 		btnJustification.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				utilisateur.setJustification(saiJustification.getText());
-				libBienvenue.setText("Bienvenue "+utilisateur.getNom()+" "+utilisateur.getPrenom()+" (Absent : "+utilisateur.getJustification()+")");
-				/* Requête de modification de statut */
-				envoyerMesg("1"); /* on envoie la demande au serveur */
-				/* On attend la réponse du serveur qui doit être identique à notre requête */
-				if(Integer.parseInt(lireMesg())==1){
-					/* Le serveur a répondu favorable, on lui envoie les infos idUtil/statut/justif */
-					envoyerMesg(String.valueOf(utilisateur.getId())+"/"+String.valueOf(utilisateur.getStatut())+"/"+utilisateur.getJustification());
-					/* On attend sa réponse */
+				/* On vérifie que l'utilisateur n'a pas mis de / ou de # dans sa justification */
+				if(saiJustification.getText().contains("#") || saiJustification.getText().contains("/")){
+					utilisateur.setJustification(saiJustification.getText());
+					libBienvenue.setText("Bienvenue "+utilisateur.getNom()+" "+utilisateur.getPrenom()+" (Absent : "+utilisateur.getJustification()+")");
+					/* Requête de modification de statut */
+					envoyerMesg("1"); /* on envoie la demande au serveur */
+					/* On attend la réponse du serveur qui doit être identique à notre requête */
 					if(Integer.parseInt(lireMesg())==1){
-						/* Réponse favorable */
-						JOptionPane.showMessageDialog(panel, "Votre modification de statut a bien été prise en compte","Modification statut",JOptionPane.INFORMATION_MESSAGE);
-					}else{
-						/* Réponse défavorable */
-						JOptionPane.showMessageDialog(panel, "Votre modification de statut a échouée, merci de réessayer ultérieurement","Erreur modification statut",JOptionPane.ERROR_MESSAGE);
+						/* Le serveur a répondu favorable, on lui envoie les infos idUtil/statut/justif */
+						envoyerMesg(String.valueOf(utilisateur.getId())+"/"+String.valueOf(utilisateur.getStatut())+"/"+utilisateur.getJustification());
+						/* On attend sa réponse */
+						if(Integer.parseInt(lireMesg())==1){
+							/* Réponse favorable */
+							JOptionPane.showMessageDialog(panel, "Votre modification de statut a bien été prise en compte","Modification statut",JOptionPane.INFORMATION_MESSAGE);
+						}else{
+							/* Réponse défavorable */
+							JOptionPane.showMessageDialog(panel, "Votre modification de statut a échouée, merci de réessayer ultérieurement","Erreur modification statut",JOptionPane.ERROR_MESSAGE);
+						}
 					}
 				}
 			}

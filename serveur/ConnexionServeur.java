@@ -11,7 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * @author florian
+ * @author STRI
  * Classe permettant d'établir la connexion entre un client et le serveur.
  */
 public class ConnexionServeur implements Runnable{
@@ -32,7 +32,7 @@ public class ConnexionServeur implements Runnable{
 	private PrintWriter ecrire = null;
 	
 	/**
-	 * Socket du serveur sur lequel les client vont se connecter
+	 * Socket du serveur sur lequel les clients vont se connecter
 	 */
 	private ServerSocket sockServeur = null;
 	
@@ -48,25 +48,25 @@ public class ConnexionServeur implements Runnable{
 	
 	
 	/**
-	 * Buffer de lecture pour lire les messages reçu du client
+	 * Buffer de lecture pour lire les messages reçus du client
 	 */
 	private BufferedReader lire;
 	
 	/**
 	 * Constructeur de la connexion permettant de pointer sur le serveur passé en paramètre
 	 * @param sockServeur Socket du serveur qui héberge actuellement  l'application.
-	 * @param serveur Serveur sur lequel les client vont réaliser la connexion.
+	 * @param serveur Serveur sur lequel les clients vont réaliser la connexion.
 	 */
 	public ConnexionServeur(ServerSocket sockServeur, Serveur serveur){
-		/* On récupère la socket du serveur passée en paramètre */
+		/* On récupère le socket du serveur passé en paramètre */
 		this.sockServeur = sockServeur;
 		this.serveur = serveur;
 	}
 	
 
 	/**
-	 * Accesseur sur la socket du serveur.
-	 * @return La socket du serveur
+	 * Accesseur sur le socket du serveur.
+	 * @return Le socket du serveur
 	 */
 	public ServerSocket getSockServeur() {
 		return sockServeur;
@@ -74,8 +74,8 @@ public class ConnexionServeur implements Runnable{
 
 
 	/**
-	 * Accesseur sur la socket de connexion du client.
-	 * @return La socket de connexion au serveur
+	 * Accesseur sur le socket de connexion du client.
+	 * @return Le socket de connexion au serveur
 	 */
 	public Socket getSockConnexion() {
 		return sockConnexion;
@@ -111,7 +111,7 @@ public class ConnexionServeur implements Runnable{
 			ecrire.flush();
 		}
 		catch(IOException exception){
-			System.out.println("Imposible d'envoyer un message au client");
+			System.out.println("Impossible d'envoyer un message au client");
 		}
 	}
 
@@ -122,9 +122,9 @@ public class ConnexionServeur implements Runnable{
 	public void run() {
 		int requeteClient;
 		try{
-			/* On boucle infinie pour permettre la connexion de plusieurs clients */
+			/* On boucle indéfiniment pour permettre la connexion de plusieurs clients */
 			while(true){
-				/* On attend la connexion d'un client, et quand le client se connecte au initialise la socket de connexion */
+				/* On attend la connexion d'un client, et quand le client se connecte on initialise la socket de connexion */
 				this.sockConnexion = this.sockServeur.accept();
 				System.out.println("Client connecté.");
 				/* On envoie un message (1) au client pour l'informer qu'il est bien connecté */
@@ -137,14 +137,14 @@ public class ConnexionServeur implements Runnable{
 				/* Selon le type de requête, on lance le thread correspondant */
 				if(requeteClient == 1){
 					/* Demande d'authentification */
-					/* On créer le thread correspondant */
+					/* On crée le thread correspondant */
 					this.thAuthentification = new Thread(new Authentification(this.sockConnexion, this.sockServeur, this.serveur));
 					/* On lance le thread correspondant */
 					this.thAuthentification.start();
 				}else{
 					if(requeteClient == 2){
 						/* Demande d'inscription */
-						/* On créer le thread correspondant */
+						/* On crée le thread correspondant */
 						this.thInscription = new Thread(new Inscription(this.sockConnexion, this.sockServeur, this.serveur));
 						/* On lance le thread d'inscription */
 						this.thInscription.start();

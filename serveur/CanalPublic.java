@@ -1,13 +1,13 @@
 /**
- * 
+ * Package contenant les classes serveurs
  */
 package serveur;
 
 import client.Utilisateur;
 
 /**
- * Un canal public est un canal accessible pour tout les membres.
- * @author florian
+ * Un canal public est un canal accessible pour tous les membres.
+ * @author STRI
  *
  */
 public class CanalPublic extends Canal{

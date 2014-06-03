@@ -1,5 +1,5 @@
 /**
- * 
+ * Package contenant les classes serveurs
  */
 package serveur;
 
@@ -15,7 +15,7 @@ import client.Utilisateur;
 
 /**
  * Classe permettant de réaliser une inscription d'un utilisateur sur l'application
- * @author florian
+ * @author STRI
  *
  */
 public class Inscription implements Runnable{
@@ -46,7 +46,7 @@ public class Inscription implements Runnable{
 	private String login;
 
 	/**
-	 * Buffer de lecture pour lire les messages reçu du client
+	 * Buffer de lecture pour lire les messages reçus du client
 	 */
 	private BufferedReader lire;
 	
@@ -71,7 +71,7 @@ public class Inscription implements Runnable{
 	private ServerSocket sockServ;
 	
 	/**
-	 * Initialise le processus d'inscription avec la socket de connexion du client
+	 * Initialise le processus d'inscription avec le socket de connexion du client
 	 * @param sockConnexion Socket de connexion du client
 	 * @param sockServ Socket du serveur
 	 * @param serveur Serveur sur lequel tourne l'application
@@ -102,7 +102,7 @@ public class Inscription implements Runnable{
 	}
 	
 	/**
-	 * Envoie un message à un client, puis vide le buffer d'écriture.
+	 * Envoi un message à un client, puis vide le buffer d'écriture.
 	 * @param message Message que le serveur veut envoyer au client
 	 */
 	public void envoyerMesg(String message){
@@ -112,24 +112,24 @@ public class Inscription implements Runnable{
 			ecrire.flush();
 		}
 		catch(IOException exception){
-			System.out.println("Imposible d'envoyer un message au client");
+			System.out.println("Impossible d'envoyer un message au client");
 		}
 	}
 	
 	/**
-	 * Porcessus d'inscription
+	 * Processus d'inscription
 	 */
 	public void run() {
-		/* On attend la demande utilisateur */
+		/* On attends la demande utilisateur */
 		if(Integer.parseInt(lireMesg()) == 1){
 			/* On envoie la liste des logins au programme client pour qu'il vérifie la disponibilité du login */
 			int i; /* indice de parcours de la liste des utilisateurs */
-			String logins = ""; /* chaine contenant les logins séparés par des / */
+			String logins = ""; /* chaîne contenant les logins séparés par des / */
 			for(i=0;i<this.serveur.getListeUtilisateurs().size();i++){
 				logins += this.serveur.getListeUtilisateurs().get(i).getLogin()+"/";
 			}
 			envoyerMesg(logins);
-			/* On attend le message de l'utilisateur avec tous les champs (nom/prenom/login/password) */
+			/* On attends le message de l'utilisateur avec tous les champs (nom/prenom/login/password) */
 			String infos = new String();
 			infos = lireMesg();
 			System.out.println("Message reçu du client : "+infos);
@@ -144,7 +144,7 @@ public class Inscription implements Runnable{
 			this.serveur.initUtilisateurs();
 			/* On récupère le nombre d'utilisateurs déjà inscrits pour affecter l'identifiant au nouvel utilisateur */
 			int id = this.serveur.getListeUtilisateurs().size();
-			/* On créer le nouvel utilisateur */
+			/* On crée le nouvel utilisateur */
 			Utilisateur nouvelUtilisateur = new Utilisateur(id, this.login, this.nom, this.prenom, this.motDePasse, 1);
 			/* On l'ajoute dans la liste des utilisateurs */
 			this.serveur.addUtilisateur(id, nouvelUtilisateur);
@@ -156,7 +156,7 @@ public class Inscription implements Runnable{
 			}else{
 				/* L'utilisateur a bien été ajouté */
 				envoyerMesg("1");
-				/* On créer ensuite le thread qui va rediriger sur la classe ConnexionServeur */
+				/* On crée ensuite le thread qui va rediriger sur la classe ConnexionServeur */
 				this.thConnexion = new Thread(new ConnexionServeur(this.sockServ,this.serveur));
 				/* On lance le thread */
 				this.thConnexion.start();

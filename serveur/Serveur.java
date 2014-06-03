@@ -16,7 +16,7 @@ import client.Utilisateur;
 
 /**
  * Classe permettant de gérer le serveur du mini tchat
- * @author florian
+ * @author STRI
  */
 public class Serveur {
 	
@@ -27,7 +27,7 @@ public class Serveur {
 	private ServerSocket sockServeur = null;
 	
 	/**
-	 * Thread permettant la connexion de plusieurs client en simultané
+	 * Thread permettant la connexion de plusieurs clients en simultané
 	 */
 	private Thread thConnexion = null;
 	
@@ -47,15 +47,15 @@ public class Serveur {
 	protected ArrayList<Canal> listeCanaux;
 	
 	/**
-	 * Liste des utilisateur qui ont été bannis de l'application
+	 * Liste des utilisateurs qui ont été banni de l'application
 	 */
 	private ArrayList<Utilisateur> blackList;
 	
 	/**
-	 * Démare le serveur avec toutes ses initialisations
+	 * Démarre le serveur avec toutes ses initialisations
 	 */
 	public void demarerServeur(){
-		/* On essaye de connecter le serveur sur le numero de port demandé */
+		/* On essaye de connecter le serveur sur le numéro de port demandé */
 		try{
 			/* On initialise la liste des utilisateurs inscrits */
 			this.initUtilisateurs();
@@ -63,17 +63,17 @@ public class Serveur {
 			this.initCanaux();
 			/* on initialise la liste des utilisateurs bannis */
 			this.initBlackList();
-			/* On créer une liste vide des utilisateurs connectés */
+			/* On crée une liste vide des utilisateurs connectés */
 			this.listeConnectes = new ArrayList<Utilisateur>();
 			/* on vide la liste des connectés sur les canaux */
 			int i;
 			for(i=0;i<this.listeCanaux.size();i++){
 				this.listeCanaux.get(i).viderListeConnectes();
 			}
-			/* On initialise la socket avec le numero de port fourni en paramètre */
+			/* On initialise le socket avec le numéro de port fourni en paramètre */
 			this.sockServeur = new ServerSocket(2369);
-			/* On affiche un message pour informer du succes de la création de la socket */
-			System.out.println("Création de la socket sur le port 2369 -> OK");
+			/* On affiche un message pour informer du succés de la création de le socket */
+			System.out.println("Création de le socket sur le port 2369 -> OK");
 			/* On créer ensuite le thread qui va rediriger sur la classe ConnexionServeur */
 			this.thConnexion = new Thread(new ConnexionServeur(this.sockServeur, this));
 			/* On lance le thread */
@@ -87,7 +87,7 @@ public class Serveur {
 	}
 	
 	/**
-	 * Accesseur sur la socket du serveur
+	 * Accesseur sur le socket du serveur
 	 * @return Socket du serveur.
 	 */
 	public ServerSocket getSock(){
@@ -218,7 +218,7 @@ public class Serveur {
 	}
 	
 	/**
-	 * Sauvegarde la liste des canaux présent sur l'application dans un fichier de datas. Retourne -1 en cas d'échec
+	 * Sauvegarde la liste des canaux présents sur l'application dans un fichier de datas. Retourne -1 en cas d'échec
 	 */
 	public int saveCanaux(){
 		ObjectOutputStream sortie;
@@ -250,7 +250,7 @@ public class Serveur {
 	
 	/**
 	 * Accesseur sur la liste des canaux
-	 * @return La liste des canaux qui ont été créés sur le serveur
+	 * @return La liste des canaux qui ont été créé sur le serveur
 	 */
 	public ArrayList<Canal> getListeCanaux(){
 		return this.listeCanaux;

@@ -1,5 +1,5 @@
 /**
- * 
+ * Package contenant les classes serveurs
  */
 package serveur;
 
@@ -10,7 +10,7 @@ import client.Utilisateur;
 
 /**
  * Un canal est un fil de discussion comportant un titre et une liste de modérateurs.
- * @author florian
+ * @author STRI
  */
 public class Canal implements Serializable{
 	
@@ -50,15 +50,15 @@ public class Canal implements Serializable{
 	private ArrayList<String> listeMessages;
 	
 	/**
-	 * Liste des utilisateurs qui ont été bannis d'un canal
+	 * Liste des utilisateurs qui ont été banni d'un canal
 	 */
 	private ArrayList<Utilisateur> blackList;
 	
 	/**
 	 * Construit un canal en lui donnant un titre et en spécifiant qui en est le créateur
 	 * @param idCanal Identifiant du canal
-	 * @param titre Titre du canal, permet aux utilisateurs de connaitre le theme de la discussion
-	 * @param createur Utilisateur qui a créer le canal.
+	 * @param titre Titre du canal, permet aux utilisateurs de connaître le théme de la discussion
+	 * @param createur Utilisateur qui a créé le canal.
 	 */
 	public Canal(int idCanal, String titreCanal, Utilisateur createur){
 		this.createur = createur;
@@ -144,7 +144,7 @@ public class Canal implements Serializable{
 	}
 	
 	/**
-	 * Vide la liste des utilisateurs connectés sur le canal (pour le redémarage du serveur)
+	 * Vide la liste des utilisateurs connectés sur le canal (pour le redémarrage du serveur)
 	 */
 	public void viderListeConnectes(){
 		this.listeUtilisateursConectes = new ArrayList<Utilisateur>();
@@ -182,12 +182,12 @@ public class Canal implements Serializable{
 	}
 	
 	/**
-	 * Vérifie si un utilisateur a été bannis ou pas d'un canal
+	 * Vérifie si un utilisateur a été banni ou pas d'un canal
 	 * @param idUtilisateur Identifiant de l'utilisateur.
 	 * @return True si l'utilisateur a bien été banni, False si l'utilisateur n'a pas été banni.
 	 */
 	public Boolean isBanni(int idUtilisateur){
-		/* On parcours la liste des utilisateurs bannis pour vérifier si l'utilisateur y est ou pas */
+		/* On parcourt la liste des utilisateurs bannis pour vérifier si l'utilisateur y est ou pas */
 		int i; /* indice de parcours de la liste */
 		for(i=0;i<this.blackList.size();i++){
 			if(this.blackList.get(i).getId() == idUtilisateur){

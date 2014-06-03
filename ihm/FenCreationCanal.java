@@ -315,8 +315,14 @@ public class FenCreationCanal {
 					}
 					/* On ajoute les utilisateurs triés dans l'ordre alphabétique dans le tableau */
 					for(i=0;i<listeUtilsDecomp.length;i++){
-						Object[] donnees = {listeUtilsDecomp[i].split("#")[0],listeUtilsDecomp[i].split("#")[1],listeUtilsDecomp[i].split("#")[2], new Boolean(false)};
-						modele.addRow(donnees);
+						if(Integer.parseInt(listeUtilsDecomp[i].split("#")[0])== utilisateur.getId()){
+							/* Si c'est le créateur on le coche par défaut comme invité */
+							Object[] donnees = {listeUtilsDecomp[i].split("#")[0],listeUtilsDecomp[i].split("#")[1],listeUtilsDecomp[i].split("#")[2], new Boolean(true)};
+							modele.addRow(donnees);
+						}else{
+							Object[] donnees = {listeUtilsDecomp[i].split("#")[0],listeUtilsDecomp[i].split("#")[1],listeUtilsDecomp[i].split("#")[2], new Boolean(false)};
+							modele.addRow(donnees);
+						}
 					}
 					
 					/* on crée le tableau à partir du modèle */
